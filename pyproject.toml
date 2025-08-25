@@ -1,0 +1,352 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "parent-daycare-matchmaker"
+version = "1.0.0"
+description = "Graph-based matching service for parent-daycare center allocation"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Your Organization", email = "contact@yourorg.com"},
+]
+maintainers = [
+    {name = "Development Team", email = "dev@yourorg.com"},
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: FastAPI",
+    "Intended Audience :: Healthcare Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Scheduling",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Typing :: Typed",
+]
+keywords = [
+    "matching",
+    "graph-algorithms",
+    "optimization",
+    "daycare",
+    "fastapi",
+    "networkx",
+    "ortools"
+]
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.104.1,<1.0.0",
+    "uvicorn[standard]>=0.24.0,<1.0.0",
+    "pydantic>=2.5.0,<3.0.0",
+    "pydantic-settings>=2.1.0,<3.0.0",
+    "networkx>=3.2.0,<4.0.0",
+    "ortools>=9.8.3296,<10.0.0",
+    "scipy>=1.11.4,<2.0.0",
+    "numpy>=1.25.2,<2.0.0",
+    "geopy>=2.4.0,<3.0.0",
+    "httpx>=0.25.2,<1.0.0",
+    "redis>=5.0.1,<6.0.0",
+    "python-json-logger>=2.0.7,<3.0.0",
+    "structlog>=23.2.0,<24.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.3",
+    "pytest-asyncio>=0.21.1",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "pytest-xdist>=3.5.0",
+    "pytest-benchmark>=4.0.0",
+    "coverage>=7.3.2",
+    "httpx>=0.25.2",
+]
+lint = [
+    "black>=23.11.0",
+    "isort>=5.12.0",
+    "flake8>=6.1.0",
+    "flake8-docstrings>=1.7.0",
+    "flake8-type-checking>=2.7.0",
+    "mypy>=1.7.1",
+    "pylint>=3.0.3",
+    "bandit>=1.7.5",
+    "safety>=2.3.0",
+    "pre-commit>=3.5.0",
+]
+docs = [
+    "mkdocs>=1.5.3",
+    "mkdocs-material>=9.4.8",
+    "mkdocs-swagger-ui-tag>=0.6.8",
+    "mkdocs-autorefs>=0.5.0",
+    "mkdocstrings[python]>=0.24.0",
+]
+test = [
+    "factory-boy>=3.3.0",
+    "faker>=20.1.0",
+    "freezegun>=1.2.2",
+    "locust>=2.17.0",
+]
+monitoring = [
+    "prometheus-client>=0.19.0",
+    "opentelemetry-api>=1.21.0",
+    "opentelemetry-sdk>=1.21.0",
+    "opentelemetry-instrumentation-fastapi>=0.42b0",
+    "sentry-sdk>=1.38.0",
+]
+all = [
+    "daycare-schedule-optimizer[dev,lint,docs,test,monitoring]"
+]
+
+[project.urls]
+Homepage = "https://github.com/yourorg/daycare-schedule-optimizer"
+Documentation = "https://yourorg.github.io/daycare-schedule-optimizer"
+Repository = "https://github.com/yourorg/daycare-schedule-optimizer.git"
+Issues = "https://github.com/yourorg/daycare-schedule-optimizer/issues"
+Changelog = "https://github.com/yourorg/daycare-schedule-optimizer/blob/main/CHANGELOG.md"
+
+[project.scripts]
+matchmaker = "src.matchmaker.main:app"
+
+# Hatch configuration
+[tool.hatch.version]
+path = "src/matchmaker/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/matchmaker"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/docs",
+    "/README.md",
+    "/CHANGELOG.md",
+    "/LICENSE",
+]
+
+# Development environment
+[tool.hatch.envs.default]
+dependencies = [
+    "daycare-schedule-optimizer[dev,lint]"
+]
+
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
+test-cov = "coverage run -m pytest {args:tests}"
+cov-report = ["- coverage combine", "coverage report"]
+cov-html = ["- coverage combine", "coverage html"]
+format = ["black {args:.}", "isort {args:.}"]
+lint = [
+    "flake8 {args:.}",
+    "mypy {args:src tests}",
+    "bandit -r {args:src}",
+    "safety check",
+]
+check = ["format", "lint", "test-cov", "cov-report"]
+serve = "uvicorn src.matchmaker.main:app --reload --host 0.0.0.0 --port 8001"
+docs-serve = "mkdocs serve"
+docs-build = "mkdocs build"
+
+# Test environment
+[tool.hatch.envs.test]
+dependencies = [
+    "daycare-schedule-optimizer[test]"
+]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.11", "3.12"]
+
+[tool.hatch.envs.test.scripts]
+test = "pytest {args:tests}"
+test-integration = "pytest {args:tests/integration}"
+test-performance = "pytest {args:tests/performance}"
+benchmark = "pytest --benchmark-only {args:tests}"
+
+# Docs environment
+[tool.hatch.envs.docs]
+dependencies = [
+    "daycare-schedule-optimizer[docs]"
+]
+
+[tool.hatch.envs.docs.scripts]
+build = "mkdocs build --clean --strict"
+serve = "mkdocs serve --dev-addr localhost:8001"
+deploy = "mkdocs gh-deploy --force"
+
+# Tool configurations
+[tool.black]
+target-version = ["py311"]
+line-length = 88
+skip-string-normalization = true
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+src_paths = ["src/matchmaker", "tests"]
+skip_glob = ["*/migrations/*"]
+
+[tool.mypy]
+python_version = "3.11"
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+show_error_codes = true
+show_column_numbers = true
+pretty = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+
+[tool.pylint]
+load-plugins = ["pylint.extensions.docparams"]
+max-line-length = 88
+disable = [
+    "C0111",  # missing-docstring
+    "R0903",  # too-few-public-methods
+    "R0913",  # too-many-arguments
+    "W0212",  # protected-access
+]
+
+[tool.pylint.messages_control]
+extension-pkg-whitelist = ["ortools", "numpy", "pydantic"]
+
+[tool.bandit]
+exclude_dirs = ["tests", "build", "dist"]
+skips = ["B101", "B601"]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+    "*/venv/*",
+    "*/virtualenv/*",
+    "*/.venv/*",
+    "*/site-packages/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+show_missing = true
+precision = 2
+skip_covered = false
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--disable-warnings",
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "performance: marks tests as performance tests",
+    "api: marks tests as API tests",
+    "solver: marks tests as solver tests",
+]
+asyncio_mode = "auto"
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
+# Security
+[tool.safety]
+ignore = []
+output = "text"
+full-report = true
+
+# Ruff (alternative to flake8)
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+    "ARG", # flake8-unused-arguments
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+    "ARG002", # unused method argument
+]
+unfixable = [
+    "B",  # avoid removing unused imports
+]
+
+[tool.ruff.per-file-ignores]
+"tests/**/*" = ["ARG", "S"]
+"**/__init__.py" = ["F401"]
+
+[tool.ruff.isort]
+known-first-party = ["scheduler"]
+
+[tool.ruff.flake8-type-checking]
+strict = true

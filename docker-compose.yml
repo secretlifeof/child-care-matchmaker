@@ -1,0 +1,162 @@
+services:
+  scheduler-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: scheduler-api
+    working_dir: /app/src
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=false
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - MAX_SOLVER_TIME_SECONDS=60
+      - CACHE_TTL=3600
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+    depends_on:
+      - redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - scheduler-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    profiles:
+      - production
+
+  redis:
+    image: redis:7-alpine
+    container_name: scheduler-redis
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - scheduler-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    profiles:
+      - dev
+      - production
+
+  # Development version
+  scheduler-api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: scheduler-api-dev
+    working_dir: /app/src
+    ports:
+      - "8001:8000"
+    environment:
+      - DEBUG=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=1
+      - MAX_SOLVER_TIME_SECONDS=30
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+    depends_on:
+      - redis
+    networks:
+      - scheduler-network
+    profiles:
+      - dev
+
+  # Monitoring and observability (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: scheduler-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - scheduler-network
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: scheduler-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - scheduler-network
+    profiles:
+      - monitoring
+
+  # Load balancer for multiple API instances
+  nginx:
+    image: nginx:alpine
+    container_name: scheduler-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - scheduler-api
+    networks:
+      - scheduler-network
+    profiles:
+      - production
+
+volumes:
+  redis-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+networks:
+  scheduler-network:
+    driver: bridge
+
+# Override for different environments
+# Production: docker-compose up
+# Development: docker-compose --profile dev up
+# With monitoring: docker-compose --profile monitoring up
+# Full production: docker-compose --profile production --profile monitoring up
