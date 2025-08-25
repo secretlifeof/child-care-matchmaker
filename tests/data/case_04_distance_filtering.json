@@ -1,0 +1,158 @@
+{
+  "name": "Distance Filtering Test",
+  "description": "Parent with strict distance limit should exclude far centers",
+  "request": {
+    "application": {
+      "id": "550e8400-e29b-41d4-a716-446655440006",
+      "family_id": "550e8400-e29b-41d4-a716-446655440106",
+      "children": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440207",
+          "family_id": "550e8400-e29b-41d4-a716-446655440106",
+          "name": "Isabella Fischer",
+          "birth_date": "2021-11-30"
+        }
+      ],
+      "home_location": {
+        "latitude": 52.5000,
+        "longitude": 13.4000,
+        "address": "Zentrale Straße 1",
+        "postal_code": "10115",
+        "city": "Berlin",
+        "country_code": "DE"
+      },
+      "preferences": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440304",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440006",
+          "property_key": "language_program",
+          "operator": "equals",
+          "value_text": "bilingual",
+          "weight": 0.7,
+          "threshold": 0.6
+        }
+      ],
+      "desired_start_date": "2024-09-01",
+      "desired_hours": [
+        {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
+        {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
+        {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
+        {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
+        {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+      ],
+      "max_distance_km": 2.0,
+      "priority_flags": []
+    },
+    "centers": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440406",
+        "name": "Nearby Bilingual Center",
+        "location": {
+          "latitude": 52.5020,
+          "longitude": 13.4020,
+          "address": "Nahe Straße 10",
+          "postal_code": "10115",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "short_description": "Close bilingual daycare",
+        "opening_hours": [
+          {"day_of_week": 0, "start_hour": 7, "end_hour": 18},
+          {"day_of_week": 1, "start_hour": 7, "end_hour": 18},
+          {"day_of_week": 2, "start_hour": 7, "end_hour": 18},
+          {"day_of_week": 3, "start_hour": 7, "end_hour": 18},
+          {"day_of_week": 4, "start_hour": 7, "end_hour": 18}
+        ],
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440506",
+            "center_id": "550e8400-e29b-41d4-a716-446655440406",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655440605",
+            "property_key": "language_program",
+            "category": "program",
+            "value_text": "bilingual",
+            "source": "verified"
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440707",
+            "center_id": "550e8400-e29b-41d4-a716-446655440406",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 48,
+              "name": "Toddler Plus"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 18,
+            "available_capacity": 4
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440407",
+        "name": "Far Away Excellent Center",
+        "location": {
+          "latitude": 52.5500,
+          "longitude": 13.4500,
+          "address": "Ferne Straße 999",
+          "postal_code": "12345",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "short_description": "Excellent but distant center",
+        "opening_hours": [
+          {"day_of_week": 0, "start_hour": 6, "end_hour": 19},
+          {"day_of_week": 1, "start_hour": 6, "end_hour": 19},
+          {"day_of_week": 2, "start_hour": 6, "end_hour": 19},
+          {"day_of_week": 3, "start_hour": 6, "end_hour": 19},
+          {"day_of_week": 4, "start_hour": 6, "end_hour": 19}
+        ],
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440507",
+            "center_id": "550e8400-e29b-41d4-a716-446655440407",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655440605",
+            "property_key": "language_program",
+            "category": "program",
+            "value_text": "trilingual",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440508",
+            "center_id": "550e8400-e29b-41d4-a716-446655440407",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655440606",
+            "property_key": "premium_program",
+            "category": "program",
+            "value_boolean": true,
+            "source": "verified"
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440708",
+            "center_id": "550e8400-e29b-41d4-a716-446655440407",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 48,
+              "name": "Advanced Program"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 30,
+            "available_capacity": 12
+          }
+        ]
+      }
+    ],
+    "top_k": 5,
+    "include_full_centers": false,
+    "include_explanations": true
+  },
+  "expected_result": {
+    "success": true,
+    "offers_count": 1,
+    "excluded_center": "550e8400-e29b-41d4-a716-446655440407",
+    "included_center": "550e8400-e29b-41d4-a716-446655440406",
+    "reason": "Far center exceeds 2km distance limit"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "test_name": "Operating Hours Mismatch Test",
+  "description": "Parent needs hours outside center's operating hours",
+  "output": {
+    "mode": "recommend",
+    "run_id": null,
+    "offers": [
+      {
+        "application_id": "550e8400-e29b-41d4-a716-446655440011",
+        "center_id": "550e8400-e29b-41d4-a716-446655440412",
+        "bucket_id": "550e8400-e29b-41d4-a716-446655440713",
+        "rank": 1,
+        "score": 0.5439339858543857,
+        "is_available": true,
+        "is_allocated": false,
+        "is_tentative": false,
+        "explanation": {
+          "distance_km": 0.26066014145614436,
+          "preference_score": 0.5700000000000002,
+          "components": {
+            "preference": 1.0,
+            "property": 0.0,
+            "availability": 0.6,
+            "quality": 0.5
+          },
+          "constraints_satisfied": [],
+          "constraints_violated": [],
+          "reason_codes": []
+        }
+      },
+      {
+        "application_id": "550e8400-e29b-41d4-a716-446655440011",
+        "center_id": "550e8400-e29b-41d4-a716-446655440411",
+        "bucket_id": "550e8400-e29b-41d4-a716-446655440712",
+        "rank": 2,
+        "score": 0.1512063985614734,
+        "is_available": true,
+        "is_allocated": false,
+        "is_tentative": false,
+        "explanation": {
+          "distance_km": 0.260663287112539,
+          "preference_score": 0.1772727272727273,
+          "components": {
+            "preference": 0.0,
+            "property": 0.0,
+            "availability": 0.6363636363636364,
+            "quality": 0.5
+          },
+          "constraints_satisfied": [],
+          "constraints_violated": [],
+          "reason_codes": []
+        }
+      }
+    ],
+    "waitlist_entries": [],
+    "success": true,
+    "message": null,
+    "total_applications": 1,
+    "matched_applications": 1,
+    "coverage_rate": null,
+    "statistics": {},
+    "processing_time_ms": null
+  }
+}

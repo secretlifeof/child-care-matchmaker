@@ -1,0 +1,41 @@
+{
+  "test_name": "Distance Filtering Test",
+  "description": "Parent with strict distance limit should exclude far centers",
+  "output": {
+    "mode": "recommend",
+    "run_id": null,
+    "offers": [
+      {
+        "application_id": "550e8400-e29b-41d4-a716-446655440006",
+        "center_id": "550e8400-e29b-41d4-a716-446655440406",
+        "bucket_id": "550e8400-e29b-41d4-a716-446655440707",
+        "rank": 1,
+        "score": 0.5461499163862698,
+        "is_available": true,
+        "is_allocated": false,
+        "is_tentative": false,
+        "explanation": {
+          "distance_km": 0.2607230583595267,
+          "preference_score": 0.5722222222222224,
+          "components": {
+            "preference": 1.0,
+            "property": 0.0,
+            "availability": 0.6111111111111112,
+            "quality": 0.5
+          },
+          "constraints_satisfied": [],
+          "constraints_violated": [],
+          "reason_codes": []
+        }
+      }
+    ],
+    "waitlist_entries": [],
+    "success": true,
+    "message": null,
+    "total_applications": 1,
+    "matched_applications": 1,
+    "coverage_rate": null,
+    "statistics": {},
+    "processing_time_ms": null
+  }
+}

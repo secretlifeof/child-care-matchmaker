@@ -1,0 +1,139 @@
+{
+  "name": "Age Group Mismatch Test", 
+  "description": "Child's age doesn't fit any available age groups",
+  "request": {
+    "application": {
+      "id": "550e8400-e29b-41d4-a716-446655440010",
+      "family_id": "550e8400-e29b-41d4-a716-446655440110",
+      "children": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440211",
+          "family_id": "550e8400-e29b-41d4-a716-446655440110",
+          "name": "Baby Charlotte",
+          "birth_date": "2023-08-15"
+        }
+      ],
+      "home_location": {
+        "latitude": 52.5300,
+        "longitude": 13.4100,
+        "address": "Baby Straße 101",
+        "postal_code": "10315",
+        "city": "Berlin",
+        "country_code": "DE"
+      },
+      "preferences": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440308",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440010",
+          "property_key": "infant_care",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.95,
+          "threshold": 0.9
+        }
+      ],
+      "desired_start_date": "2024-09-01",
+      "desired_hours": [
+        {"day_of_week": 0, "start_hour": 9, "end_hour": 15},
+        {"day_of_week": 1, "start_hour": 9, "end_hour": 15},
+        {"day_of_week": 2, "start_hour": 9, "end_hour": 15},
+        {"day_of_week": 3, "start_hour": 9, "end_hour": 15},
+        {"day_of_week": 4, "start_hour": 9, "end_hour": 15}
+      ],
+      "max_distance_km": 5.0,
+      "priority_flags": []
+    },
+    "centers": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440409",
+        "name": "Toddler Only Center",
+        "location": {
+          "latitude": 52.5280,
+          "longitude": 13.4120,
+          "address": "Toddler Straße 22",
+          "postal_code": "10315",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "short_description": "Specialized toddler care only",
+        "opening_hours": [
+          {"day_of_week": 0, "start_hour": 7, "end_hour": 18},
+          {"day_of_week": 1, "start_hour": 7, "end_hour": 18},
+          {"day_of_week": 2, "start_hour": 7, "end_hour": 18},
+          {"day_of_week": 3, "start_hour": 7, "end_hour": 18},
+          {"day_of_week": 4, "start_hour": 7, "end_hour": 18}
+        ],
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440510",
+            "center_id": "550e8400-e29b-41d4-a716-446655440409",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655440608",
+            "property_key": "infant_care",
+            "category": "service",
+            "value_boolean": false,
+            "source": "verified"
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440710",
+            "center_id": "550e8400-e29b-41d4-a716-446655440409",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 48,
+              "name": "Toddlers Only"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 20,
+            "available_capacity": 8
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440410",
+        "name": "Preschool Center",
+        "location": {
+          "latitude": 52.5320,
+          "longitude": 13.4080,
+          "address": "Preschool Straße 88",
+          "postal_code": "10315",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "short_description": "Ages 3-6 only",
+        "opening_hours": [
+          {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+        ],
+        "properties": [],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440711",
+            "center_id": "550e8400-e29b-41d4-a716-446655440410",
+            "age_band": {
+              "min_age_months": 36,
+              "max_age_months": 72,
+              "name": "Preschoolers"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 25,
+            "available_capacity": 10
+          }
+        ]
+      }
+    ],
+    "top_k": 5,
+    "include_full_centers": false,
+    "include_explanations": true
+  },
+  "expected_result": {
+    "success": true,
+    "offers_count": 0,
+    "message": "No age-compatible centers found",
+    "child_age_months": 12,
+    "reason": "All centers require minimum 18+ months"
+  }
+}

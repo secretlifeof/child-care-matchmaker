@@ -1,0 +1,17 @@
+{
+  "test_name": "Age Group Mismatch Test",
+  "description": "Child's age doesn't fit any available age groups",
+  "output": {
+    "mode": "recommend",
+    "run_id": null,
+    "offers": [],
+    "waitlist_entries": [],
+    "success": true,
+    "message": null,
+    "total_applications": 1,
+    "matched_applications": 0,
+    "coverage_rate": null,
+    "statistics": {},
+    "processing_time_ms": null
+  }
+}

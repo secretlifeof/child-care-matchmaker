@@ -1,0 +1,102 @@
+{
+  "name": "No Available Capacity Test",
+  "description": "All matching centers are at full capacity",
+  "request": {
+    "application": {
+      "id": "550e8400-e29b-41d4-a716-446655440013",
+      "family_id": "550e8400-e29b-41d4-a716-446655440113",
+      "children": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440214",
+          "family_id": "550e8400-e29b-41d4-a716-446655440113",
+          "name": "Ethan Taylor",
+          "birth_date": "2022-03-20"
+        }
+      ],
+      "home_location": {
+        "latitude": 52.5500,
+        "longitude": 13.4200,
+        "address": "Voll Straße 99",
+        "postal_code": "10405",
+        "city": "Berlin",
+        "country_code": "DE"
+      },
+      "preferences": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440311",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440013",
+          "property_key": "art_program",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.8,
+          "threshold": 0.7
+        }
+      ],
+      "desired_start_date": "2024-09-01",
+      "max_distance_km": 4.0
+    },
+    "centers": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440415",
+        "name": "Full Art Center",
+        "location": {
+          "latitude": 52.5480,
+          "longitude": 13.4220,
+          "address": "Kunst Straße 77",
+          "postal_code": "10405",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "property_key": "art_program",
+            "value_boolean": true
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440716",
+            "center_id": "550e8400-e29b-41d4-a716-446655440415",
+            "age_band": {"min_age_months": 18, "max_age_months": 42, "name": "Artists"},
+            "start_month": "2024-09-01",
+            "total_capacity": 16,
+            "available_capacity": 0
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440416",
+        "name": "Another Full Center",
+        "location": {
+          "latitude": 52.5520,
+          "longitude": 13.4180,
+          "address": "Besetzt Straße 44",
+          "postal_code": "10405",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "property_key": "art_program", 
+            "value_boolean": true
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440717",
+            "center_id": "550e8400-e29b-41d4-a716-446655440416",
+            "age_band": {"min_age_months": 18, "max_age_months": 42, "name": "Creative"},
+            "start_month": "2024-09-01",
+            "total_capacity": 14,
+            "available_capacity": 0
+          }
+        ]
+      }
+    ],
+    "include_full_centers": false
+  },
+  "expected_result": {
+    "offers_count": 0,
+    "reason": "All matching centers at full capacity"
+  }
+}

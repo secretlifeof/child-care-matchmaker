@@ -1,0 +1,64 @@
+{
+  "test_name": "Simple Recommendation Request",
+  "description": "Parent looking for daycare recommendations within 5km with organic food preference",
+  "output": {
+    "mode": "recommend",
+    "run_id": null,
+    "offers": [
+      {
+        "application_id": "550e8400-e29b-41d4-a716-446655440001",
+        "center_id": "550e8400-e29b-41d4-a716-446655440401",
+        "bucket_id": "550e8400-e29b-41d4-a716-446655440701",
+        "rank": 1,
+        "score": 0.6298257239858249,
+        "is_available": true,
+        "is_allocated": false,
+        "is_tentative": false,
+        "explanation": {
+          "distance_km": 0.6517427601417527,
+          "preference_score": 0.6950000000000002,
+          "components": {
+            "preference": 1.0,
+            "property": 0.4,
+            "availability": 0.625,
+            "quality": 0.5
+          },
+          "constraints_satisfied": [],
+          "constraints_violated": [],
+          "reason_codes": []
+        }
+      },
+      {
+        "application_id": "550e8400-e29b-41d4-a716-446655440001",
+        "center_id": "550e8400-e29b-41d4-a716-446655440402",
+        "bucket_id": "550e8400-e29b-41d4-a716-446655440702",
+        "rank": 2,
+        "score": 0.1682562615741261,
+        "is_available": true,
+        "is_allocated": false,
+        "is_tentative": false,
+        "explanation": {
+          "distance_km": 0.651723098544454,
+          "preference_score": 0.23342857142857149,
+          "components": {
+            "preference": 0.1285714285714286,
+            "property": 0.0,
+            "availability": 0.66,
+            "quality": 0.5
+          },
+          "constraints_satisfied": [],
+          "constraints_violated": [],
+          "reason_codes": []
+        }
+      }
+    ],
+    "waitlist_entries": [],
+    "success": true,
+    "message": null,
+    "total_applications": 1,
+    "matched_applications": 1,
+    "coverage_rate": null,
+    "statistics": {},
+    "processing_time_ms": null
+  }
+}

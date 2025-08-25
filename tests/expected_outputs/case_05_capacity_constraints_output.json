@@ -1,0 +1,17 @@
+{
+  "test_name": "Capacity Constraint Test",
+  "description": "Multiple applications competing for limited capacity",
+  "output": {
+    "mode": "allocate",
+    "run_id": null,
+    "offers": [],
+    "waitlist_entries": [],
+    "success": false,
+    "message": "No feasible allocation found",
+    "total_applications": null,
+    "matched_applications": null,
+    "coverage_rate": null,
+    "statistics": {},
+    "processing_time_ms": null
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "name": "Exclusion Preferences Test",
+  "description": "Parent excludes centers with certain properties",
+  "request": {
+    "application": {
+      "id": "550e8400-e29b-41d4-a716-446655440012",
+      "family_id": "550e8400-e29b-41d4-a716-446655440112",
+      "children": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440213",
+          "family_id": "550e8400-e29b-41d4-a716-446655440112",
+          "name": "Zoe Rodriguez",
+          "birth_date": "2021-09-12"
+        }
+      ],
+      "home_location": {
+        "latitude": 52.5100,
+        "longitude": 13.4300,
+        "address": "Wahl Straße 15",
+        "postal_code": "10243",
+        "city": "Berlin",
+        "country_code": "DE"
+      },
+      "preferences": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440310",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440012",
+          "property_key": "religious_program",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.0,
+          "threshold": 0.05
+        }
+      ],
+      "desired_start_date": "2024-10-01",
+      "max_distance_km": 3.0
+    },
+    "centers": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440413",
+        "name": "Religious Center",
+        "location": {
+          "latitude": 52.5120,
+          "longitude": 13.4280,
+          "address": "Glauben Straße 42",
+          "postal_code": "10243",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "property_key": "religious_program",
+            "value_boolean": true
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440714",
+            "center_id": "550e8400-e29b-41d4-a716-446655440413",
+            "age_band": {"min_age_months": 24, "max_age_months": 60, "name": "Mixed"},
+            "start_month": "2024-10-01",
+            "total_capacity": 20,
+            "available_capacity": 5
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440414",
+        "name": "Secular Center",
+        "location": {
+          "latitude": 52.5080,
+          "longitude": 13.4320,
+          "address": "Weltlich Straße 88",
+          "postal_code": "10243",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440715",
+            "center_id": "550e8400-e29b-41d4-a716-446655440414",
+            "age_band": {"min_age_months": 24, "max_age_months": 60, "name": "Mixed"},
+            "start_month": "2024-10-01",
+            "total_capacity": 18,
+            "available_capacity": 7
+          }
+        ]
+      }
+    ]
+  },
+  "expected_result": {
+    "offers_count": 1,
+    "included_center": "550e8400-e29b-41d4-a716-446655440414",
+    "excluded_center": "550e8400-e29b-41d4-a716-446655440413"
+  }
+}

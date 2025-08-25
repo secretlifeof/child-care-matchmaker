@@ -1,0 +1,17 @@
+{
+  "test_name": "No Available Capacity Test",
+  "description": "All matching centers are at full capacity",
+  "output": {
+    "mode": "recommend",
+    "run_id": null,
+    "offers": [],
+    "waitlist_entries": [],
+    "success": true,
+    "message": null,
+    "total_applications": 1,
+    "matched_applications": 0,
+    "coverage_rate": null,
+    "statistics": {},
+    "processing_time_ms": null
+  }
+}

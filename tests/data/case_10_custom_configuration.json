@@ -1,0 +1,139 @@
+{
+  "name": "Custom Configuration Test",
+  "description": "Request with custom matching configuration parameters",
+  "request": {
+    "application": {
+      "id": "550e8400-e29b-41d4-a716-446655440014",
+      "family_id": "550e8400-e29b-41d4-a716-446655440114",
+      "children": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440215",
+          "family_id": "550e8400-e29b-41d4-a716-446655440114",
+          "name": "Ava Martinez",
+          "birth_date": "2021-07-18"
+        }
+      ],
+      "home_location": {
+        "latitude": 52.5250,
+        "longitude": 13.4150,
+        "address": "Config Straße 123",
+        "postal_code": "10117",
+        "city": "Berlin",
+        "country_code": "DE"
+      },
+      "preferences": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440312",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440014",
+          "property_key": "steam_program",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.8,
+          "threshold": 0.6
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440313",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440014",
+          "property_key": "small_class_size",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.6,
+          "threshold": 0.4
+        }
+      ],
+      "desired_start_date": "2024-08-01",
+      "max_distance_km": 6.0
+    },
+    "centers": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440417",
+        "name": "STEAM Academy",
+        "location": {
+          "latitude": 52.5230,
+          "longitude": 13.4170,
+          "address": "Tech Straße 200",
+          "postal_code": "10117",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "property_key": "steam_program",
+            "value_boolean": true
+          },
+          {
+            "property_key": "small_class_size",
+            "value_boolean": true
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440718",
+            "center_id": "550e8400-e29b-41d4-a716-446655440417",
+            "age_band": {"min_age_months": 30, "max_age_months": 72, "name": "STEAM Kids"},
+            "start_month": "2024-08-01",
+            "total_capacity": 12,
+            "available_capacity": 3
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440418",
+        "name": "Traditional Center",
+        "location": {
+          "latitude": 52.5270,
+          "longitude": 13.4130,
+          "address": "Traditional Straße 456",
+          "postal_code": "10117", 
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "property_key": "steam_program",
+            "value_boolean": false
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440719",
+            "center_id": "550e8400-e29b-41d4-a716-446655440418",
+            "age_band": {"min_age_months": 24, "max_age_months": 60, "name": "Standard"},
+            "start_month": "2024-08-01",
+            "total_capacity": 25,
+            "available_capacity": 12
+          }
+        ]
+      }
+    ],
+    "top_k": 3,
+    "min_score_threshold": 0.5,
+    "matching_config": {
+      "scoring_weights": {
+        "preference_weight": 0.6,
+        "property_weight": 0.2,
+        "availability_weight": 0.1,
+        "quality_weight": 0.1
+      },
+      "distance_weights": {
+        "decay_factor": 0.05,
+        "preferred_radius_km": 1.5
+      },
+      "performance": {
+        "max_edges_per_application": 20,
+        "edge_pruning_threshold": 0.3
+      },
+      "debug": {
+        "include_timing_breakdown": true,
+        "include_graph_stats": true
+      }
+    }
+  },
+  "expected_result": {
+    "success": true,
+    "offers_count": 2,
+    "first_offer_center": "550e8400-e29b-41d4-a716-446655440417",
+    "custom_weights_applied": true,
+    "reason": "STEAM center should score higher with custom preference weighting"
+  }
+}

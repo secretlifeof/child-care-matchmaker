@@ -1,5 +1,7 @@
 config/
 logs/
 .env
+!.env.example
 __pycache__/
 *.pyc
+*coverage*

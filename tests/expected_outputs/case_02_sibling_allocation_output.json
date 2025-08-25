@@ -1,0 +1,17 @@
+{
+  "test_name": "Sibling Allocation Request",
+  "description": "Family with two children seeking placement with sibling co-assignment bonus",
+  "output": {
+    "mode": "allocate",
+    "run_id": null,
+    "offers": [],
+    "waitlist_entries": [],
+    "success": false,
+    "message": "No feasible allocation found",
+    "total_applications": null,
+    "matched_applications": null,
+    "coverage_rate": null,
+    "statistics": {},
+    "processing_time_ms": null
+  }
+}

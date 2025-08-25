@@ -1,0 +1,162 @@
+{
+  "name": "Waitlist with Priority Tiers",
+  "description": "Generate waitlist for popular center with policy priorities",
+  "request": {
+    "center_id": "550e8400-e29b-41d4-a716-446655440405",
+    "applications": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440003",
+        "family_id": "550e8400-e29b-41d4-a716-446655440103",
+        "children": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440204",
+            "family_id": "550e8400-e29b-41d4-a716-446655440103",
+            "name": "Liam Schmidt",
+            "birth_date": "2023-01-15"
+          }
+        ],
+        "home_location": {
+          "latitude": 52.5100,
+          "longitude": 13.4200,
+          "address": "Prioritätsstraße 89",
+          "postal_code": "10179",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "preferences": [],
+        "desired_start_date": "2024-09-01",
+        "desired_hours": [
+          {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+        ],
+        "priority_flags": ["sibling"]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440004",
+        "family_id": "550e8400-e29b-41d4-a716-446655440104",
+        "children": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440205",
+            "family_id": "550e8400-e29b-41d4-a716-446655440104",
+            "name": "Sofia Martinez",
+            "birth_date": "2023-04-22"
+          }
+        ],
+        "home_location": {
+          "latitude": 52.5080,
+          "longitude": 13.4180,
+          "address": "Normalstraße 45",
+          "postal_code": "10179",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "preferences": [],
+        "desired_start_date": "2024-09-01",
+        "desired_hours": [
+          {"day_of_week": 0, "start_hour": 8, "end_hour": 17},
+          {"day_of_week": 1, "start_hour": 8, "end_hour": 17},
+          {"day_of_week": 2, "start_hour": 8, "end_hour": 17},
+          {"day_of_week": 3, "start_hour": 8, "end_hour": 17},
+          {"day_of_week": 4, "start_hour": 8, "end_hour": 17}
+        ],
+        "priority_flags": []
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440005",
+        "family_id": "550e8400-e29b-41d4-a716-446655440105",
+        "children": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440206",
+            "family_id": "550e8400-e29b-41d4-a716-446655440105",
+            "name": "Noah Weber",
+            "birth_date": "2023-12-08"
+          }
+        ],
+        "home_location": {
+          "latitude": 52.5120,
+          "longitude": 13.4220,
+          "address": "Kommunalstraße 156",
+          "postal_code": "10179",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "preferences": [],
+        "desired_start_date": "2024-09-01",
+        "desired_hours": [
+          {"day_of_week": 0, "start_hour": 9, "end_hour": 15},
+          {"day_of_week": 1, "start_hour": 9, "end_hour": 15},
+          {"day_of_week": 2, "start_hour": 9, "end_hour": 15},
+          {"day_of_week": 3, "start_hour": 9, "end_hour": 15},
+          {"day_of_week": 4, "start_hour": 9, "end_hour": 15}
+        ],
+        "priority_flags": ["municipality", "low_income"]
+      }
+    ],
+    "center": {
+      "id": "550e8400-e29b-41d4-a716-446655440405",
+      "name": "Premium Kids Academy",
+      "location": {
+        "latitude": 52.5110,
+        "longitude": 13.4190,
+        "address": "Akademiestraße 101",
+        "postal_code": "10179",
+        "city": "Berlin",
+        "country_code": "DE"
+      },
+      "short_description": "High-demand premium daycare center",
+      "opening_hours": [
+        {"day_of_week": 0, "start_hour": 7, "end_hour": 18},
+        {"day_of_week": 1, "start_hour": 7, "end_hour": 18},
+        {"day_of_week": 2, "start_hour": 7, "end_hour": 18},
+        {"day_of_week": 3, "start_hour": 7, "end_hour": 18},
+        {"day_of_week": 4, "start_hour": 7, "end_hour": 18}
+      ],
+      "properties": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440505",
+          "center_id": "550e8400-e29b-41d4-a716-446655440405",
+          "property_type_id": "550e8400-e29b-41d4-a716-446655440604",
+          "property_key": "premium_program",
+          "category": "program",
+          "value_boolean": true,
+          "source": "verified"
+        }
+      ],
+      "capacity_buckets": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440706",
+          "center_id": "550e8400-e29b-41d4-a716-446655440405",
+          "age_band": {
+            "min_age_months": 18,
+            "max_age_months": 42,
+            "name": "Mixed Toddlers"
+          },
+          "start_month": "2024-09-01",
+          "total_capacity": 24,
+          "available_capacity": 0
+        }
+      ]
+    },
+    "policy_overrides": {
+      "priority_tiers": {
+        "sibling": 1000,
+        "municipality": 500,
+        "low_income": 300,
+        "regular": 0
+      }
+    },
+    "include_estimated_dates": true
+  },
+  "expected_result": {
+    "success": true,
+    "waitlist_entries_count": 3,
+    "expected_order": [
+      {"rank": 1, "application_id": "550e8400-e29b-41d4-a716-446655440003", "tier": "sibling"},
+      {"rank": 2, "application_id": "550e8400-e29b-41d4-a716-446655440005", "tier": "municipality"},
+      {"rank": 3, "application_id": "550e8400-e29b-41d4-a716-446655440004", "tier": "regular"}
+    ]
+  }
+}

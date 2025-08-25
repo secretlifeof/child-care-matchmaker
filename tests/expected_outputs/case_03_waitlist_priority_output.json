@@ -1,0 +1,17 @@
+{
+  "test_name": "Waitlist with Priority Tiers",
+  "description": "Generate waitlist for popular center with policy priorities",
+  "output": {
+    "mode": "waitlist",
+    "run_id": null,
+    "offers": [],
+    "waitlist_entries": [],
+    "success": true,
+    "message": "Generated waitlist for center 550e8400-e29b-41d4-a716-446655440405 with 0 entries",
+    "total_applications": null,
+    "matched_applications": null,
+    "coverage_rate": null,
+    "statistics": {},
+    "processing_time_ms": null
+  }
+}

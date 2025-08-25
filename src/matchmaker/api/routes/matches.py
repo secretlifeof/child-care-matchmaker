@@ -10,6 +10,10 @@ from pydantic import BaseModel, Field
 
 from ...models.base import MatchMode, Application, Center
 from ...models.results import MatchResult
+from ...models.requests import (
+    EnhancedRecommendationRequest, EnhancedAllocationRequest,
+    EnhancedWaitlistRequest, BatchMatchRequest, MatchingConfig
+)
 from ...graph.builder import MatchingGraphBuilder
 from ...graph.matcher import GraphMatcher
 from ...scoring.composite_scorer import CompositeScorer
@@ -101,7 +105,7 @@ def get_loader() -> ProgressiveLoader:
 
 @router.post("/recommend", response_model=MatchResult)
 async def get_recommendations(
-    request: RecommendationRequest,
+    request: EnhancedRecommendationRequest,
     loader: ProgressiveLoader = Depends(get_loader),
     builder: MatchingGraphBuilder = Depends(get_graph_builder),
     matcher: GraphMatcher = Depends(get_matcher)
@@ -109,48 +113,86 @@ async def get_recommendations(
     """
     Get top-K center recommendations for an application.
     
-    This endpoint uses progressive loading to efficiently find the best matches
-    without loading all centers at once.
+    Supports both inline data and progressive loading from main API.
+    Centers can be provided in the request to limit matching to specific centers.
     """
     start_time = time.time()
     
     try:
-        # Load application (would come from database)
-        application = await loader.load_application(request.application_id)
-        if not application:
-            raise HTTPException(status_code=404, detail="Application not found")
+        # Get application data
+        if request.application:
+            application = request.application
+        elif request.application_id:
+            application = await loader.load_application(request.application_id)
+            if not application:
+                raise HTTPException(status_code=404, detail="Application not found")
+        else:
+            raise HTTPException(status_code=400, detail="Either application or application_id required")
         
         # Override max distance if provided
         if request.max_distance_km:
             application.max_distance_km = request.max_distance_km
         
-        # Progressive loading of centers
-        centers = await loader.load_centers_progressive(
-            application=application,
-            target_matches=request.top_k
-        )
+        # Get centers - either from request or progressive loading
+        if request.centers:
+            # Use centers provided in request
+            centers = request.centers
+            
+            # Apply filters if specified
+            if request.force_center_ids:
+                centers = [c for c in centers if c.id in request.force_center_ids]
+            if request.exclude_center_ids:
+                centers = [c for c in centers if c.id not in request.exclude_center_ids]
+                
+            logger.info(f"Using {len(centers)} centers provided in request")
+        else:
+            # Progressive loading of centers
+            config = request.matching_config.progressive_loading if request.matching_config else None
+            target_matches = config.target_good_matches if config else request.top_k
+            
+            centers = await loader.load_centers_progressive(
+                application=application,
+                target_matches=target_matches
+            )
+        
+        # Apply matching configuration if provided
+        if request.matching_config:
+            scorer = CompositeScorer(
+                preference_weight=request.matching_config.scoring_weights.preference_weight,
+                property_weight=request.matching_config.scoring_weights.property_weight,
+                availability_weight=request.matching_config.scoring_weights.availability_weight,
+                quality_weight=request.matching_config.scoring_weights.quality_weight
+            )
+            builder = MatchingGraphBuilder(
+                scorer=scorer,
+                filter=HardConstraintFilter(),
+                max_candidates_per_application=request.matching_config.performance.max_edges_per_application
+            )
         
         # Build graph
         graph = builder.build_graph(
             applications=[application],
             centers=centers,
-            respect_capacity=not request.include_full
+            respect_capacity=not request.include_full_centers
         )
         
         # Prune to top candidates
+        prune_threshold = (request.matching_config.performance.edge_pruning_threshold 
+                          if request.matching_config else 0.1)
+        
         graph = builder.prune_edges(
             graph,
-            keep_top_k_per_application=request.top_k * 2,  # Keep extra for filtering
-            min_weight_threshold=0.1
+            keep_top_k_per_application=request.top_k * 2,
+            min_weight_threshold=max(prune_threshold, request.min_score_threshold)
         )
         
         # Generate recommendations
         result = matcher.match(
             graph,
             mode=MatchMode.RECOMMEND,
-            application_id=request.application_id,
+            application_id=application.id,
             top_k=request.top_k,
-            include_full=request.include_full
+            include_full=request.include_full_centers
         )
         
         # Add processing time

@@ -1,0 +1,64 @@
+{
+  "test_name": "Custom Configuration Test",
+  "description": "Request with custom matching configuration parameters",
+  "output": {
+    "mode": "recommend",
+    "run_id": null,
+    "offers": [
+      {
+        "application_id": "550e8400-e29b-41d4-a716-446655440014",
+        "center_id": "550e8400-e29b-41d4-a716-446655440417",
+        "bucket_id": "550e8400-e29b-41d4-a716-446655440718",
+        "rank": 1,
+        "score": 0.5489313119823037,
+        "is_available": true,
+        "is_allocated": false,
+        "is_tentative": false,
+        "explanation": {
+          "distance_km": 0.26068688017696506,
+          "preference_score": 0.5750000000000002,
+          "components": {
+            "preference": 1.0,
+            "property": 0.0,
+            "availability": 0.625,
+            "quality": 0.5
+          },
+          "constraints_satisfied": [],
+          "constraints_violated": [],
+          "reason_codes": []
+        }
+      },
+      {
+        "application_id": "550e8400-e29b-41d4-a716-446655440014",
+        "center_id": "550e8400-e29b-41d4-a716-446655440418",
+        "bucket_id": "550e8400-e29b-41d4-a716-446655440719",
+        "rank": 2,
+        "score": 0.22336019799133736,
+        "is_available": true,
+        "is_allocated": false,
+        "is_tentative": false,
+        "explanation": {
+          "distance_km": 0.2606837343723412,
+          "preference_score": 0.24942857142857147,
+          "components": {
+            "preference": 0.1285714285714286,
+            "property": 0.0,
+            "availability": 0.74,
+            "quality": 0.5
+          },
+          "constraints_satisfied": [],
+          "constraints_violated": [],
+          "reason_codes": []
+        }
+      }
+    ],
+    "waitlist_entries": [],
+    "success": true,
+    "message": null,
+    "total_applications": 1,
+    "matched_applications": 1,
+    "coverage_rate": null,
+    "statistics": {},
+    "processing_time_ms": null
+  }
+}

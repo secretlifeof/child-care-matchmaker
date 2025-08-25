@@ -241,7 +241,7 @@ class GraphMatcher:
                 bucket_id=candidate["bucket"].id,
                 application_id=candidate["application"].id,
                 rank=i + 1,
-                score=candidate["weight"],
+                score=candidate.get("original_score", candidate["weight"]),
                 tier=candidate.get("tier", "standard"),
                 explanation=self._create_explanation(candidate["metadata"])
             )
@@ -433,6 +433,9 @@ class GraphMatcher:
         """Apply policy tier priorities to candidates."""
         for candidate in candidates:
             application = candidate["application"]
+            
+            # Store original score for WaitlistEntry validation
+            candidate["original_score"] = candidate["weight"]
             
             # Determine tier based on priority flags
             tier = "standard"

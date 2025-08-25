@@ -1,0 +1,149 @@
+{
+  "name": "Operating Hours Mismatch Test",
+  "description": "Parent needs hours outside center's operating hours",
+  "request": {
+    "application": {
+      "id": "550e8400-e29b-41d4-a716-446655440011",
+      "family_id": "550e8400-e29b-41d4-a716-446655440111",
+      "children": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440212",
+          "family_id": "550e8400-e29b-41d4-a716-446655440111",
+          "name": "Lucas Wilson",
+          "birth_date": "2021-10-05"
+        }
+      ],
+      "home_location": {
+        "latitude": 52.5400,
+        "longitude": 13.3900,
+        "address": "Schicht Straße 24",
+        "postal_code": "10557",
+        "city": "Berlin",
+        "country_code": "DE"
+      },
+      "preferences": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440309",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440011",
+          "property_key": "extended_hours",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.9,
+          "threshold": 0.8
+        }
+      ],
+      "desired_start_date": "2024-09-01",
+      "desired_hours": [
+        {"day_of_week": 0, "start_hour": 5, "end_hour": 19},
+        {"day_of_week": 1, "start_hour": 5, "end_hour": 19},
+        {"day_of_week": 2, "start_hour": 5, "end_hour": 19},
+        {"day_of_week": 3, "start_hour": 5, "end_hour": 19},
+        {"day_of_week": 4, "start_hour": 5, "end_hour": 19}
+      ],
+      "max_distance_km": 8.0,
+      "priority_flags": ["shift_worker"]
+    },
+    "centers": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440411",
+        "name": "Regular Hours Daycare",
+        "location": {
+          "latitude": 52.5380,
+          "longitude": 13.3920,
+          "address": "Normal Straße 33",
+          "postal_code": "10557",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "short_description": "Standard operating hours",
+        "opening_hours": [
+          {"day_of_week": 0, "start_hour": 7, "end_hour": 17},
+          {"day_of_week": 1, "start_hour": 7, "end_hour": 17},
+          {"day_of_week": 2, "start_hour": 7, "end_hour": 17},
+          {"day_of_week": 3, "start_hour": 7, "end_hour": 17},
+          {"day_of_week": 4, "start_hour": 7, "end_hour": 17}
+        ],
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440511",
+            "center_id": "550e8400-e29b-41d4-a716-446655440411",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655440609",
+            "property_key": "extended_hours",
+            "category": "service",
+            "value_boolean": false,
+            "source": "verified"
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440712",
+            "center_id": "550e8400-e29b-41d4-a716-446655440411",
+            "age_band": {
+              "min_age_months": 24,
+              "max_age_months": 60,
+              "name": "Standard Program"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 22,
+            "available_capacity": 6
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440412",
+        "name": "24/7 Care Center",
+        "location": {
+          "latitude": 52.5420,
+          "longitude": 13.3880,
+          "address": "Rund-um-die-Uhr Straße 7",
+          "postal_code": "10557",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "short_description": "Extended hours for shift workers",
+        "opening_hours": [
+          {"day_of_week": 0, "start_hour": 5, "end_hour": 22},
+          {"day_of_week": 1, "start_hour": 5, "end_hour": 22},
+          {"day_of_week": 2, "start_hour": 5, "end_hour": 22},
+          {"day_of_week": 3, "start_hour": 5, "end_hour": 22},
+          {"day_of_week": 4, "start_hour": 5, "end_hour": 22}
+        ],
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440512",
+            "center_id": "550e8400-e29b-41d4-a716-446655440412",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655440609",
+            "property_key": "extended_hours",
+            "category": "service",
+            "value_boolean": true,
+            "source": "verified"
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440713",
+            "center_id": "550e8400-e29b-41d4-a716-446655440412",
+            "age_band": {
+              "min_age_months": 24,
+              "max_age_months": 60,
+              "name": "Extended Care"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 15,
+            "available_capacity": 3
+          }
+        ]
+      }
+    ],
+    "top_k": 5,
+    "include_full_centers": false,
+    "include_explanations": true
+  },
+  "expected_result": {
+    "success": true,
+    "offers_count": 1,
+    "matched_center": "550e8400-e29b-41d4-a716-446655440412",
+    "excluded_center": "550e8400-e29b-41d4-a716-446655440411",
+    "reason": "Only 24/7 center covers required 5am-7pm hours"
+  }
+}

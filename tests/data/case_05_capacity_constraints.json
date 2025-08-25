@@ -1,0 +1,184 @@
+{
+  "name": "Capacity Constraint Test",
+  "description": "Multiple applications competing for limited capacity",
+  "request": {
+    "applications": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440007",
+        "family_id": "550e8400-e29b-41d4-a716-446655440107",
+        "children": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440208",
+            "family_id": "550e8400-e29b-41d4-a716-446655440107",
+            "name": "Mia Anderson",
+            "birth_date": "2022-02-14"
+          }
+        ],
+        "home_location": {
+          "latitude": 52.5200,
+          "longitude": 13.4050,
+          "address": "Erste Straße 1",
+          "postal_code": "10178",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "preferences": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440305",
+            "profile_id": "550e8400-e29b-41d4-a716-446655440007",
+            "property_key": "music_program",
+            "operator": "equals",
+            "value_boolean": true,
+            "weight": 0.9,
+            "threshold": 0.8
+          }
+        ],
+        "desired_start_date": "2024-09-01",
+        "desired_hours": [
+          {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+        ],
+        "priority_flags": ["low_income"]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440008",
+        "family_id": "550e8400-e29b-41d4-a716-446655440108",
+        "children": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440209",
+            "family_id": "550e8400-e29b-41d4-a716-446655440108",
+            "name": "Oliver Brown",
+            "birth_date": "2022-05-20"
+          }
+        ],
+        "home_location": {
+          "latitude": 52.5180,
+          "longitude": 13.4070,
+          "address": "Zweite Straße 2",
+          "postal_code": "10178",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "preferences": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440306",
+            "profile_id": "550e8400-e29b-41d4-a716-446655440008",
+            "property_key": "music_program",
+            "operator": "equals",
+            "value_boolean": true,
+            "weight": 0.8,
+            "threshold": 0.7
+          }
+        ],
+        "desired_start_date": "2024-09-01",
+        "desired_hours": [
+          {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+        ],
+        "priority_flags": []
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440009",
+        "family_id": "550e8400-e29b-41d4-a716-446655440109",
+        "children": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440210",
+            "family_id": "550e8400-e29b-41d4-a716-446655440109",
+            "name": "Emma Davis",
+            "birth_date": "2022-01-10"
+          }
+        ],
+        "home_location": {
+          "latitude": 52.5220,
+          "longitude": 13.4030,
+          "address": "Dritte Straße 3",
+          "postal_code": "10178",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "preferences": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440307",
+            "profile_id": "550e8400-e29b-41d4-a716-446655440009",
+            "property_key": "music_program",
+            "operator": "equals",
+            "value_boolean": true,
+            "weight": 0.7,
+            "threshold": 0.6
+          }
+        ],
+        "desired_start_date": "2024-09-01",
+        "desired_hours": [
+          {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
+          {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+        ],
+        "priority_flags": ["municipality"]
+      }
+    ],
+    "centers": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440408",
+        "name": "Music & Arts Daycare",
+        "location": {
+          "latitude": 52.5200,
+          "longitude": 13.4050,
+          "address": "Musik Straße 50",
+          "postal_code": "10178",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "short_description": "Specialized music and arts program",
+        "opening_hours": [
+          {"day_of_week": 0, "start_hour": 7, "end_hour": 18},
+          {"day_of_week": 1, "start_hour": 7, "end_hour": 18},
+          {"day_of_week": 2, "start_hour": 7, "end_hour": 18},
+          {"day_of_week": 3, "start_hour": 7, "end_hour": 18},
+          {"day_of_week": 4, "start_hour": 7, "end_hour": 18}
+        ],
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440509",
+            "center_id": "550e8400-e29b-41d4-a716-446655440408",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655440607",
+            "property_key": "music_program",
+            "category": "program",
+            "value_boolean": true,
+            "source": "verified"
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440709",
+            "center_id": "550e8400-e29b-41d4-a716-446655440408",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 36,
+              "name": "Toddler Music"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 12,
+            "available_capacity": 2
+          }
+        ]
+      }
+    ],
+    "respect_capacity": true,
+    "optimization_objective": "fairness"
+  },
+  "expected_result": {
+    "success": true,
+    "total_applications": 3,
+    "matched_applications": 2,
+    "coverage_rate": 0.67,
+    "constraint": "Limited to 2 spots, should prioritize by policy tiers and scores"
+  }
+}

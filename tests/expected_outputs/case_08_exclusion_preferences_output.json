@@ -1,0 +1,41 @@
+{
+  "test_name": "Exclusion Preferences Test",
+  "description": "Parent excludes centers with certain properties",
+  "output": {
+    "mode": "recommend",
+    "run_id": null,
+    "offers": [
+      {
+        "application_id": "550e8400-e29b-41d4-a716-446655440012",
+        "center_id": "550e8400-e29b-41d4-a716-446655440414",
+        "bucket_id": "550e8400-e29b-41d4-a716-446655440715",
+        "rank": 1,
+        "score": 0.3628178414538932,
+        "is_available": true,
+        "is_allocated": false,
+        "is_tentative": false,
+        "explanation": {
+          "distance_km": 0.26071047434995775,
+          "preference_score": 0.38888888888888895,
+          "components": {
+            "preference": 0.5,
+            "property": 0.0,
+            "availability": 0.6944444444444444,
+            "quality": 0.5
+          },
+          "constraints_satisfied": [],
+          "constraints_violated": [],
+          "reason_codes": []
+        }
+      }
+    ],
+    "waitlist_entries": [],
+    "success": true,
+    "message": null,
+    "total_applications": 1,
+    "matched_applications": 1,
+    "coverage_rate": null,
+    "statistics": {},
+    "processing_time_ms": null
+  }
+}

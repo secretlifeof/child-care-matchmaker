@@ -1,30 +1,27 @@
 """Main FastAPI application for the matchmaker service."""
 
-import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api.routes import matches
+from .api.middleware import LoggingMiddleware
+from .utils.logger import get_logger
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-
-logger = logging.getLogger(__name__)
+# Get the matchmaker logger instead of basic logging
+logger = get_logger()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage application lifecycle."""
     # Startup
-    logger.info("Starting Parent-Daycare Matchmaker Service")
+    logger.log_info("Starting Parent-Daycare Matchmaker Service")
     yield
     # Shutdown
-    logger.info("Shutting down Parent-Daycare Matchmaker Service")
+    logger.log_info("Shutting down Parent-Daycare Matchmaker Service")
 
 
 # Create FastAPI app
@@ -34,6 +31,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+# Add logging middleware first
+app.add_middleware(LoggingMiddleware)
 
 # Configure CORS
 app.add_middleware(
