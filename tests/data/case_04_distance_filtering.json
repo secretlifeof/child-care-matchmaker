@@ -14,9 +14,9 @@
         }
       ],
       "home_location": {
-        "latitude": 52.5000,
-        "longitude": 13.4000,
-        "address": "Zentrale Straße 1",
+        "latitude": 52.5,
+        "longitude": 13.4,
+        "address": "Zentrale Stra\u00dfe 1",
         "postal_code": "10115",
         "city": "Berlin",
         "country_code": "DE"
@@ -34,11 +34,31 @@
       ],
       "desired_start_date": "2024-09-01",
       "desired_hours": [
-        {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
-        {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
-        {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
-        {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
-        {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+        {
+          "day_of_week": 0,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 1,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 2,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 3,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 4,
+          "start_minute": 480,
+          "end_minute": 960
+        }
       ],
       "max_distance_km": 2.0,
       "priority_flags": []
@@ -48,20 +68,40 @@
         "id": "550e8400-e29b-41d4-a716-446655440406",
         "name": "Nearby Bilingual Center",
         "location": {
-          "latitude": 52.5020,
-          "longitude": 13.4020,
-          "address": "Nahe Straße 10",
+          "latitude": 52.502,
+          "longitude": 13.402,
+          "address": "Nahe Stra\u00dfe 10",
           "postal_code": "10115",
           "city": "Berlin",
           "country_code": "DE"
         },
         "short_description": "Close bilingual daycare",
         "opening_hours": [
-          {"day_of_week": 0, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 1, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 2, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 3, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 4, "start_hour": 7, "end_hour": 18}
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1080
+          }
         ],
         "properties": [
           {
@@ -93,20 +133,40 @@
         "id": "550e8400-e29b-41d4-a716-446655440407",
         "name": "Far Away Excellent Center",
         "location": {
-          "latitude": 52.5500,
-          "longitude": 13.4500,
-          "address": "Ferne Straße 999",
+          "latitude": 52.55,
+          "longitude": 13.45,
+          "address": "Ferne Stra\u00dfe 999",
           "postal_code": "12345",
           "city": "Berlin",
           "country_code": "DE"
         },
         "short_description": "Excellent but distant center",
         "opening_hours": [
-          {"day_of_week": 0, "start_hour": 6, "end_hour": 19},
-          {"day_of_week": 1, "start_hour": 6, "end_hour": 19},
-          {"day_of_week": 2, "start_hour": 6, "end_hour": 19},
-          {"day_of_week": 3, "start_hour": 6, "end_hour": 19},
-          {"day_of_week": 4, "start_hour": 6, "end_hour": 19}
+          {
+            "day_of_week": 0,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 360,
+            "end_minute": 1140
+          }
         ],
         "properties": [
           {

@@ -14,9 +14,9 @@
         }
       ],
       "home_location": {
-        "latitude": 52.5100,
-        "longitude": 13.4300,
-        "address": "Wahl Straße 15",
+        "latitude": 52.51,
+        "longitude": 13.43,
+        "address": "Wahl Stra\u00dfe 15",
         "postal_code": "10243",
         "city": "Berlin",
         "country_code": "DE"
@@ -40,9 +40,9 @@
         "id": "550e8400-e29b-41d4-a716-446655440413",
         "name": "Religious Center",
         "location": {
-          "latitude": 52.5120,
-          "longitude": 13.4280,
-          "address": "Glauben Straße 42",
+          "latitude": 52.512,
+          "longitude": 13.428,
+          "address": "Glauben Stra\u00dfe 42",
           "postal_code": "10243",
           "city": "Berlin",
           "country_code": "DE"
@@ -57,7 +57,11 @@
           {
             "id": "550e8400-e29b-41d4-a716-446655440714",
             "center_id": "550e8400-e29b-41d4-a716-446655440413",
-            "age_band": {"min_age_months": 24, "max_age_months": 60, "name": "Mixed"},
+            "age_band": {
+              "min_age_months": 24,
+              "max_age_months": 60,
+              "name": "Mixed"
+            },
             "start_month": "2024-10-01",
             "total_capacity": 20,
             "available_capacity": 5
@@ -68,9 +72,9 @@
         "id": "550e8400-e29b-41d4-a716-446655440414",
         "name": "Secular Center",
         "location": {
-          "latitude": 52.5080,
-          "longitude": 13.4320,
-          "address": "Weltlich Straße 88",
+          "latitude": 52.508,
+          "longitude": 13.432,
+          "address": "Weltlich Stra\u00dfe 88",
           "postal_code": "10243",
           "city": "Berlin",
           "country_code": "DE"
@@ -80,7 +84,11 @@
           {
             "id": "550e8400-e29b-41d4-a716-446655440715",
             "center_id": "550e8400-e29b-41d4-a716-446655440414",
-            "age_band": {"min_age_months": 24, "max_age_months": 60, "name": "Mixed"},
+            "age_band": {
+              "min_age_months": 24,
+              "max_age_months": 60,
+              "name": "Mixed"
+            },
             "start_month": "2024-10-01",
             "total_capacity": 18,
             "available_capacity": 7

@@ -16,9 +16,9 @@
           }
         ],
         "home_location": {
-          "latitude": 52.5100,
-          "longitude": 13.4200,
-          "address": "Prioritätsstraße 89",
+          "latitude": 52.51,
+          "longitude": 13.42,
+          "address": "Priorit\u00e4tsstra\u00dfe 89",
           "postal_code": "10179",
           "city": "Berlin",
           "country_code": "DE"
@@ -26,13 +26,35 @@
         "preferences": [],
         "desired_start_date": "2024-09-01",
         "desired_hours": [
-          {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 960
+          }
         ],
-        "priority_flags": ["sibling"]
+        "priority_flags": [
+          "sibling"
+        ]
       },
       {
         "id": "550e8400-e29b-41d4-a716-446655440004",
@@ -46,9 +68,9 @@
           }
         ],
         "home_location": {
-          "latitude": 52.5080,
-          "longitude": 13.4180,
-          "address": "Normalstraße 45",
+          "latitude": 52.508,
+          "longitude": 13.418,
+          "address": "Normalstra\u00dfe 45",
           "postal_code": "10179",
           "city": "Berlin",
           "country_code": "DE"
@@ -56,11 +78,31 @@
         "preferences": [],
         "desired_start_date": "2024-09-01",
         "desired_hours": [
-          {"day_of_week": 0, "start_hour": 8, "end_hour": 17},
-          {"day_of_week": 1, "start_hour": 8, "end_hour": 17},
-          {"day_of_week": 2, "start_hour": 8, "end_hour": 17},
-          {"day_of_week": 3, "start_hour": 8, "end_hour": 17},
-          {"day_of_week": 4, "start_hour": 8, "end_hour": 17}
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 1020
+          }
         ],
         "priority_flags": []
       },
@@ -76,9 +118,9 @@
           }
         ],
         "home_location": {
-          "latitude": 52.5120,
-          "longitude": 13.4220,
-          "address": "Kommunalstraße 156",
+          "latitude": 52.512,
+          "longitude": 13.422,
+          "address": "Kommunalstra\u00dfe 156",
           "postal_code": "10179",
           "city": "Berlin",
           "country_code": "DE"
@@ -86,33 +128,76 @@
         "preferences": [],
         "desired_start_date": "2024-09-01",
         "desired_hours": [
-          {"day_of_week": 0, "start_hour": 9, "end_hour": 15},
-          {"day_of_week": 1, "start_hour": 9, "end_hour": 15},
-          {"day_of_week": 2, "start_hour": 9, "end_hour": 15},
-          {"day_of_week": 3, "start_hour": 9, "end_hour": 15},
-          {"day_of_week": 4, "start_hour": 9, "end_hour": 15}
+          {
+            "day_of_week": 0,
+            "start_minute": 540,
+            "end_minute": 900
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 540,
+            "end_minute": 900
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 540,
+            "end_minute": 900
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 540,
+            "end_minute": 900
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 540,
+            "end_minute": 900
+          }
         ],
-        "priority_flags": ["municipality", "low_income"]
+        "priority_flags": [
+          "municipality",
+          "low_income"
+        ]
       }
     ],
     "center": {
       "id": "550e8400-e29b-41d4-a716-446655440405",
       "name": "Premium Kids Academy",
       "location": {
-        "latitude": 52.5110,
-        "longitude": 13.4190,
-        "address": "Akademiestraße 101",
+        "latitude": 52.511,
+        "longitude": 13.419,
+        "address": "Akademiestra\u00dfe 101",
         "postal_code": "10179",
         "city": "Berlin",
         "country_code": "DE"
       },
       "short_description": "High-demand premium daycare center",
       "opening_hours": [
-        {"day_of_week": 0, "start_hour": 7, "end_hour": 18},
-        {"day_of_week": 1, "start_hour": 7, "end_hour": 18},
-        {"day_of_week": 2, "start_hour": 7, "end_hour": 18},
-        {"day_of_week": 3, "start_hour": 7, "end_hour": 18},
-        {"day_of_week": 4, "start_hour": 7, "end_hour": 18}
+        {
+          "day_of_week": 0,
+          "start_minute": 420,
+          "end_minute": 1080
+        },
+        {
+          "day_of_week": 1,
+          "start_minute": 420,
+          "end_minute": 1080
+        },
+        {
+          "day_of_week": 2,
+          "start_minute": 420,
+          "end_minute": 1080
+        },
+        {
+          "day_of_week": 3,
+          "start_minute": 420,
+          "end_minute": 1080
+        },
+        {
+          "day_of_week": 4,
+          "start_minute": 420,
+          "end_minute": 1080
+        }
       ],
       "properties": [
         {
@@ -154,9 +239,21 @@
     "success": true,
     "waitlist_entries_count": 3,
     "expected_order": [
-      {"rank": 1, "application_id": "550e8400-e29b-41d4-a716-446655440003", "tier": "sibling"},
-      {"rank": 2, "application_id": "550e8400-e29b-41d4-a716-446655440005", "tier": "municipality"},
-      {"rank": 3, "application_id": "550e8400-e29b-41d4-a716-446655440004", "tier": "regular"}
+      {
+        "rank": 1,
+        "application_id": "550e8400-e29b-41d4-a716-446655440003",
+        "tier": "sibling"
+      },
+      {
+        "rank": 2,
+        "application_id": "550e8400-e29b-41d4-a716-446655440005",
+        "tier": "municipality"
+      },
+      {
+        "rank": 3,
+        "application_id": "550e8400-e29b-41d4-a716-446655440004",
+        "tier": "regular"
+      }
     ]
   }
 }

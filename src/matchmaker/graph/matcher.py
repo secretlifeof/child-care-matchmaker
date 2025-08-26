@@ -149,11 +149,17 @@ class GraphMatcher:
         solution = self._solve_min_cost_flow(flow_graph, node_map)
         
         if solution is None:
+            # Count total applications in the graph
+            total_apps = sum(1 for node, data in graph.nodes(data=True) 
+                           if data.get("type") == "application")
             return MatchResult(
                 mode=MatchMode.ALLOCATE,
                 offers=[],
                 success=False,
-                message="No feasible allocation found"
+                message="No feasible allocation found",
+                total_applications=total_apps,
+                matched_applications=0,
+                coverage_rate=0.0
             )
         
         # Extract offers from solution

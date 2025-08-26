@@ -1,0 +1,831 @@
+{
+  "name": "Mixed Preferences Test",
+  "description": "Test with mixed preference thresholds and partial matches across 8 centers",
+  "request": {
+    "application": {
+      "id": "550e8400-e29b-41d4-a716-446655440021",
+      "family_id": "550e8400-e29b-41d4-a716-446655440121",
+      "children": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440221",
+          "family_id": "550e8400-e29b-41d4-a716-446655440121",
+          "name": "Oliver Chen",
+          "birth_date": "2023-03-20"
+        }
+      ],
+      "home_location": {
+        "latitude": 52.515,
+        "longitude": 13.4,
+        "address": "Zentral Stra\u00dfe 10",
+        "postal_code": "10178",
+        "city": "Berlin",
+        "country_code": "DE"
+      },
+      "preferences": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440325",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440021",
+          "property_key": "steam_learning",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.9,
+          "threshold": 0.91
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440326",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440021",
+          "property_key": "small_class_size",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.8,
+          "threshold": 0.7
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440327",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440021",
+          "property_key": "extended_hours",
+          "operator": "equals",
+          "value_boolean": false,
+          "weight": 0.7,
+          "threshold": 0.08
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440328",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440021",
+          "property_key": "art_program",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.6,
+          "threshold": 0.5
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440329",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440021",
+          "property_key": "transportation",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.5,
+          "threshold": 0.3
+        }
+      ],
+      "desired_start_date": "2024-09-01",
+      "desired_hours": [
+        {
+          "day_of_week": 0,
+          "start_minute": 480,
+          "end_minute": 990
+        },
+        {
+          "day_of_week": 1,
+          "start_minute": 480,
+          "end_minute": 990
+        },
+        {
+          "day_of_week": 2,
+          "start_minute": 480,
+          "end_minute": 990
+        },
+        {
+          "day_of_week": 3,
+          "start_minute": 480,
+          "end_minute": 990
+        },
+        {
+          "day_of_week": 4,
+          "start_minute": 480,
+          "end_minute": 990
+        }
+      ],
+      "max_distance_km": 6.0
+    },
+    "centers": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440511",
+        "name": "STEAM Innovation Center",
+        "location": {
+          "latitude": 52.516,
+          "longitude": 13.401,
+          "address": "Innovation Stra\u00dfe 1",
+          "postal_code": "10178",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441040",
+            "center_id": "550e8400-e29b-41d4-a716-446655440511",
+            "property_key": "steam_learning",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442010",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441041",
+            "center_id": "550e8400-e29b-41d4-a716-446655440511",
+            "property_key": "small_class_size",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442011",
+            "value_boolean": true,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441042",
+            "center_id": "550e8400-e29b-41d4-a716-446655440511",
+            "property_key": "extended_hours",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442012",
+            "value_boolean": false,
+            "category": "service",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441043",
+            "center_id": "550e8400-e29b-41d4-a716-446655440511",
+            "property_key": "art_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442013",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441044",
+            "center_id": "550e8400-e29b-41d4-a716-446655440511",
+            "property_key": "transportation",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442014",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1080
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440811",
+            "center_id": "550e8400-e29b-41d4-a716-446655440511",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 12,
+            "available_capacity": 7
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440512",
+        "name": "Extended Hours Center",
+        "location": {
+          "latitude": 52.514,
+          "longitude": 13.399,
+          "address": "Lang Stra\u00dfe 2",
+          "postal_code": "10177",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441045",
+            "center_id": "550e8400-e29b-41d4-a716-446655440512",
+            "property_key": "steam_learning",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442010",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441046",
+            "center_id": "550e8400-e29b-41d4-a716-446655440512",
+            "property_key": "small_class_size",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442011",
+            "value_boolean": false,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441047",
+            "center_id": "550e8400-e29b-41d4-a716-446655440512",
+            "property_key": "extended_hours",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442012",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441048",
+            "center_id": "550e8400-e29b-41d4-a716-446655440512",
+            "property_key": "transportation",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442014",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 360,
+            "end_minute": 1140
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440812",
+            "center_id": "550e8400-e29b-41d4-a716-446655440512",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 20,
+            "available_capacity": 15
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440513",
+        "name": "Arts & Crafts Academy",
+        "location": {
+          "latitude": 52.517,
+          "longitude": 13.402,
+          "address": "Kunst Stra\u00dfe 3",
+          "postal_code": "10179",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441049",
+            "center_id": "550e8400-e29b-41d4-a716-446655440513",
+            "property_key": "steam_learning",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442010",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441050",
+            "center_id": "550e8400-e29b-41d4-a716-446655440513",
+            "property_key": "small_class_size",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442011",
+            "value_boolean": true,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441051",
+            "center_id": "550e8400-e29b-41d4-a716-446655440513",
+            "property_key": "extended_hours",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442012",
+            "value_boolean": false,
+            "category": "service",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441052",
+            "center_id": "550e8400-e29b-41d4-a716-446655440513",
+            "property_key": "art_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442013",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 1020
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440813",
+            "center_id": "550e8400-e29b-41d4-a716-446655440513",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 8,
+            "available_capacity": 4
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440514",
+        "name": "Transport & Care Center",
+        "location": {
+          "latitude": 52.512,
+          "longitude": 13.396,
+          "address": "Transport Stra\u00dfe 4",
+          "postal_code": "10176",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441053",
+            "center_id": "550e8400-e29b-41d4-a716-446655440514",
+            "property_key": "steam_learning",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442010",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441054",
+            "center_id": "550e8400-e29b-41d4-a716-446655440514",
+            "property_key": "small_class_size",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442011",
+            "value_boolean": false,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441055",
+            "center_id": "550e8400-e29b-41d4-a716-446655440514",
+            "property_key": "extended_hours",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442012",
+            "value_boolean": false,
+            "category": "service",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441056",
+            "center_id": "550e8400-e29b-41d4-a716-446655440514",
+            "property_key": "transportation",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442014",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 450,
+            "end_minute": 1050
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 450,
+            "end_minute": 1050
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 450,
+            "end_minute": 1050
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 450,
+            "end_minute": 1050
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 450,
+            "end_minute": 1050
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440814",
+            "center_id": "550e8400-e29b-41d4-a716-446655440514",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 15,
+            "available_capacity": 9
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440515",
+        "name": "Small Groups Daycare",
+        "location": {
+          "latitude": 52.519,
+          "longitude": 13.404,
+          "address": "Klein Stra\u00dfe 5",
+          "postal_code": "10180",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441057",
+            "center_id": "550e8400-e29b-41d4-a716-446655440515",
+            "property_key": "steam_learning",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442010",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441058",
+            "center_id": "550e8400-e29b-41d4-a716-446655440515",
+            "property_key": "small_class_size",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442011",
+            "value_boolean": true,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441059",
+            "center_id": "550e8400-e29b-41d4-a716-446655440515",
+            "property_key": "extended_hours",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442012",
+            "value_boolean": false,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 1020
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440815",
+            "center_id": "550e8400-e29b-41d4-a716-446655440515",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 6,
+            "available_capacity": 3
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440516",
+        "name": "Standard Care Center",
+        "location": {
+          "latitude": 52.51,
+          "longitude": 13.392,
+          "address": "Standard Stra\u00dfe 6",
+          "postal_code": "10175",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441060",
+            "center_id": "550e8400-e29b-41d4-a716-446655440516",
+            "property_key": "steam_learning",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442010",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441061",
+            "center_id": "550e8400-e29b-41d4-a716-446655440516",
+            "property_key": "small_class_size",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442011",
+            "value_boolean": false,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441062",
+            "center_id": "550e8400-e29b-41d4-a716-446655440516",
+            "property_key": "extended_hours",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442012",
+            "value_boolean": false,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1080
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440816",
+            "center_id": "550e8400-e29b-41d4-a716-446655440516",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 25,
+            "available_capacity": 20
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440517",
+        "name": "Academic Prep Center",
+        "location": {
+          "latitude": 52.522,
+          "longitude": 13.408,
+          "address": "Akademie Stra\u00dfe 7",
+          "postal_code": "10181",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441063",
+            "center_id": "550e8400-e29b-41d4-a716-446655440517",
+            "property_key": "steam_learning",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442010",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441064",
+            "center_id": "550e8400-e29b-41d4-a716-446655440517",
+            "property_key": "small_class_size",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442011",
+            "value_boolean": true,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441065",
+            "center_id": "550e8400-e29b-41d4-a716-446655440517",
+            "property_key": "extended_hours",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442012",
+            "value_boolean": false,
+            "category": "service",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441066",
+            "center_id": "550e8400-e29b-41d4-a716-446655440517",
+            "property_key": "art_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442013",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 450,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 450,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 450,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 450,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 450,
+            "end_minute": 1020
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440817",
+            "center_id": "550e8400-e29b-41d4-a716-446655440517",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 10,
+            "available_capacity": 5
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440518",
+        "name": "Large Groups Center",
+        "location": {
+          "latitude": 52.525,
+          "longitude": 13.412,
+          "address": "Gross Stra\u00dfe 8",
+          "postal_code": "10182",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441067",
+            "center_id": "550e8400-e29b-41d4-a716-446655440518",
+            "property_key": "steam_learning",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442010",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441068",
+            "center_id": "550e8400-e29b-41d4-a716-446655440518",
+            "property_key": "small_class_size",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442011",
+            "value_boolean": false,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441069",
+            "center_id": "550e8400-e29b-41d4-a716-446655440518",
+            "property_key": "extended_hours",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442012",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441070",
+            "center_id": "550e8400-e29b-41d4-a716-446655440518",
+            "property_key": "transportation",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442014",
+            "value_boolean": false,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 360,
+            "end_minute": 1140
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440818",
+            "center_id": "550e8400-e29b-41d4-a716-446655440518",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 35,
+            "available_capacity": 28
+          }
+        ]
+      }
+    ],
+    "top_k": 8,
+    "include_full_centers": false
+  },
+  "expected_result": {
+    "success": true,
+    "offers_count": 0,
+    "excluded_centers": [],
+    "top_ranked": null
+  }
+}

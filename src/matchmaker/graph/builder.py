@@ -350,14 +350,14 @@ class MatchingGraphBuilder:
             edges_to_remove = []
             
             if keep_top_k_per_application and len(edges) > keep_top_k_per_application:
-                edges_to_remove.extend(edges[keep_top_k_per_application:])
+                edges_to_remove.extend([(s, t) for s, t, w in edges[keep_top_k_per_application:]])
             
             for source, target, weight in edges:
                 if weight < min_weight_threshold and (source, target) not in edges_to_remove:
                     edges_to_remove.append((source, target))
             
             # Remove edges
-            for source, target, _ in edges_to_remove:
+            for source, target in edges_to_remove:
                 pruned.remove_edge(source, target)
         
         logger.info(

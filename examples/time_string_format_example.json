@@ -1,0 +1,140 @@
+{
+  "name": "Time String Format Example",
+  "description": "Example showing both time string format and minutes format can be used together",
+  "request": {
+    "application": {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "family_id": "550e8400-e29b-41d4-a716-446655440101",
+      "children": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440201",
+          "family_id": "550e8400-e29b-41d4-a716-446655440101",
+          "name": "Emma Thompson",
+          "birth_date": "2023-08-15"
+        }
+      ],
+      "home_location": {
+        "latitude": 52.52,
+        "longitude": 13.405,
+        "address": "Example Straße 123",
+        "postal_code": "10117",
+        "city": "Berlin",
+        "country_code": "DE"
+      },
+      "preferences": [],
+      "desired_start_date": "2024-09-01",
+      "desired_hours": [
+        {
+          "day_of_week": 0,
+          "start": "07:30",
+          "end": "16:30"
+        },
+        {
+          "day_of_week": 1,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 2,
+          "start": "08:15",
+          "end": "17:45"
+        },
+        {
+          "day_of_week": 3,
+          "start": "07:00",
+          "end": "16:00"
+        },
+        {
+          "day_of_week": 4,
+          "start_minute": 510,
+          "end_minute": 1050
+        }
+      ],
+      "max_distance_km": 5.0
+    },
+    "centers": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440401",
+        "name": "Flexible Hours Daycare",
+        "location": {
+          "latitude": 52.521,
+          "longitude": 13.407,
+          "address": "Flexible Straße 456",
+          "postal_code": "10117",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "short_description": "Supports both time formats",
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start": "06:30",
+            "end": "18:00"
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 390,
+            "end_minute": 1110
+          },
+          {
+            "day_of_week": 2,
+            "start": "07:00",
+            "end": "19:00"
+          },
+          {
+            "day_of_week": 3,
+            "start": "06:00",
+            "end": "18:30"
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 360,
+            "end_minute": 1140
+          }
+        ],
+        "properties": [],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440701",
+            "center_id": "550e8400-e29b-41d4-a716-446655440401",
+            "age_band": {
+              "min_age_months": 6,
+              "max_age_months": 36,
+              "name": "Infants and Toddlers"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 15,
+            "available_capacity": 3
+          }
+        ]
+      }
+    ],
+    "top_k": 5,
+    "include_full_centers": false,
+    "include_explanations": true
+  },
+  "format_explanation": {
+    "time_string_format": {
+      "description": "Use HH:MM format strings for easy readability",
+      "examples": {
+        "start": "07:30",
+        "end": "16:30"
+      },
+      "valid_range": "00:00 to 23:59"
+    },
+    "minutes_format": {
+      "description": "Use minutes from start of day (backward compatible)",
+      "examples": {
+        "start_minute": 450,
+        "end_minute": 990
+      },
+      "valid_range": "0 to 1440 (24*60)"
+    },
+    "conversion": {
+      "07:30": "450 minutes (7*60 + 30)",
+      "16:30": "990 minutes (16*60 + 30)",
+      "08:00": "480 minutes (8*60 + 0)",
+      "16:00": "960 minutes (16*60 + 0)"
+    }
+  }
+}

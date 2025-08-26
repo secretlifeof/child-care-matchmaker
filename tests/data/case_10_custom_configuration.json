@@ -14,9 +14,9 @@
         }
       ],
       "home_location": {
-        "latitude": 52.5250,
-        "longitude": 13.4150,
-        "address": "Config Straße 123",
+        "latitude": 52.525,
+        "longitude": 13.415,
+        "address": "Config Stra\u00dfe 123",
         "postal_code": "10117",
         "city": "Berlin",
         "country_code": "DE"
@@ -42,6 +42,33 @@
         }
       ],
       "desired_start_date": "2024-08-01",
+      "desired_hours": [
+        {
+          "day_of_week": 0,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 1,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 2,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 3,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 4,
+          "start_minute": 480,
+          "end_minute": 960
+        }
+      ],
       "max_distance_km": 6.0
     },
     "centers": [
@@ -49,28 +76,42 @@
         "id": "550e8400-e29b-41d4-a716-446655440417",
         "name": "STEAM Academy",
         "location": {
-          "latitude": 52.5230,
-          "longitude": 13.4170,
-          "address": "Tech Straße 200",
+          "latitude": 52.523,
+          "longitude": 13.417,
+          "address": "Tech Stra\u00dfe 200",
           "postal_code": "10117",
           "city": "Berlin",
           "country_code": "DE"
         },
         "properties": [
           {
+            "id": "550e8400-e29b-41d4-a716-446655441101",
+            "center_id": "550e8400-e29b-41d4-a716-446655440417",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442101",
             "property_key": "steam_program",
-            "value_boolean": true
+            "category": "program",
+            "value_boolean": true,
+            "source": "verified"
           },
           {
+            "id": "550e8400-e29b-41d4-a716-446655441102",
+            "center_id": "550e8400-e29b-41d4-a716-446655440417",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442102",
             "property_key": "small_class_size",
-            "value_boolean": true
+            "category": "approach",
+            "value_boolean": true,
+            "source": "verified"
           }
         ],
         "capacity_buckets": [
           {
             "id": "550e8400-e29b-41d4-a716-446655440718",
             "center_id": "550e8400-e29b-41d4-a716-446655440417",
-            "age_band": {"min_age_months": 30, "max_age_months": 72, "name": "STEAM Kids"},
+            "age_band": {
+              "min_age_months": 30,
+              "max_age_months": 72,
+              "name": "STEAM Kids"
+            },
             "start_month": "2024-08-01",
             "total_capacity": 12,
             "available_capacity": 3
@@ -81,24 +122,33 @@
         "id": "550e8400-e29b-41d4-a716-446655440418",
         "name": "Traditional Center",
         "location": {
-          "latitude": 52.5270,
-          "longitude": 13.4130,
-          "address": "Traditional Straße 456",
-          "postal_code": "10117", 
+          "latitude": 52.527,
+          "longitude": 13.413,
+          "address": "Traditional Stra\u00dfe 456",
+          "postal_code": "10117",
           "city": "Berlin",
           "country_code": "DE"
         },
         "properties": [
           {
+            "id": "550e8400-e29b-41d4-a716-446655441103",
+            "center_id": "550e8400-e29b-41d4-a716-446655440418",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442103",
             "property_key": "steam_program",
-            "value_boolean": false
+            "category": "program",
+            "value_boolean": false,
+            "source": "verified"
           }
         ],
         "capacity_buckets": [
           {
             "id": "550e8400-e29b-41d4-a716-446655440719",
             "center_id": "550e8400-e29b-41d4-a716-446655440418",
-            "age_band": {"min_age_months": 24, "max_age_months": 60, "name": "Standard"},
+            "age_band": {
+              "min_age_months": 24,
+              "max_age_months": 60,
+              "name": "Standard"
+            },
             "start_month": "2024-08-01",
             "total_capacity": 25,
             "available_capacity": 12

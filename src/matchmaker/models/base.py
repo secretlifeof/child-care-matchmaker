@@ -81,22 +81,98 @@ class AgeGroup(BaseModel):
 
 
 class TimeSlot(BaseModel):
-    """Time slot for availability."""
+    """Time slot for availability using minutes from start of day or time strings."""
     day_of_week: int = Field(..., ge=0, le=6)  # 0=Monday, 6=Sunday
-    start_hour: int = Field(..., ge=0, le=23)
-    start_minute: int = Field(default=0, ge=0, le=59)
-    end_hour: int = Field(..., ge=0, le=23)
-    end_minute: int = Field(default=0, ge=0, le=59)
+    start_minute: Optional[int] = Field(None, ge=0, le=1439)  # 0-1439 (24*60-1)
+    end_minute: Optional[int] = Field(None, ge=0, le=1440)    # 0-1440 (24*60)
+    start: Optional[str] = Field(None, pattern=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$")  # HH:MM format
+    end: Optional[str] = Field(None, pattern=r"^([01]?[0-9]|2[0-3]):[0-5][0-9]$")    # HH:MM format
+    
+    def __init__(self, **data):
+        # Convert time strings to minutes if provided
+        if 'start' in data and data['start'] is not None:
+            if 'start_minute' not in data:
+                data['start_minute'] = self._time_string_to_minutes(data['start'])
+        if 'end' in data and data['end'] is not None:
+            if 'end_minute' not in data:
+                data['end_minute'] = self._time_string_to_minutes(data['end'])
+            
+        # Ensure we have the required minute fields after conversion
+        if data.get('start_minute') is None:
+            raise ValueError("TimeSlot requires start_minute or start field")
+        if data.get('end_minute') is None:
+            raise ValueError("TimeSlot requires end_minute or end field")
+            
+        super().__init__(**data)
+    
+    @staticmethod
+    def _time_string_to_minutes(time_str: str) -> int:
+        """Convert HH:MM string to minutes from start of day."""
+        hours, minutes = map(int, time_str.split(':'))
+        return hours * 60 + minutes
+    
+    @property
+    def start_hour(self) -> int:
+        """Get start hour for backward compatibility."""
+        return self.start_minute // 60
+    
+    @property 
+    def start_minute_in_hour(self) -> int:
+        """Get minute within the hour."""
+        return self.start_minute % 60
+        
+    @property
+    def end_hour(self) -> int:
+        """Get end hour for backward compatibility."""
+        return self.end_minute // 60
+    
+    @property
+    def end_minute_in_hour(self) -> int:
+        """Get minute within the hour."""
+        return self.end_minute % 60
+    
+    @property
+    def start_time_string(self) -> str:
+        """Get start time as HH:MM string."""
+        hours, minutes = divmod(self.start_minute, 60)
+        return f"{hours:02d}:{minutes:02d}"
+    
+    @property
+    def end_time_string(self) -> str:
+        """Get end time as HH:MM string."""
+        hours, minutes = divmod(self.end_minute, 60)
+        return f"{hours:02d}:{minutes:02d}"
+    
+    @classmethod
+    def from_time_strings(cls, day_of_week: int, start: str, end: str):
+        """Create TimeSlot from HH:MM time strings."""
+        return cls(
+            day_of_week=day_of_week,
+            start=start,
+            end=end
+        )
+    
+    @classmethod
+    def from_hours(cls, day_of_week: int, start_hour: int, end_hour: int, 
+                   start_min: int = 0, end_min: int = 0):
+        """Create TimeSlot from hour format for backward compatibility."""
+        return cls(
+            day_of_week=day_of_week,
+            start_minute=start_hour * 60 + start_min,
+            end_minute=end_hour * 60 + end_min
+        )
     
     def overlaps_with(self, other: "TimeSlot") -> bool:
         """Check if time slots overlap."""
         if self.day_of_week != other.day_of_week:
             return False
-        self_start = self.start_hour * 60 + self.start_minute
-        self_end = self.end_hour * 60 + self.end_minute
-        other_start = other.start_hour * 60 + other.start_minute
-        other_end = other.end_hour * 60 + other.end_minute
-        return not (self_end <= other_start or other_end <= self_start)
+        return not (self.end_minute <= other.start_minute or other.end_minute <= self.start_minute)
+    
+    def to_time_string(self) -> str:
+        """Convert to readable time string."""
+        start_h, start_m = divmod(self.start_minute, 60)
+        end_h, end_m = divmod(self.end_minute, 60)
+        return f"{start_h:02d}:{start_m:02d}-{end_h:02d}:{end_m:02d}"
 
 
 class CapacityBucket(BaseModel):

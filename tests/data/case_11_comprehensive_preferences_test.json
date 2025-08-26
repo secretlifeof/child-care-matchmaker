@@ -1,0 +1,831 @@
+{
+  "name": "Comprehensive Preferences Test",
+  "description": "Test all preference threshold types with 8 centers - must-haves, excludes, and preferences",
+  "request": {
+    "application": {
+      "id": "550e8400-e29b-41d4-a716-446655440020",
+      "family_id": "550e8400-e29b-41d4-a716-446655440120",
+      "children": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440220",
+          "family_id": "550e8400-e29b-41d4-a716-446655440120",
+          "name": "Maya Patel",
+          "birth_date": "2022-06-15"
+        }
+      ],
+      "home_location": {
+        "latitude": 52.52,
+        "longitude": 13.405,
+        "address": "Hauptstra\u00dfe 1",
+        "postal_code": "10178",
+        "city": "Berlin",
+        "country_code": "DE"
+      },
+      "preferences": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440320",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440020",
+          "property_key": "organic_food",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 1.0,
+          "threshold": 0.95
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440321",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440020",
+          "property_key": "outdoor_playground",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.8,
+          "threshold": 0.92
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440322",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440020",
+          "property_key": "religious_program",
+          "operator": "equals",
+          "value_boolean": false,
+          "weight": 0.9,
+          "threshold": 0.05
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440323",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440020",
+          "property_key": "language_immersion",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.7,
+          "threshold": 0.6
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440324",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440020",
+          "property_key": "music_program",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.6,
+          "threshold": 0.4
+        }
+      ],
+      "desired_start_date": "2024-09-01",
+      "desired_hours": [
+        {
+          "day_of_week": 0,
+          "start_minute": 450,
+          "end_minute": 1020
+        },
+        {
+          "day_of_week": 1,
+          "start_minute": 450,
+          "end_minute": 1020
+        },
+        {
+          "day_of_week": 2,
+          "start_minute": 450,
+          "end_minute": 1020
+        },
+        {
+          "day_of_week": 3,
+          "start_minute": 450,
+          "end_minute": 1020
+        },
+        {
+          "day_of_week": 4,
+          "start_minute": 450,
+          "end_minute": 1020
+        }
+      ],
+      "max_distance_km": 8.0
+    },
+    "centers": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440501",
+        "name": "Perfect Match Center",
+        "location": {
+          "latitude": 52.521,
+          "longitude": 13.406,
+          "address": "Perfekt Stra\u00dfe 1",
+          "postal_code": "10178",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441001",
+            "center_id": "550e8400-e29b-41d4-a716-446655440501",
+            "property_key": "organic_food",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442001",
+            "value_boolean": true,
+            "category": "dietary",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441002",
+            "center_id": "550e8400-e29b-41d4-a716-446655440501",
+            "property_key": "outdoor_playground",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442002",
+            "value_boolean": true,
+            "category": "facility",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441003",
+            "center_id": "550e8400-e29b-41d4-a716-446655440501",
+            "property_key": "religious_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442003",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441004",
+            "center_id": "550e8400-e29b-41d4-a716-446655440501",
+            "property_key": "language_immersion",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442004",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441005",
+            "center_id": "550e8400-e29b-41d4-a716-446655440501",
+            "property_key": "music_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442005",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1080
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440801",
+            "center_id": "550e8400-e29b-41d4-a716-446655440501",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 15,
+            "available_capacity": 8
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440502",
+        "name": "Religious Center",
+        "location": {
+          "latitude": 52.522,
+          "longitude": 13.407,
+          "address": "Kirchen Stra\u00dfe 2",
+          "postal_code": "10179",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441006",
+            "center_id": "550e8400-e29b-41d4-a716-446655440502",
+            "property_key": "organic_food",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442001",
+            "value_boolean": true,
+            "category": "dietary",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441007",
+            "center_id": "550e8400-e29b-41d4-a716-446655440502",
+            "property_key": "outdoor_playground",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442002",
+            "value_boolean": true,
+            "category": "facility",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441008",
+            "center_id": "550e8400-e29b-41d4-a716-446655440502",
+            "property_key": "religious_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442003",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 1020
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440802",
+            "center_id": "550e8400-e29b-41d4-a716-446655440502",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 12,
+            "available_capacity": 5
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440503",
+        "name": "Organic Nature Center",
+        "location": {
+          "latitude": 52.518,
+          "longitude": 13.402,
+          "address": "Natur Stra\u00dfe 3",
+          "postal_code": "10177",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441009",
+            "center_id": "550e8400-e29b-41d4-a716-446655440503",
+            "property_key": "organic_food",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442001",
+            "value_boolean": true,
+            "category": "dietary",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441010",
+            "center_id": "550e8400-e29b-41d4-a716-446655440503",
+            "property_key": "outdoor_playground",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442002",
+            "value_boolean": true,
+            "category": "facility",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441011",
+            "center_id": "550e8400-e29b-41d4-a716-446655440503",
+            "property_key": "religious_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442003",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1080
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440803",
+            "center_id": "550e8400-e29b-41d4-a716-446655440503",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 20,
+            "available_capacity": 12
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440504",
+        "name": "Language Immersion Academy",
+        "location": {
+          "latitude": 52.524,
+          "longitude": 13.41,
+          "address": "Sprach Stra\u00dfe 4",
+          "postal_code": "10180",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441012",
+            "center_id": "550e8400-e29b-41d4-a716-446655440504",
+            "property_key": "organic_food",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442001",
+            "value_boolean": true,
+            "category": "dietary",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441013",
+            "center_id": "550e8400-e29b-41d4-a716-446655440504",
+            "property_key": "outdoor_playground",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442002",
+            "value_boolean": true,
+            "category": "facility",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441014",
+            "center_id": "550e8400-e29b-41d4-a716-446655440504",
+            "property_key": "religious_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442003",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441015",
+            "center_id": "550e8400-e29b-41d4-a716-446655440504",
+            "property_key": "language_immersion",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442004",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441016",
+            "center_id": "550e8400-e29b-41d4-a716-446655440504",
+            "property_key": "music_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442005",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 450,
+            "end_minute": 1050
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 450,
+            "end_minute": 1050
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 450,
+            "end_minute": 1050
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 450,
+            "end_minute": 1050
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 450,
+            "end_minute": 1050
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440804",
+            "center_id": "550e8400-e29b-41d4-a716-446655440504",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 10,
+            "available_capacity": 6
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440505",
+        "name": "Music & Arts Center",
+        "location": {
+          "latitude": 52.516,
+          "longitude": 13.398,
+          "address": "Musik Stra\u00dfe 5",
+          "postal_code": "10176",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441017",
+            "center_id": "550e8400-e29b-41d4-a716-446655440505",
+            "property_key": "organic_food",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442001",
+            "value_boolean": false,
+            "category": "dietary",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441018",
+            "center_id": "550e8400-e29b-41d4-a716-446655440505",
+            "property_key": "outdoor_playground",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442002",
+            "value_boolean": false,
+            "category": "facility",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441019",
+            "center_id": "550e8400-e29b-41d4-a716-446655440505",
+            "property_key": "religious_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442003",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441020",
+            "center_id": "550e8400-e29b-41d4-a716-446655440505",
+            "property_key": "music_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442005",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 1020
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440805",
+            "center_id": "550e8400-e29b-41d4-a716-446655440505",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 8,
+            "available_capacity": 3
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440506",
+        "name": "Basic Daycare",
+        "location": {
+          "latitude": 52.53,
+          "longitude": 13.42,
+          "address": "Einfach Stra\u00dfe 6",
+          "postal_code": "10181",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441021",
+            "center_id": "550e8400-e29b-41d4-a716-446655440506",
+            "property_key": "organic_food",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442001",
+            "value_boolean": false,
+            "category": "dietary",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441022",
+            "center_id": "550e8400-e29b-41d4-a716-446655440506",
+            "property_key": "outdoor_playground",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442002",
+            "value_boolean": false,
+            "category": "facility",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441023",
+            "center_id": "550e8400-e29b-41d4-a716-446655440506",
+            "property_key": "religious_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442003",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1080
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440806",
+            "center_id": "550e8400-e29b-41d4-a716-446655440506",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 25,
+            "available_capacity": 18
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440507",
+        "name": "Premium Center",
+        "location": {
+          "latitude": 52.512,
+          "longitude": 13.39,
+          "address": "Luxus Stra\u00dfe 7",
+          "postal_code": "10175",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441024",
+            "center_id": "550e8400-e29b-41d4-a716-446655440507",
+            "property_key": "organic_food",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442001",
+            "value_boolean": true,
+            "category": "dietary",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441025",
+            "center_id": "550e8400-e29b-41d4-a716-446655440507",
+            "property_key": "outdoor_playground",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442002",
+            "value_boolean": true,
+            "category": "facility",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441026",
+            "center_id": "550e8400-e29b-41d4-a716-446655440507",
+            "property_key": "religious_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442003",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441027",
+            "center_id": "550e8400-e29b-41d4-a716-446655440507",
+            "property_key": "language_immersion",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442004",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441028",
+            "center_id": "550e8400-e29b-41d4-a716-446655440507",
+            "property_key": "music_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442005",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 390,
+            "end_minute": 1110
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 390,
+            "end_minute": 1110
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 390,
+            "end_minute": 1110
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 390,
+            "end_minute": 1110
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 390,
+            "end_minute": 1110
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440807",
+            "center_id": "550e8400-e29b-41d4-a716-446655440507",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 5,
+            "available_capacity": 2
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440508",
+        "name": "Community Center",
+        "location": {
+          "latitude": 52.538,
+          "longitude": 13.43,
+          "address": "Gemeinschaft Stra\u00dfe 8",
+          "postal_code": "10182",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441029",
+            "center_id": "550e8400-e29b-41d4-a716-446655440508",
+            "property_key": "organic_food",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442001",
+            "value_boolean": false,
+            "category": "dietary",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441030",
+            "center_id": "550e8400-e29b-41d4-a716-446655440508",
+            "property_key": "outdoor_playground",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442002",
+            "value_boolean": true,
+            "category": "facility",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441031",
+            "center_id": "550e8400-e29b-41d4-a716-446655440508",
+            "property_key": "religious_program",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442003",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 450,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 450,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 450,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 450,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 450,
+            "end_minute": 1020
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440808",
+            "center_id": "550e8400-e29b-41d4-a716-446655440508",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 30,
+            "available_capacity": 22
+          }
+        ]
+      }
+    ],
+    "top_k": 8,
+    "include_full_centers": false
+  },
+  "expected_result": {
+    "success": true,
+    "offers_count": 1,
+    "excluded_centers": [],
+    "top_ranked": "550e8400-e29b-41d4-a716-446655440502"
+  }
+}

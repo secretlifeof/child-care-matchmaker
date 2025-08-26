@@ -65,7 +65,6 @@ services:
     profiles:
       - dev
       - production
-      - test
 
   # Development version
   matchmaker-api-dev:

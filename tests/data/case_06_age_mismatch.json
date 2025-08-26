@@ -1,5 +1,5 @@
 {
-  "name": "Age Group Mismatch Test", 
+  "name": "Age Group Mismatch Test",
   "description": "Child's age doesn't fit any available age groups",
   "request": {
     "application": {
@@ -14,9 +14,9 @@
         }
       ],
       "home_location": {
-        "latitude": 52.5300,
-        "longitude": 13.4100,
-        "address": "Baby Straße 101",
+        "latitude": 52.53,
+        "longitude": 13.41,
+        "address": "Baby Stra\u00dfe 101",
         "postal_code": "10315",
         "city": "Berlin",
         "country_code": "DE"
@@ -34,11 +34,31 @@
       ],
       "desired_start_date": "2024-09-01",
       "desired_hours": [
-        {"day_of_week": 0, "start_hour": 9, "end_hour": 15},
-        {"day_of_week": 1, "start_hour": 9, "end_hour": 15},
-        {"day_of_week": 2, "start_hour": 9, "end_hour": 15},
-        {"day_of_week": 3, "start_hour": 9, "end_hour": 15},
-        {"day_of_week": 4, "start_hour": 9, "end_hour": 15}
+        {
+          "day_of_week": 0,
+          "start_minute": 540,
+          "end_minute": 900
+        },
+        {
+          "day_of_week": 1,
+          "start_minute": 540,
+          "end_minute": 900
+        },
+        {
+          "day_of_week": 2,
+          "start_minute": 540,
+          "end_minute": 900
+        },
+        {
+          "day_of_week": 3,
+          "start_minute": 540,
+          "end_minute": 900
+        },
+        {
+          "day_of_week": 4,
+          "start_minute": 540,
+          "end_minute": 900
+        }
       ],
       "max_distance_km": 5.0,
       "priority_flags": []
@@ -48,20 +68,40 @@
         "id": "550e8400-e29b-41d4-a716-446655440409",
         "name": "Toddler Only Center",
         "location": {
-          "latitude": 52.5280,
-          "longitude": 13.4120,
-          "address": "Toddler Straße 22",
+          "latitude": 52.528,
+          "longitude": 13.412,
+          "address": "Toddler Stra\u00dfe 22",
           "postal_code": "10315",
           "city": "Berlin",
           "country_code": "DE"
         },
         "short_description": "Specialized toddler care only",
         "opening_hours": [
-          {"day_of_week": 0, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 1, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 2, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 3, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 4, "start_hour": 7, "end_hour": 18}
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1080
+          }
         ],
         "properties": [
           {
@@ -93,20 +133,40 @@
         "id": "550e8400-e29b-41d4-a716-446655440410",
         "name": "Preschool Center",
         "location": {
-          "latitude": 52.5320,
-          "longitude": 13.4080,
-          "address": "Preschool Straße 88",
+          "latitude": 52.532,
+          "longitude": 13.408,
+          "address": "Preschool Stra\u00dfe 88",
           "postal_code": "10315",
           "city": "Berlin",
           "country_code": "DE"
         },
         "short_description": "Ages 3-6 only",
         "opening_hours": [
-          {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 960
+          }
         ],
         "properties": [],
         "capacity_buckets": [

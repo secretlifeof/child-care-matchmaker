@@ -32,6 +32,9 @@ class CompositeScorer:
         total = sum(self.weights.values())
         if total > 0:
             self.weights = {k: v/total for k, v in self.weights.items()}
+        else:
+            # If all weights are zero, use equal weights
+            self.weights = {k: 0.25 for k in self.weights.keys()}
     
     def score(
         self,

@@ -1,0 +1,849 @@
+{
+  "name": "Strict Requirements Test",
+  "description": "Test with multiple must-have requirements and strict excludes across 8 centers",
+  "request": {
+    "application": {
+      "id": "550e8400-e29b-41d4-a716-446655440022",
+      "family_id": "550e8400-e29b-41d4-a716-446655440122",
+      "children": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440222",
+          "family_id": "550e8400-e29b-41d4-a716-446655440122",
+          "name": "Sophia Williams",
+          "birth_date": "2022-11-10"
+        }
+      ],
+      "home_location": {
+        "latitude": 52.525,
+        "longitude": 13.41,
+        "address": "Strict Stra\u00dfe 20",
+        "postal_code": "10183",
+        "city": "Berlin",
+        "country_code": "DE"
+      },
+      "preferences": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440330",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440022",
+          "property_key": "certified_teachers",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 1.0,
+          "threshold": 0.95
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440331",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440022",
+          "property_key": "outdoor_activities",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.9,
+          "threshold": 0.93
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440332",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440022",
+          "property_key": "screen_time",
+          "operator": "equals",
+          "value_boolean": false,
+          "weight": 0.8,
+          "threshold": 0.02
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440333",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440022",
+          "property_key": "multilingual_support",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.7,
+          "threshold": 0.91
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440334",
+          "profile_id": "550e8400-e29b-41d4-a716-446655440022",
+          "property_key": "flexible_pickup",
+          "operator": "equals",
+          "value_boolean": true,
+          "weight": 0.6,
+          "threshold": 0.4
+        }
+      ],
+      "desired_start_date": "2024-09-01",
+      "desired_hours": [
+        {
+          "day_of_week": 0,
+          "start_minute": 510,
+          "end_minute": 1020
+        },
+        {
+          "day_of_week": 1,
+          "start_minute": 510,
+          "end_minute": 1020
+        },
+        {
+          "day_of_week": 2,
+          "start_minute": 510,
+          "end_minute": 1020
+        },
+        {
+          "day_of_week": 3,
+          "start_minute": 510,
+          "end_minute": 1020
+        },
+        {
+          "day_of_week": 4,
+          "start_minute": 510,
+          "end_minute": 1020
+        }
+      ],
+      "max_distance_km": 7.5
+    },
+    "centers": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440521",
+        "name": "Elite Academy",
+        "location": {
+          "latitude": 52.526,
+          "longitude": 13.411,
+          "address": "Elite Stra\u00dfe 1",
+          "postal_code": "10183",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441080",
+            "center_id": "550e8400-e29b-41d4-a716-446655440521",
+            "property_key": "certified_teachers",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442020",
+            "value_boolean": true,
+            "category": "certificate",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441081",
+            "center_id": "550e8400-e29b-41d4-a716-446655440521",
+            "property_key": "outdoor_activities",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442021",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441082",
+            "center_id": "550e8400-e29b-41d4-a716-446655440521",
+            "property_key": "screen_time",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442022",
+            "value_boolean": false,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441083",
+            "center_id": "550e8400-e29b-41d4-a716-446655440521",
+            "property_key": "multilingual_support",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442023",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441084",
+            "center_id": "550e8400-e29b-41d4-a716-446655440521",
+            "property_key": "flexible_pickup",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442024",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 1080
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440821",
+            "center_id": "550e8400-e29b-41d4-a716-446655440521",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 8,
+            "available_capacity": 3
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440522",
+        "name": "Screen Time Center",
+        "location": {
+          "latitude": 52.524,
+          "longitude": 13.408,
+          "address": "Digital Stra\u00dfe 2",
+          "postal_code": "10182",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441085",
+            "center_id": "550e8400-e29b-41d4-a716-446655440522",
+            "property_key": "certified_teachers",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442020",
+            "value_boolean": true,
+            "category": "certificate",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441086",
+            "center_id": "550e8400-e29b-41d4-a716-446655440522",
+            "property_key": "outdoor_activities",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442021",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441087",
+            "center_id": "550e8400-e29b-41d4-a716-446655440522",
+            "property_key": "screen_time",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442022",
+            "value_boolean": true,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441088",
+            "center_id": "550e8400-e29b-41d4-a716-446655440522",
+            "property_key": "multilingual_support",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442023",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 1080
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440822",
+            "center_id": "550e8400-e29b-41d4-a716-446655440522",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 15,
+            "available_capacity": 10
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440523",
+        "name": "Nature & Learning Center",
+        "location": {
+          "latitude": 52.528,
+          "longitude": 13.414,
+          "address": "Natur Lernen Stra\u00dfe 3",
+          "postal_code": "10184",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441089",
+            "center_id": "550e8400-e29b-41d4-a716-446655440523",
+            "property_key": "certified_teachers",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442020",
+            "value_boolean": true,
+            "category": "certificate",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441090",
+            "center_id": "550e8400-e29b-41d4-a716-446655440523",
+            "property_key": "outdoor_activities",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442021",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441091",
+            "center_id": "550e8400-e29b-41d4-a716-446655440523",
+            "property_key": "screen_time",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442022",
+            "value_boolean": false,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441092",
+            "center_id": "550e8400-e29b-41d4-a716-446655440523",
+            "property_key": "multilingual_support",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442023",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 450,
+            "end_minute": 1050
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 450,
+            "end_minute": 1050
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 450,
+            "end_minute": 1050
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 450,
+            "end_minute": 1050
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 450,
+            "end_minute": 1050
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440823",
+            "center_id": "550e8400-e29b-41d4-a716-446655440523",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 12,
+            "available_capacity": 8
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440524",
+        "name": "Multilingual Academy",
+        "location": {
+          "latitude": 52.522,
+          "longitude": 13.406,
+          "address": "Sprachen Stra\u00dfe 4",
+          "postal_code": "10181",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441093",
+            "center_id": "550e8400-e29b-41d4-a716-446655440524",
+            "property_key": "certified_teachers",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442020",
+            "value_boolean": true,
+            "category": "certificate",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441094",
+            "center_id": "550e8400-e29b-41d4-a716-446655440524",
+            "property_key": "outdoor_activities",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442021",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441095",
+            "center_id": "550e8400-e29b-41d4-a716-446655440524",
+            "property_key": "screen_time",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442022",
+            "value_boolean": false,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441096",
+            "center_id": "550e8400-e29b-41d4-a716-446655440524",
+            "property_key": "multilingual_support",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442023",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441097",
+            "center_id": "550e8400-e29b-41d4-a716-446655440524",
+            "property_key": "flexible_pickup",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442024",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 1080
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440824",
+            "center_id": "550e8400-e29b-41d4-a716-446655440524",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 10,
+            "available_capacity": 6
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440525",
+        "name": "Flexible Care Center",
+        "location": {
+          "latitude": 52.53,
+          "longitude": 13.416,
+          "address": "Flexibel Stra\u00dfe 5",
+          "postal_code": "10185",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441098",
+            "center_id": "550e8400-e29b-41d4-a716-446655440525",
+            "property_key": "certified_teachers",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442020",
+            "value_boolean": false,
+            "category": "certificate",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441099",
+            "center_id": "550e8400-e29b-41d4-a716-446655440525",
+            "property_key": "outdoor_activities",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442021",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441100",
+            "center_id": "550e8400-e29b-41d4-a716-446655440525",
+            "property_key": "screen_time",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442022",
+            "value_boolean": false,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441101",
+            "center_id": "550e8400-e29b-41d4-a716-446655440525",
+            "property_key": "flexible_pickup",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442024",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1140
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440825",
+            "center_id": "550e8400-e29b-41d4-a716-446655440525",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 18,
+            "available_capacity": 12
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440526",
+        "name": "Basic Training Center",
+        "location": {
+          "latitude": 52.52,
+          "longitude": 13.402,
+          "address": "Basis Stra\u00dfe 6",
+          "postal_code": "10180",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441102",
+            "center_id": "550e8400-e29b-41d4-a716-446655440526",
+            "property_key": "certified_teachers",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442020",
+            "value_boolean": false,
+            "category": "certificate",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441103",
+            "center_id": "550e8400-e29b-41d4-a716-446655440526",
+            "property_key": "outdoor_activities",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442021",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441104",
+            "center_id": "550e8400-e29b-41d4-a716-446655440526",
+            "property_key": "screen_time",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442022",
+            "value_boolean": false,
+            "category": "approach",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 1020
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440826",
+            "center_id": "550e8400-e29b-41d4-a716-446655440526",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 25,
+            "available_capacity": 20
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440527",
+        "name": "Indoor Activities Center",
+        "location": {
+          "latitude": 52.518,
+          "longitude": 13.398,
+          "address": "Innen Stra\u00dfe 7",
+          "postal_code": "10179",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441105",
+            "center_id": "550e8400-e29b-41d4-a716-446655440527",
+            "property_key": "certified_teachers",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442020",
+            "value_boolean": true,
+            "category": "certificate",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441106",
+            "center_id": "550e8400-e29b-41d4-a716-446655440527",
+            "property_key": "outdoor_activities",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442021",
+            "value_boolean": false,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441107",
+            "center_id": "550e8400-e29b-41d4-a716-446655440527",
+            "property_key": "screen_time",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442022",
+            "value_boolean": false,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441108",
+            "center_id": "550e8400-e29b-41d4-a716-446655440527",
+            "property_key": "multilingual_support",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442023",
+            "value_boolean": false,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 510,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 510,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 510,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 510,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 510,
+            "end_minute": 1020
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440827",
+            "center_id": "550e8400-e29b-41d4-a716-446655440527",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 14,
+            "available_capacity": 9
+          }
+        ]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440528",
+        "name": "Community Daycare",
+        "location": {
+          "latitude": 52.532,
+          "longitude": 13.42,
+          "address": "Gemeinde Stra\u00dfe 8",
+          "postal_code": "10186",
+          "city": "Berlin",
+          "country_code": "DE"
+        },
+        "properties": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441109",
+            "center_id": "550e8400-e29b-41d4-a716-446655440528",
+            "property_key": "certified_teachers",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442020",
+            "value_boolean": false,
+            "category": "certificate",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441110",
+            "center_id": "550e8400-e29b-41d4-a716-446655440528",
+            "property_key": "outdoor_activities",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442021",
+            "value_boolean": true,
+            "category": "program",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441111",
+            "center_id": "550e8400-e29b-41d4-a716-446655440528",
+            "property_key": "screen_time",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442022",
+            "value_boolean": false,
+            "category": "approach",
+            "source": "verified"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441112",
+            "center_id": "550e8400-e29b-41d4-a716-446655440528",
+            "property_key": "flexible_pickup",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442024",
+            "value_boolean": true,
+            "category": "service",
+            "source": "verified"
+          }
+        ],
+        "opening_hours": [
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1080
+          }
+        ],
+        "capacity_buckets": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440828",
+            "center_id": "550e8400-e29b-41d4-a716-446655440528",
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Toddler"
+            },
+            "start_month": "2024-09-01",
+            "total_capacity": 30,
+            "available_capacity": 25
+          }
+        ]
+      }
+    ],
+    "top_k": 8,
+    "include_full_centers": false
+  },
+  "expected_result": {
+    "success": true,
+    "offers_count": 1,
+    "excluded_centers": [],
+    "top_ranked": "550e8400-e29b-41d4-a716-446655440522"
+  }
+}

@@ -14,9 +14,9 @@
         }
       ],
       "home_location": {
-        "latitude": 52.5200,
-        "longitude": 13.4050,
-        "address": "Friedrichstraße 123",
+        "latitude": 52.52,
+        "longitude": 13.405,
+        "address": "Friedrichstra\u00dfe 123",
         "postal_code": "10117",
         "city": "Berlin",
         "country_code": "DE"
@@ -43,11 +43,31 @@
       ],
       "desired_start_date": "2024-09-01",
       "desired_hours": [
-        {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
-        {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
-        {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
-        {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
-        {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+        {
+          "day_of_week": 0,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 1,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 2,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 3,
+          "start_minute": 480,
+          "end_minute": 960
+        },
+        {
+          "day_of_week": 4,
+          "start_minute": 480,
+          "end_minute": 960
+        }
       ],
       "max_distance_km": 5.0,
       "priority_flags": []
@@ -57,20 +77,40 @@
         "id": "550e8400-e29b-41d4-a716-446655440401",
         "name": "Green Garden Daycare",
         "location": {
-          "latitude": 52.5150,
-          "longitude": 13.4100,
-          "address": "Gartenstraße 45",
+          "latitude": 52.515,
+          "longitude": 13.41,
+          "address": "Gartenstra\u00dfe 45",
           "postal_code": "10115",
           "city": "Berlin",
           "country_code": "DE"
         },
         "short_description": "Eco-friendly daycare with organic meals",
         "opening_hours": [
-          {"day_of_week": 0, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 1, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 2, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 3, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 4, "start_hour": 7, "end_hour": 18}
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1080
+          }
         ],
         "properties": [
           {
@@ -111,20 +151,40 @@
         "id": "550e8400-e29b-41d4-a716-446655440402",
         "name": "City Kids Center",
         "location": {
-          "latitude": 52.5250,
-          "longitude": 13.4000,
-          "address": "Stadtstraße 78",
+          "latitude": 52.525,
+          "longitude": 13.4,
+          "address": "Stadtstra\u00dfe 78",
           "postal_code": "10178",
           "city": "Berlin",
           "country_code": "DE"
         },
         "short_description": "Modern urban daycare center",
         "opening_hours": [
-          {"day_of_week": 0, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 1, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 2, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 3, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 4, "start_hour": 7, "end_hour": 18}
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1080
+          }
         ],
         "properties": [
           {

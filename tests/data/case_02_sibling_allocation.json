@@ -11,19 +11,19 @@
             "id": "550e8400-e29b-41d4-a716-446655440202",
             "family_id": "550e8400-e29b-41d4-a716-446655440102",
             "name": "Alex Johnson",
-            "birth_date": "2021-06-10"
+            "birth_date": "2022-02-10"
           },
           {
             "id": "550e8400-e29b-41d4-a716-446655440203",
             "family_id": "550e8400-e29b-41d4-a716-446655440102",
             "name": "Maya Johnson",
-            "birth_date": "2022-09-22"
+            "birth_date": "2023-01-15"
           }
         ],
         "home_location": {
-          "latitude": 52.5300,
-          "longitude": 13.3800,
-          "address": "Hauptstraße 67",
+          "latitude": 52.53,
+          "longitude": 13.38,
+          "address": "Hauptstra\u00dfe 67",
           "postal_code": "10827",
           "city": "Berlin",
           "country_code": "DE"
@@ -41,14 +41,36 @@
         ],
         "desired_start_date": "2024-08-15",
         "desired_hours": [
-          {"day_of_week": 0, "start_hour": 7, "end_hour": 17},
-          {"day_of_week": 1, "start_hour": 7, "end_hour": 17},
-          {"day_of_week": 2, "start_hour": 7, "end_hour": 17},
-          {"day_of_week": 3, "start_hour": 7, "end_hour": 17},
-          {"day_of_week": 4, "start_hour": 7, "end_hour": 17}
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1020
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1020
+          }
         ],
         "max_distance_km": 8.0,
-        "priority_flags": ["sibling"]
+        "priority_flags": [
+          "sibling"
+        ]
       }
     ],
     "centers": [
@@ -56,20 +78,40 @@
         "id": "550e8400-e29b-41d4-a716-446655440403",
         "name": "Happy Family Daycare",
         "location": {
-          "latitude": 52.5280,
-          "longitude": 13.3850,
-          "address": "Familienstraße 12",
+          "latitude": 52.528,
+          "longitude": 13.385,
+          "address": "Familienstra\u00dfe 12",
           "postal_code": "10829",
           "city": "Berlin",
           "country_code": "DE"
         },
         "short_description": "Multi-age daycare specializing in sibling care",
         "opening_hours": [
-          {"day_of_week": 0, "start_hour": 6, "end_hour": 19},
-          {"day_of_week": 1, "start_hour": 6, "end_hour": 19},
-          {"day_of_week": 2, "start_hour": 6, "end_hour": 19},
-          {"day_of_week": 3, "start_hour": 6, "end_hour": 19},
-          {"day_of_week": 4, "start_hour": 6, "end_hour": 19}
+          {
+            "day_of_week": 0,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 360,
+            "end_minute": 1140
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 360,
+            "end_minute": 1140
+          }
         ],
         "properties": [
           {
@@ -102,20 +144,40 @@
         "id": "550e8400-e29b-41d4-a716-446655440404",
         "name": "Little Stars Daycare",
         "location": {
-          "latitude": 52.5350,
-          "longitude": 13.3900,
-          "address": "Sternstraße 23",
+          "latitude": 52.535,
+          "longitude": 13.39,
+          "address": "Sternstra\u00dfe 23",
           "postal_code": "10405",
           "city": "Berlin",
           "country_code": "DE"
         },
         "short_description": "Traditional age-separated daycare",
         "opening_hours": [
-          {"day_of_week": 0, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 1, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 2, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 3, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 4, "start_hour": 7, "end_hour": 18}
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1080
+          }
         ],
         "properties": [],
         "capacity_buckets": [

@@ -175,10 +175,20 @@ class HardConstraintFilter:
             if pref.threshold <= 0.1:  # Exclusion
                 prop = center.get_property(pref.property_key)
                 if prop:
-                    if self._matches_preference(pref, prop):
+                    # For exclusion, we exclude if center has the value we want to exclude
+                    if pref.operator == ComparisonOperator.EQUALS:
+                        # If we want to exclude religious_affiliation=True, exclude centers with religious_affiliation=True
+                        if prop.get_value() == pref.get_value():
+                            logger.debug(
+                                f"Exclusion constraint violated: center has "
+                                f"{pref.property_key}={prop.get_value()}, excluding this value"
+                            )
+                            return False
+                    elif not self._matches_preference(pref, prop):
+                        # For other operators, exclude if preference doesn't match
                         logger.debug(
-                            f"Exclusion constraint violated: center has "
-                            f"excluded property {pref.property_key}"
+                            f"Exclusion constraint violated: center doesn't match "
+                            f"exclusion preference for {pref.property_key}"
                         )
                         return False
         return True

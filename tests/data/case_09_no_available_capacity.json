@@ -14,9 +14,9 @@
         }
       ],
       "home_location": {
-        "latitude": 52.5500,
-        "longitude": 13.4200,
-        "address": "Voll Straße 99",
+        "latitude": 52.55,
+        "longitude": 13.42,
+        "address": "Voll Stra\u00dfe 99",
         "postal_code": "10405",
         "city": "Berlin",
         "country_code": "DE"
@@ -33,6 +33,14 @@
         }
       ],
       "desired_start_date": "2024-09-01",
+      "desired_hours": [
+        {"day_of_week": 0, "start_minute": 480, "end_minute": 960},
+        {"day_of_week": 1, "start_minute": 480, "end_minute": 960},
+        {"day_of_week": 2, "start_minute": 480, "end_minute": 960},
+        {"day_of_week": 3, "start_minute": 480, "end_minute": 960},
+        {"day_of_week": 4, "start_minute": 480, "end_minute": 960}
+      ],
+      "priority_flags": [],
       "max_distance_km": 4.0
     },
     "centers": [
@@ -40,24 +48,33 @@
         "id": "550e8400-e29b-41d4-a716-446655440415",
         "name": "Full Art Center",
         "location": {
-          "latitude": 52.5480,
-          "longitude": 13.4220,
-          "address": "Kunst Straße 77",
+          "latitude": 52.548,
+          "longitude": 13.422,
+          "address": "Kunst Stra\u00dfe 77",
           "postal_code": "10405",
           "city": "Berlin",
           "country_code": "DE"
         },
         "properties": [
           {
+            "id": "550e8400-e29b-41d4-a716-446655441001",
+            "center_id": "550e8400-e29b-41d4-a716-446655440415",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442001",
             "property_key": "art_program",
-            "value_boolean": true
+            "category": "program",
+            "value_boolean": true,
+            "source": "verified"
           }
         ],
         "capacity_buckets": [
           {
             "id": "550e8400-e29b-41d4-a716-446655440716",
             "center_id": "550e8400-e29b-41d4-a716-446655440415",
-            "age_band": {"min_age_months": 18, "max_age_months": 42, "name": "Artists"},
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Artists"
+            },
             "start_month": "2024-09-01",
             "total_capacity": 16,
             "available_capacity": 0
@@ -68,24 +85,33 @@
         "id": "550e8400-e29b-41d4-a716-446655440416",
         "name": "Another Full Center",
         "location": {
-          "latitude": 52.5520,
-          "longitude": 13.4180,
-          "address": "Besetzt Straße 44",
+          "latitude": 52.552,
+          "longitude": 13.418,
+          "address": "Besetzt Stra\u00dfe 44",
           "postal_code": "10405",
           "city": "Berlin",
           "country_code": "DE"
         },
         "properties": [
           {
-            "property_key": "art_program", 
-            "value_boolean": true
+            "id": "550e8400-e29b-41d4-a716-446655441002",
+            "center_id": "550e8400-e29b-41d4-a716-446655440416",
+            "property_type_id": "550e8400-e29b-41d4-a716-446655442001",
+            "property_key": "art_program",
+            "category": "program",
+            "value_boolean": true,
+            "source": "verified"
           }
         ],
         "capacity_buckets": [
           {
             "id": "550e8400-e29b-41d4-a716-446655440717",
             "center_id": "550e8400-e29b-41d4-a716-446655440416",
-            "age_band": {"min_age_months": 18, "max_age_months": 42, "name": "Creative"},
+            "age_band": {
+              "min_age_months": 18,
+              "max_age_months": 42,
+              "name": "Creative"
+            },
             "start_month": "2024-09-01",
             "total_capacity": 14,
             "available_capacity": 0

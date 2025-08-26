@@ -1,0 +1,17 @@
+{
+  "test_name": "Mixed Preferences Test",
+  "description": "Test with mixed preference thresholds and partial matches across 8 centers",
+  "output": {
+    "mode": "recommend",
+    "run_id": null,
+    "offers": [],
+    "waitlist_entries": [],
+    "success": true,
+    "message": null,
+    "total_applications": 1,
+    "matched_applications": 0,
+    "coverage_rate": null,
+    "statistics": {},
+    "processing_time_ms": null
+  }
+}

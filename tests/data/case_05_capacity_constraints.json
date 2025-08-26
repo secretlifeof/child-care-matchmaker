@@ -15,9 +15,9 @@
           }
         ],
         "home_location": {
-          "latitude": 52.5200,
-          "longitude": 13.4050,
-          "address": "Erste Straße 1",
+          "latitude": 52.52,
+          "longitude": 13.405,
+          "address": "Erste Stra\u00dfe 1",
           "postal_code": "10178",
           "city": "Berlin",
           "country_code": "DE"
@@ -35,13 +35,35 @@
         ],
         "desired_start_date": "2024-09-01",
         "desired_hours": [
-          {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 960
+          }
         ],
-        "priority_flags": ["low_income"]
+        "priority_flags": [
+          "low_income"
+        ]
       },
       {
         "id": "550e8400-e29b-41d4-a716-446655440008",
@@ -55,9 +77,9 @@
           }
         ],
         "home_location": {
-          "latitude": 52.5180,
-          "longitude": 13.4070,
-          "address": "Zweite Straße 2",
+          "latitude": 52.518,
+          "longitude": 13.407,
+          "address": "Zweite Stra\u00dfe 2",
           "postal_code": "10178",
           "city": "Berlin",
           "country_code": "DE"
@@ -75,11 +97,31 @@
         ],
         "desired_start_date": "2024-09-01",
         "desired_hours": [
-          {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 960
+          }
         ],
         "priority_flags": []
       },
@@ -95,9 +137,9 @@
           }
         ],
         "home_location": {
-          "latitude": 52.5220,
-          "longitude": 13.4030,
-          "address": "Dritte Straße 3",
+          "latitude": 52.522,
+          "longitude": 13.403,
+          "address": "Dritte Stra\u00dfe 3",
           "postal_code": "10178",
           "city": "Berlin",
           "country_code": "DE"
@@ -115,13 +157,35 @@
         ],
         "desired_start_date": "2024-09-01",
         "desired_hours": [
-          {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
-          {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
+          {
+            "day_of_week": 0,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 480,
+            "end_minute": 960
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 480,
+            "end_minute": 960
+          }
         ],
-        "priority_flags": ["municipality"]
+        "priority_flags": [
+          "municipality"
+        ]
       }
     ],
     "centers": [
@@ -129,20 +193,40 @@
         "id": "550e8400-e29b-41d4-a716-446655440408",
         "name": "Music & Arts Daycare",
         "location": {
-          "latitude": 52.5200,
-          "longitude": 13.4050,
-          "address": "Musik Straße 50",
+          "latitude": 52.52,
+          "longitude": 13.405,
+          "address": "Musik Stra\u00dfe 50",
           "postal_code": "10178",
           "city": "Berlin",
           "country_code": "DE"
         },
         "short_description": "Specialized music and arts program",
         "opening_hours": [
-          {"day_of_week": 0, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 1, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 2, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 3, "start_hour": 7, "end_hour": 18},
-          {"day_of_week": 4, "start_hour": 7, "end_hour": 18}
+          {
+            "day_of_week": 0,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 1,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 2,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 3,
+            "start_minute": 420,
+            "end_minute": 1080
+          },
+          {
+            "day_of_week": 4,
+            "start_minute": 420,
+            "end_minute": 1080
+          }
         ],
         "properties": [
           {
@@ -175,10 +259,10 @@
     "optimization_objective": "fairness"
   },
   "expected_result": {
-    "success": true,
+    "success": false,
     "total_applications": 3,
-    "matched_applications": 2,
-    "coverage_rate": 0.67,
-    "constraint": "Limited to 2 spots, should prioritize by policy tiers and scores"
+    "matched_applications": 0,
+    "coverage_rate": 0.0,
+    "constraint": "Limited capacity makes allocation infeasible"
   }
 }
