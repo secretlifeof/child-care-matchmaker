@@ -17,8 +17,14 @@ from ...models.requests import (
 from ...graph.builder import MatchingGraphBuilder
 from ...graph.matcher import GraphMatcher
 from ...scoring.composite_scorer import CompositeScorer
+from ...scoring.explainable_scorer import ExplainableCompositeScorer
+from ...graph.tigergraph_client import TigerGraphClient
 from ...utils.filters import HardConstraintFilter
 from ...data.loaders.progressive import ProgressiveLoader
+from ...services.enhanced_matching import EnhancedMatcher, EnhancedMatchRequest
+from ...services.graph import get_graph_client
+from ...database import get_database_manager, DatabaseManager
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +75,41 @@ def get_scorer() -> CompositeScorer:
     )
 
 
+def get_tigergraph_client() -> Optional[TigerGraphClient]:
+    """Get TigerGraph client if configured."""
+    host = os.getenv('TIGERGRAPH_HOST')
+    username = os.getenv('TIGERGRAPH_USERNAME')
+    password = os.getenv('TIGERGRAPH_PASSWORD')
+    
+    if host and username and password:
+        return TigerGraphClient(
+            host=host,
+            username=username,
+            password=password,
+            graph_name=os.getenv('TIGERGRAPH_GRAPH_NAME', 'childcare')
+        )
+    return None
+
+
+def get_explainable_scorer(
+    tigergraph: Optional[TigerGraphClient] = Depends(get_tigergraph_client)
+) -> ExplainableCompositeScorer:
+    """Get explainable scorer with optional TigerGraph integration."""
+    return ExplainableCompositeScorer(
+        preference_weight=0.4,
+        property_weight=0.3,
+        availability_weight=0.2,
+        quality_weight=0.1,
+        tigergraph_client=tigergraph
+    )
+
+
+async def get_enhanced_matcher() -> EnhancedMatcher:
+    """Get enhanced matcher with database integration."""
+    db_manager = await get_database_manager()
+    return EnhancedMatcher(db_manager=db_manager)
+
+
 def get_filter() -> HardConstraintFilter:
     """Get configured filter instance."""
     return HardConstraintFilter()
@@ -108,7 +149,8 @@ async def get_recommendations(
     request: EnhancedRecommendationRequest,
     loader: ProgressiveLoader = Depends(get_loader),
     builder: MatchingGraphBuilder = Depends(get_graph_builder),
-    matcher: GraphMatcher = Depends(get_matcher)
+    matcher: GraphMatcher = Depends(get_matcher),
+    explainable_scorer: ExplainableCompositeScorer = Depends(get_explainable_scorer)
 ) -> MatchResult:
     """
     Get top-K center recommendations for an application.
@@ -389,17 +431,78 @@ async def batch_match(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.post("/enhanced-recommend", response_model=MatchResult)
+async def get_enhanced_recommendations(
+    request: EnhancedMatchRequest,
+    enhanced_matcher: EnhancedMatcher = Depends(get_enhanced_matcher)
+) -> MatchResult:
+    """
+    Get enhanced recommendations using capacity checking and graph-based feature matching.
+    
+    This endpoint provides:
+    - Capacity availability checking using existing waitlist tables
+    - Graph database feature matching (TigerGraph or Neo4j)
+    - Comprehensive scoring with detailed explanations
+    - Distance-based filtering using PostGIS
+    """
+    start_time = time.time()
+    
+    try:
+        # Validate database connection
+        if not enhanced_matcher.db_manager.is_initialized:
+            raise HTTPException(
+                status_code=503, 
+                detail="Database connection not available."
+            )
+        
+        result = await enhanced_matcher.match_with_full_context(request)
+        
+        # Add processing time
+        result.processing_time_ms = int((time.time() - start_time) * 1000)
+        
+        logger.info(
+            f"Enhanced recommendations generated {len(result.offers)} matches "
+            f"for parent {request.parent_id} in {result.processing_time_ms}ms"
+        )
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error in enhanced recommendations: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/stats")
 async def get_statistics():
     """Get matching service statistics."""
-    # Would connect to monitoring/metrics service
+    from ...services.graph.factory import GraphClientFactory, GraphDBType
+    
+    # Get graph client info
+    graph_type = os.getenv('GRAPH_DB_TYPE', 'tigergraph')
+    supported_graphs = GraphClientFactory.get_supported_types()
+    is_valid, missing_vars = GraphClientFactory.validate_environment()
+    
     return {
         "status": "healthy",
-        "version": "1.0.0",
+        "version": "2.0.0",  # Updated version
+        "graph_database": {
+            "type": graph_type,
+            "supported_types": supported_graphs,
+            "environment_valid": is_valid,
+            "missing_variables": missing_vars if not is_valid else []
+        },
         "endpoints": {
-            "recommend": "Generate personalized recommendations",
+            "recommend": "Generate personalized recommendations (legacy)",
+            "enhanced-recommend": "Enhanced recommendations with capacity + graph matching", 
             "allocate": "Global optimal allocation",
             "waitlist": "Center-specific waitlist",
             "batch": "Batch processing"
+        },
+        "features": {
+            "graph_databases": ["TigerGraph", "Neo4j"],
+            "capacity_checking": True,
+            "semantic_matching": True,
+            "explainable_results": True,
+            "distance_filtering": True
         }
     }

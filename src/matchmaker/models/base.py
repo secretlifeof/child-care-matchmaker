@@ -21,6 +21,14 @@ class ConstraintType(str, Enum):
     EXCLUDE = "exclude"
 
 
+class PreferenceStrength(str, Enum):
+    """Preference strength levels for better LLM extraction."""
+    REQUIRED = "required"        # Must have (dealbreaker if missing)
+    PREFERRED = "preferred"      # Strong preference but flexible  
+    NICE_TO_HAVE = "nice_to_have" # Would be nice but not important
+    AVOID = "avoid"             # Must NOT have (dealbreaker if present)
+
+
 class PropertyCategory(str, Enum):
     """Categories of center properties."""
     FACILITY = "facility"
@@ -32,13 +40,17 @@ class PropertyCategory(str, Enum):
     PROGRAM = "program"
 
 
-class ValueType(str, Enum):
-    """Types of property values."""
+class PropertyType(str, Enum):
+    """Types of property values - renamed for clarity."""
     TEXT = "text"
     BOOLEAN = "boolean"
     NUMBER = "number"
     DATE = "date"
     LIST = "list"
+
+
+# Backward compatibility alias
+ValueType = PropertyType
 
 
 class SourceType(str, Enum):
@@ -248,28 +260,56 @@ class Center(BaseModel):
 
 
 class ParentPreference(BaseModel):
-    """Parent's preference for matching."""
+    """Parent's preference for matching with categorical strength system."""
     model_config = ConfigDict(from_attributes=True)
     
     id: UUID
     profile_id: UUID
     property_type_id: Optional[UUID] = None
     property_key: str
+    property_type: PropertyType
     operator: ComparisonOperator
+    
+    # Preference strength (replaces weight/threshold)
+    strength: PreferenceStrength = PreferenceStrength.PREFERRED
+    
+    # Values to match against
     value_text: Optional[str] = None
     value_numeric: Optional[float] = None
     value_boolean: Optional[bool] = None
     value_date: Optional[date] = None
     value_list: Optional[List[str]] = None
+    
+    # For numeric ranges
+    min_value: Optional[float] = None
+    max_value: Optional[float] = None
+    
+    # Backward compatibility (deprecated)
     weight: float = Field(default=0.5, ge=0.0, le=1.0)
     threshold: float = Field(default=0.0, ge=0.0, le=1.0)
     
     @property
+    def is_absolute(self) -> bool:
+        """Check if this is an absolute requirement."""
+        return self.strength in [PreferenceStrength.REQUIRED, PreferenceStrength.AVOID]
+    
+    @property
+    def computed_weight(self) -> float:
+        """Convert strength to numeric weight."""
+        strength_weights = {
+            PreferenceStrength.REQUIRED: 1.0,
+            PreferenceStrength.PREFERRED: 0.8,
+            PreferenceStrength.NICE_TO_HAVE: 0.5,
+            PreferenceStrength.AVOID: -1.0
+        }
+        return strength_weights[self.strength]
+    
+    @property
     def constraint_type(self) -> ConstraintType:
-        """Derive constraint type from threshold and weight."""
-        if self.threshold >= 0.9:
+        """Derive constraint type from strength."""
+        if self.strength == PreferenceStrength.REQUIRED:
             return ConstraintType.MUST_HAVE
-        elif self.threshold <= 0.1:
+        elif self.strength == PreferenceStrength.AVOID:
             return ConstraintType.EXCLUDE
         return ConstraintType.NICE_TO_HAVE
     

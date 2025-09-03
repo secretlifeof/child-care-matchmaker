@@ -219,3 +219,48 @@ This service expects to integrate with a main application API that provides:
 - `GET /api/applications/interested` - Applications for a center
 
 The service operates as a recommendation and allocation engine, not the primary data store.
+
+## NEW FEATURES IMPLEMENTED
+
+### 1. Categorical Preference Strengths
+- **LLM-Friendly**: Uses "required", "preferred", "nice_to_have", "avoid" instead of numeric thresholds
+- **Better Extraction**: LLMs excel at categorizing vs. precise numeric scoring  
+- **Automatic Weights**: Converts categories to numeric weights internally
+
+### 2. TigerGraph Semantic Integration
+- **Property Relationships**: Connects related properties (garden → nature_activities)
+- **ConceptNet Bootstrap**: Uses ConceptNet API for initial relationship discovery
+- **Semantic Expansion**: Automatically finds related preferences parents didn't explicitly state
+- **Main App Integration**: Complete implementation guide in `/MAIN_APP_INTEGRATION_PROMPT.md`
+
+### 3. Explainable Match Scoring
+- **Detailed Reasons**: Every match includes specific explanations
+- **Semantic Discoveries**: Shows properties found via semantic relationships
+- **Policy Bonuses**: Transparent scoring for sibling/income priorities
+- **Confidence Scores**: AI extraction confidence displayed to users
+
+### 4. Extended Property Types
+- **Boolean**: Has/doesn't have features
+- **Number**: Ranges, greater/less than comparisons
+- **List**: Contains/doesn't contain items
+- **Text**: String matching and contains operations
+- **Date**: Temporal matching capabilities
+
+### 5. Enhanced API Responses
+```json
+{
+  "explanation": {
+    "reasons": [
+      {
+        "category": "semantic_match",
+        "explanation": "Found nature activities (related to your garden preference)",
+        "source": "semantic"
+      }
+    ],
+    "semantic_matches": ["nature_activities"],
+    "policy_bonuses": {"sibling": 0.5}
+  }
+}
+```
+
+All features maintain backward compatibility with existing threshold-based preferences.

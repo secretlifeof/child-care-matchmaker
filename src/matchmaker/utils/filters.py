@@ -5,7 +5,7 @@ import logging
 
 from ..models.base import (
     Application, Center, CapacityBucket,
-    ComparisonOperator
+    ComparisonOperator, PreferenceStrength, PropertyType
 )
 
 logger = logging.getLogger(__name__)
@@ -170,27 +170,20 @@ class HardConstraintFilter:
         application: Application,
         center: Center
     ) -> bool:
-        """Check exclusion preferences."""
+        """Check exclusion preferences using new strength system."""
         for pref in application.preferences:
-            if pref.threshold <= 0.1:  # Exclusion
+            # Check both old threshold system and new strength system
+            is_exclusion = (pref.strength == PreferenceStrength.AVOID or 
+                           pref.threshold <= 0.1)
+            
+            if is_exclusion:
                 prop = center.get_property(pref.property_key)
-                if prop:
-                    # For exclusion, we exclude if center has the value we want to exclude
-                    if pref.operator == ComparisonOperator.EQUALS:
-                        # If we want to exclude religious_affiliation=True, exclude centers with religious_affiliation=True
-                        if prop.get_value() == pref.get_value():
-                            logger.debug(
-                                f"Exclusion constraint violated: center has "
-                                f"{pref.property_key}={prop.get_value()}, excluding this value"
-                            )
-                            return False
-                    elif not self._matches_preference(pref, prop):
-                        # For other operators, exclude if preference doesn't match
-                        logger.debug(
-                            f"Exclusion constraint violated: center doesn't match "
-                            f"exclusion preference for {pref.property_key}"
-                        )
-                        return False
+                if prop and self._matches_preference_value(pref, prop):
+                    logger.debug(
+                        f"Exclusion constraint violated: center has "
+                        f"{pref.property_key}={prop.get_value()}, which should be avoided"
+                    )
+                    return False
         return True
     
     def _check_must_have_constraints(
@@ -198,13 +191,17 @@ class HardConstraintFilter:
         application: Application,
         center: Center
     ) -> bool:
-        """Check must-have preferences."""
+        """Check must-have preferences using new strength system."""
         for pref in application.preferences:
-            if pref.threshold >= 0.9:  # Must have
+            # Check both old threshold system and new strength system
+            is_required = (pref.strength == PreferenceStrength.REQUIRED or 
+                          pref.threshold >= 0.9)
+            
+            if is_required:
                 prop = center.get_property(pref.property_key)
-                if not prop or not self._matches_preference(pref, prop):
+                if not prop or not self._matches_preference_value(pref, prop):
                     logger.debug(
-                        f"Must-have constraint violated: center lacks "
+                        f"Required constraint violated: center lacks "
                         f"required property {pref.property_key}"
                     )
                     return False
@@ -228,22 +225,46 @@ class HardConstraintFilter:
         
         return True
     
-    def _matches_preference(self, preference, property) -> bool:
-        """Check if property matches preference criteria."""
+    def _matches_preference_value(self, preference, center_property) -> bool:
+        """Check if property matches preference criteria with extended property types."""
         if preference.operator == ComparisonOperator.EQUALS:
-            return property.get_value() == preference.get_value()
+            return center_property.get_value() == preference.get_value()
+        
         elif preference.operator == ComparisonOperator.GREATER_THAN:
-            if property.value_numeric and preference.value_numeric:
-                return property.value_numeric > preference.value_numeric
+            if (center_property.value_numeric is not None and 
+                preference.value_numeric is not None):
+                return center_property.value_numeric > preference.value_numeric
+        
         elif preference.operator == ComparisonOperator.LESS_THAN:
-            if property.value_numeric and preference.value_numeric:
-                return property.value_numeric < preference.value_numeric
+            if (center_property.value_numeric is not None and 
+                preference.value_numeric is not None):
+                return center_property.value_numeric < preference.value_numeric
+        
+        elif preference.operator == ComparisonOperator.BETWEEN:
+            if (center_property.value_numeric is not None and
+                preference.min_value is not None and 
+                preference.max_value is not None):
+                return (preference.min_value <= center_property.value_numeric <= 
+                       preference.max_value)
+        
         elif preference.operator == ComparisonOperator.CONTAINS:
-            if property.value_text and preference.value_text:
-                return preference.value_text.lower() in property.value_text.lower()
+            # Handle both text and list types
+            if preference.property_type == PropertyType.LIST:
+                if (center_property.value_list and preference.value_list):
+                    return any(item in center_property.value_list 
+                              for item in preference.value_list)
+            elif preference.property_type == PropertyType.TEXT:
+                if (center_property.value_text and preference.value_text):
+                    return preference.value_text.lower() in center_property.value_text.lower()
+        
         elif preference.operator == ComparisonOperator.NOT_CONTAINS:
-            if property.value_text and preference.value_text:
-                return preference.value_text.lower() not in property.value_text.lower()
+            if preference.property_type == PropertyType.LIST:
+                if (center_property.value_list and preference.value_list):
+                    return not any(item in center_property.value_list 
+                                  for item in preference.value_list)
+            elif preference.property_type == PropertyType.TEXT:
+                if (center_property.value_text and preference.value_text):
+                    return preference.value_text.lower() not in center_property.value_text.lower()
         
         return False
     
