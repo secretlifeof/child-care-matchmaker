@@ -1,4 +1,4 @@
-"""Enhanced request models with flexible parameters."""
+"""Request models with flexible parameters."""
 
 from typing import List, Optional, Dict, Any, Union
 from uuid import UUID
@@ -103,8 +103,8 @@ class CenterValidation(BaseModel):
 
 # Updated request models
 
-class EnhancedRecommendationRequest(BaseModel):
-    """Enhanced request for recommendations."""
+class RecommendationRequest(BaseModel):
+    """Request for recommendations."""
     # Core data - either inline or by reference
     application: Optional[Application] = None
     application_id: Optional[UUID] = None
@@ -136,8 +136,8 @@ class EnhancedRecommendationRequest(BaseModel):
             raise ValueError("Either application or application_id must be provided")
 
 
-class EnhancedAllocationRequest(BaseModel):
-    """Enhanced request for global allocation."""
+class AllocationRequest(BaseModel):
+    """Request for global allocation."""
     # Core data
     applications: Optional[List[Application]] = None
     application_ids: Optional[List[UUID]] = None
@@ -160,8 +160,8 @@ class EnhancedAllocationRequest(BaseModel):
     validation_rules: Optional[ValidationRules] = None
 
 
-class EnhancedWaitlistRequest(BaseModel):
-    """Enhanced request for waitlist generation."""
+class WaitlistRequest(BaseModel):
+    """Request for waitlist generation."""
     # Core data
     center_id: UUID
     center: Optional[Center] = None

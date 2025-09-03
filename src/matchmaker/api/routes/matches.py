@@ -11,8 +11,9 @@ from pydantic import BaseModel, Field
 from ...models.base import MatchMode, Application, Center
 from ...models.results import MatchResult
 from ...models.requests import (
-    EnhancedRecommendationRequest, EnhancedAllocationRequest,
-    EnhancedWaitlistRequest, BatchMatchRequest, MatchingConfig
+    RecommendationRequest, AllocationRequest,
+    WaitlistRequest, BatchMatchRequest, MatchingConfig,
+    MatchRequest
 )
 from ...graph.builder import MatchingGraphBuilder
 from ...graph.matcher import GraphMatcher
@@ -21,7 +22,7 @@ from ...scoring.explainable_scorer import ExplainableCompositeScorer
 from ...graph.tigergraph_client import TigerGraphClient
 from ...utils.filters import HardConstraintFilter
 from ...data.loaders.progressive import ProgressiveLoader
-from ...services.enhanced_matching import EnhancedMatcher, EnhancedMatchRequest
+from ...services.matching import Matcher, MatchRequest
 from ...services.graph import get_graph_client
 from ...database import get_database_manager, DatabaseManager
 import os
@@ -104,10 +105,10 @@ def get_explainable_scorer(
     )
 
 
-async def get_enhanced_matcher() -> EnhancedMatcher:
-    """Get enhanced matcher with database integration."""
+async def get_matcher_service() -> Matcher:
+    """Get matcher with database integration."""
     db_manager = await get_database_manager()
-    return EnhancedMatcher(db_manager=db_manager)
+    return Matcher(db_manager=db_manager)
 
 
 def get_filter() -> HardConstraintFilter:
@@ -146,103 +147,36 @@ def get_loader() -> ProgressiveLoader:
 
 @router.post("/recommend", response_model=MatchResult)
 async def get_recommendations(
-    request: EnhancedRecommendationRequest,
-    loader: ProgressiveLoader = Depends(get_loader),
-    builder: MatchingGraphBuilder = Depends(get_graph_builder),
-    matcher: GraphMatcher = Depends(get_matcher),
-    explainable_scorer: ExplainableCompositeScorer = Depends(get_explainable_scorer)
+    request: MatchRequest,
+    matcher_service: Matcher = Depends(get_matcher_service)
 ) -> MatchResult:
     """
-    Get top-K center recommendations for an application.
+    Get recommendations using capacity checking and graph-based feature matching.
     
-    Supports both inline data and progressive loading from main API.
-    Centers can be provided in the request to limit matching to specific centers.
+    This endpoint provides:
+    - Capacity availability checking using existing waitlist tables
+    - Graph database feature matching (TigerGraph or Neo4j)
+    - Comprehensive scoring with detailed explanations
+    - Distance-based filtering using PostGIS
     """
     start_time = time.time()
     
     try:
-        # Get application data
-        if request.application:
-            application = request.application
-        elif request.application_id:
-            application = await loader.load_application(request.application_id)
-            if not application:
-                raise HTTPException(status_code=404, detail="Application not found")
-        else:
-            raise HTTPException(status_code=400, detail="Either application or application_id required")
-        
-        # Override max distance if provided
-        if request.max_distance_km:
-            application.max_distance_km = request.max_distance_km
-        
-        # Get centers - either from request or progressive loading
-        if request.centers:
-            # Use centers provided in request
-            centers = request.centers
-            
-            # Apply filters if specified
-            if request.force_center_ids:
-                centers = [c for c in centers if c.id in request.force_center_ids]
-            if request.exclude_center_ids:
-                centers = [c for c in centers if c.id not in request.exclude_center_ids]
-                
-            logger.info(f"Using {len(centers)} centers provided in request")
-        else:
-            # Progressive loading of centers
-            config = request.matching_config.progressive_loading if request.matching_config else None
-            target_matches = config.target_good_matches if config else request.top_k
-            
-            centers = await loader.load_centers_progressive(
-                application=application,
-                target_matches=target_matches
+        # Validate database connection
+        if not matcher_service.db_manager.is_initialized:
+            raise HTTPException(
+                status_code=503, 
+                detail="Database connection not available."
             )
         
-        # Apply matching configuration if provided
-        if request.matching_config:
-            scorer = CompositeScorer(
-                preference_weight=request.matching_config.scoring_weights.preference_weight,
-                property_weight=request.matching_config.scoring_weights.property_weight,
-                availability_weight=request.matching_config.scoring_weights.availability_weight,
-                quality_weight=request.matching_config.scoring_weights.quality_weight
-            )
-            builder = MatchingGraphBuilder(
-                scorer=scorer,
-                filter=HardConstraintFilter(),
-                max_candidates_per_application=request.matching_config.performance.max_edges_per_application
-            )
-        
-        # Build graph
-        graph = builder.build_graph(
-            applications=[application],
-            centers=centers,
-            respect_capacity=not request.include_full_centers
-        )
-        
-        # Prune to top candidates
-        prune_threshold = (request.matching_config.performance.edge_pruning_threshold 
-                          if request.matching_config else 0.1)
-        
-        graph = builder.prune_edges(
-            graph,
-            keep_top_k_per_application=request.top_k * 2,
-            min_weight_threshold=max(prune_threshold, request.min_score_threshold)
-        )
-        
-        # Generate recommendations
-        result = matcher.match(
-            graph,
-            mode=MatchMode.RECOMMEND,
-            application_id=application.id,
-            top_k=request.top_k,
-            include_full=request.include_full_centers
-        )
+        result = await matcher_service.match_with_full_context(request)
         
         # Add processing time
         result.processing_time_ms = int((time.time() - start_time) * 1000)
         
         logger.info(
-            f"Generated {len(result.offers)} recommendations for "
-            f"application {request.application_id} in {result.processing_time_ms}ms"
+            f"Recommendations generated {len(result.offers)} matches "
+            f"for parent {request.parent_id} in {result.processing_time_ms}ms"
         )
         
         return result
@@ -431,46 +365,6 @@ async def batch_match(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/enhanced-recommend", response_model=MatchResult)
-async def get_enhanced_recommendations(
-    request: EnhancedMatchRequest,
-    enhanced_matcher: EnhancedMatcher = Depends(get_enhanced_matcher)
-) -> MatchResult:
-    """
-    Get enhanced recommendations using capacity checking and graph-based feature matching.
-    
-    This endpoint provides:
-    - Capacity availability checking using existing waitlist tables
-    - Graph database feature matching (TigerGraph or Neo4j)
-    - Comprehensive scoring with detailed explanations
-    - Distance-based filtering using PostGIS
-    """
-    start_time = time.time()
-    
-    try:
-        # Validate database connection
-        if not enhanced_matcher.db_manager.is_initialized:
-            raise HTTPException(
-                status_code=503, 
-                detail="Database connection not available."
-            )
-        
-        result = await enhanced_matcher.match_with_full_context(request)
-        
-        # Add processing time
-        result.processing_time_ms = int((time.time() - start_time) * 1000)
-        
-        logger.info(
-            f"Enhanced recommendations generated {len(result.offers)} matches "
-            f"for parent {request.parent_id} in {result.processing_time_ms}ms"
-        )
-        
-        return result
-        
-    except Exception as e:
-        logger.error(f"Error in enhanced recommendations: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.get("/stats")
 async def get_statistics():
@@ -492,8 +386,7 @@ async def get_statistics():
             "missing_variables": missing_vars if not is_valid else []
         },
         "endpoints": {
-            "recommend": "Generate personalized recommendations (legacy)",
-            "enhanced-recommend": "Enhanced recommendations with capacity + graph matching", 
+            "recommend": "Generate personalized recommendations with capacity + graph matching", 
             "allocate": "Global optimal allocation",
             "waitlist": "Center-specific waitlist",
             "batch": "Batch processing"

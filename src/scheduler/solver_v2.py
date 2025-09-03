@@ -17,8 +17,8 @@ from .config import settings
 logger = logging.getLogger(__name__)
 
 
-class EnhancedScheduleSolverV2:
-    """Enhanced solver with shift templates and group assignment preferences"""
+class ScheduleSolverV2:
+    """Solver with shift templates and group assignment preferences"""
 
     def __init__(self, optimization_config: OptimizationConfig):
         self.config = optimization_config

@@ -12,8 +12,8 @@ import json
 from collections import defaultdict
 
 from ..models import *
-from ..enhanced_solver import EnhancedScheduleSolver
-from ..enhanced_solver_v2 import EnhancedScheduleSolverV2
+from ..solver import ScheduleSolver
+from ..solver_v2 import ScheduleSolverV2
 from ..config import settings
 from .validator import ScheduleValidator
 from .analyzer import ScheduleAnalyzer  
@@ -90,7 +90,7 @@ class ScheduleOptimizer:
             
             if request.shift_templates and request.shift_template_requirements:
                 logger.info(f"Using template-based solver with {len(request.shift_templates)} templates")
-                solver_v2 = EnhancedScheduleSolverV2(request.optimization_config)
+                solver_v2 = ScheduleSolverV2(request.optimization_config)
                 
                 # Add optimization goals for group assignments and continuity
                 if OptimizationGoal.RESPECT_GROUP_ASSIGNMENTS not in request.optimization_config.goals:
@@ -110,8 +110,8 @@ class ScheduleOptimizer:
                     existing_schedule=request.existing_schedules,
                 )
             elif has_group_assignments:
-                logger.info(f"Using enhanced solver V2 to respect group assignments (no templates)")
-                solver_v2 = EnhancedScheduleSolverV2(request.optimization_config)
+                logger.info(f"Using solver V2 to respect group assignments (no templates)")
+                solver_v2 = ScheduleSolverV2(request.optimization_config)
                 
                 # Add optimization goals for group assignments and continuity
                 if OptimizationGoal.RESPECT_GROUP_ASSIGNMENTS not in request.optimization_config.goals:
@@ -134,7 +134,7 @@ class ScheduleOptimizer:
             else:
                 # Use original solver only when no group assignments exist
                 logger.info("Using original solver (no templates, no group assignments)")
-                solver = EnhancedScheduleSolver(request.optimization_config)
+                solver = ScheduleSolver(request.optimization_config)
                 
                 # Solve for the entire period at once - this prevents 1-hour shifts and excessive schedules
                 schedule, optimization_result, conflicts = solver.solve_with_date_range(
@@ -869,7 +869,7 @@ class ScheduleOptimizer:
             
             if request.shift_templates and request.shift_template_requirements:
                 logger.info(f"Using template-based solver with {len(request.shift_templates)} templates")
-                solver_v2 = EnhancedScheduleSolverV2(request.optimization_config)
+                solver_v2 = ScheduleSolverV2(request.optimization_config)
                 
                 # Add optimization goals for group assignments and continuity
                 if OptimizationGoal.RESPECT_GROUP_ASSIGNMENTS not in request.optimization_config.goals:
@@ -889,8 +889,8 @@ class ScheduleOptimizer:
                     existing_schedule=request.existing_schedules,
                 )
             elif has_group_assignments:
-                logger.info(f"Using enhanced solver V2 to respect group assignments (no templates)")
-                solver_v2 = EnhancedScheduleSolverV2(request.optimization_config)
+                logger.info(f"Using solver V2 to respect group assignments (no templates)")
+                solver_v2 = ScheduleSolverV2(request.optimization_config)
                 
                 # Add optimization goals for group assignments and continuity
                 if OptimizationGoal.RESPECT_GROUP_ASSIGNMENTS not in request.optimization_config.goals:
@@ -913,7 +913,7 @@ class ScheduleOptimizer:
             else:
                 # Use original solver only when no group assignments exist
                 logger.info("Using original solver (no templates, no group assignments)")
-                solver = EnhancedScheduleSolver(request.optimization_config)
+                solver = ScheduleSolver(request.optimization_config)
                 
                 # Solve for the entire period at once - this prevents 1-hour shifts and excessive schedules
                 schedule, optimization_result, conflicts = solver.solve_with_date_range(

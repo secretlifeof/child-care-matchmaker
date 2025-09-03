@@ -14,7 +14,7 @@
 - **Async Operations**: Thread-safe async operations for both databases
 - **Health Monitoring**: Connection status and health checks
 
-### ✅ 3. **Enhanced Matching Service** (`src/matchmaker/services/enhanced_matching.py`)
+### ✅ 3. **Matching Service** (`src/matchmaker/services/matching.py`)
 - **Complete Integration**: Uses PostgreSQL for capacity + graph DB for features
 - **Capacity Checking**: Queries existing `Waiting_List_Containers` and `Applications` tables
 - **Geographic Filtering**: PostGIS integration for distance-based prefiltering
@@ -22,7 +22,7 @@
 - **Detailed Explanations**: Comprehensive match scoring with reasons
 
 ### ✅ 4. **API Integration** (`src/matchmaker/api/routes/matches.py`)
-- **New Endpoint**: `POST /api/matches/enhanced-recommend`
+- **Main Endpoint**: `POST /api/matches/recommend`
 - **Database Dependencies**: Full dependency injection for both databases
 - **Enhanced Statistics**: Configuration validation and health status
 - **Error Handling**: Graceful degradation if databases unavailable
@@ -39,14 +39,14 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                    FastAPI Application                      │
 │  ┌─────────────────┐  ┌──────────────────┐  ┌─────────────┐ │
-│  │  /enhanced-     │  │  Database        │  │  Graph DB   │ │
-│  │   recommend     │  │  Dependencies    │  │  Factory    │ │
+│  │  /recommend     │  │  Database        │  │  Graph DB   │ │
+│  │                │  │  Dependencies    │  │  Factory    │ │
 │  └─────────────────┘  └──────────────────┘  └─────────────┘ │
 └─────────────────────────────────────────────────────────────┘
           │                       │                    │
           ▼                       ▼                    ▼
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│ Enhanced Matcher│    │   PostgreSQL     │    │ TigerGraph OR   │
+│    Matcher      │    │   PostgreSQL     │    │ TigerGraph OR   │
 │                 │    │                  │    │ Neo4j           │
 │ • Geo filter    │◄──►│ • Centers        │    │                 │
 │ • Capacity      │    │ • Applications   │    │ • Semantic      │
@@ -85,8 +85,8 @@ python -m src.matchmaker.main
 # Check health (both databases)
 curl http://localhost:8001/health
 
-# Enhanced matching with full context
-curl -X POST http://localhost:8001/api/matches/enhanced-recommend \
+# Matching with full context
+curl -X POST http://localhost:8001/api/matches/recommend \
   -H "Content-Type: application/json" \
   -d '{
     "parent_id": "parent-uuid",

@@ -60,7 +60,7 @@ __url__ = "https://github.com/yourorg/daycare-schedule-optimizer"
 __all__ = [
     "ScheduleOptimizer",
     "ScheduleSolver",
-    "EnhancedScheduleSolver",
+    "ScheduleSolver",
     "ScheduleGenerationRequest",
     "ScheduleGenerationResponse",
     "ScheduleValidationRequest",
@@ -81,7 +81,7 @@ __all__ = [
 try:
     from .scheduler import ScheduleOptimizer
     from .solver import ScheduleSolver
-    from .enchanced_solver import EnhancedScheduleSolver
+    from .enchanced_solver import ScheduleSolver
     from .models import (
         ScheduleGenerationRequest,
         ScheduleGenerationResponse,

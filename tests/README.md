@@ -107,7 +107,7 @@ python test_large_scale.py
 ## Implementation Architecture
 
 ### Core Components
-- **Enhanced Solver V2** (`enhanced_solver_v2.py`): Template-based scheduling with group preferences
+- **Solver V2** (`solver_v2.py`): Template-based scheduling with group preferences
 - **Weighted Objective Function**: 
   - PRIMARY assignments: 2000 points
   - SECONDARY assignments: 500 points

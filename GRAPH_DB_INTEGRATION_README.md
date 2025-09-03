@@ -40,7 +40,7 @@ client = create_graph_client("tigergraph")
 client = await get_graph_client()
 ```
 
-### ✅ 3. Enhanced Matching Service (`services/enhanced_matching.py`)
+### ✅ 3. Matching Service (`services/matching.py`)
 
 **Key Features**:
 - **Capacity Checking**: Uses existing `Waiting_List_Containers` and `Applications` tables
@@ -49,7 +49,7 @@ client = await get_graph_client()
 - **Comprehensive Scoring**: Distance + features + capacity + policy bonuses
 - **Detailed Explanations**: Every match includes reasons and confidence scores
 
-**New API Endpoint**: `POST /api/matches/enhanced-recommend`
+**Main API Endpoint**: `POST /api/matches/recommend`
 
 ### ✅ 4. Configuration Management
 
@@ -82,10 +82,10 @@ requirements.txt:
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   FastAPI App   │    │ Enhanced Matcher │    │ Graph Database  │
+│   FastAPI App   │    │    Matcher       │    │ Graph Database  │
 │                 │    │                  │    │ (TigerGraph/    │
-│ /enhanced-      │───▶│ • Geo filtering  │───▶│  Neo4j)         │
-│  recommend      │    │ • Capacity check │    │                 │
+│   /recommend    │───▶│ • Geo filtering  │───▶│  Neo4j)         │
+│                 │    │ • Capacity check │    │                 │
 │                 │    │ • Feature match  │    │ • Semantic      │
 │                 │    │ • Scoring        │    │   relationships │
 └─────────────────┘    └──────────────────┘    └─────────────────┘

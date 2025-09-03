@@ -1,4 +1,4 @@
-"""Enhanced matching service using existing database schema and generic graph interface."""
+""" matching service using existing database schema and generic graph interface."""
 
 import logging
 from typing import List, Dict, Any, Optional, Tuple
@@ -21,8 +21,8 @@ class ChildInfo(BaseModel):
     current_center_id: Optional[str] = None
 
 
-class EnhancedMatchRequest(BaseModel):
-    """Enhanced match request with capacity and temporal considerations."""
+class MatchRequest(BaseModel):
+    """ match request with capacity and temporal considerations."""
     parent_id: Optional[str] = None
     preferences: Optional[List[Dict[str, Any]]] = None
     children: List[ChildInfo] = []
@@ -35,12 +35,12 @@ class EnhancedMatchRequest(BaseModel):
     top_k: int = 50
 
 
-class EnhancedMatcher:
-    """Enhanced matching service with capacity checking and graph-based feature matching."""
+class Matcher:
+    """ matching service with capacity checking and graph-based feature matching."""
     
     def __init__(self, db_manager: DatabaseManager, graph_client: Optional[GraphClient] = None):
         """
-        Initialize enhanced matcher.
+        Initialize  matcher.
         
         Args:
             db_manager: Database manager instance
@@ -49,12 +49,12 @@ class EnhancedMatcher:
         self.db_manager = db_manager
         self.graph_client = graph_client
     
-    async def match_with_full_context(self, request: EnhancedMatchRequest) -> MatchResult:
+    async def match_with_full_context(self, request: MatchRequest) -> MatchResult:
         """
         Perform comprehensive matching with capacity, temporal, and feature considerations.
         
         Args:
-            request: Enhanced match request
+            request:  match request
             
         Returns:
             Match result with explanations
@@ -130,7 +130,7 @@ class EnhancedMatcher:
             )
             
         except Exception as e:
-            logger.error(f"Error in enhanced matching: {e}")
+            logger.error(f"Error in  matching: {e}")
             return MatchResult(
                 mode="recommend",
                 success=False,
@@ -141,7 +141,7 @@ class EnhancedMatcher:
                 processing_time_ms=int((datetime.utcnow() - start_time).total_seconds() * 1000)
             )
     
-    async def _geo_prefilter(self, request: EnhancedMatchRequest) -> List[str]:
+    async def _geo_prefilter(self, request: MatchRequest) -> List[str]:
         """Filter centers by geographic proximity using existing PostGIS functions."""
         if not request.home_lat or not request.home_lon:
             # If no location provided, return all centers (or use parent's stored location)
@@ -259,7 +259,7 @@ class EnhancedMatcher:
     
     async def _score_and_rank_centers(
         self,
-        request: EnhancedMatchRequest,
+        request: MatchRequest,
         center_ids: List[str],
         feature_matches: List[FeatureMatchResult]
     ) -> List[MatchOffer]:
@@ -316,7 +316,7 @@ class EnhancedMatcher:
     
     async def _calculate_center_score(
         self,
-        request: EnhancedMatchRequest,
+        request: MatchRequest,
         center_info: Any,
         feature_matches: List[FeatureMatchResult]
     ) -> Tuple[float, MatchExplanation]:
@@ -463,7 +463,7 @@ class EnhancedMatcher:
         else:
             return "poor"
     
-    async def _log_match_run(self, request: EnhancedMatchRequest, offers: List[MatchOffer]):
+    async def _log_match_run(self, request: MatchRequest, offers: List[MatchOffer]):
         """Log match run to database using existing tables."""
         try:
             async with self.db_manager.get_connection() as conn:
