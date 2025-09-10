@@ -114,7 +114,9 @@ Commute route integration:
 
 ## API Endpoints
 
-### POST /api/matches/recommend
+### Core Matching Endpoints
+
+#### POST /api/matches/recommend
 
 Get personalized recommendations with complex preference support.
 
@@ -228,6 +230,159 @@ Get available complex preference types from schema registry.
 }
 ```
 
+### Semantic Matching Endpoints
+
+#### POST /api/semantic/centers/{center_id}/features
+
+Process and enhance center features with semantic matching.
+
+**Request:**
+```json
+{
+  "features": [
+    {
+      "feature_key": "space.garden",
+      "value_bool": true,
+      "value_num": null,
+      "value_text": null,
+      "confidence": 0.92,
+      "raw_phrase": "Unser Garten mit altem Baumbestand"
+    }
+  ]
+}
+```
+
+**Response:**
+```json
+{
+  "processing_summary": {
+    "explicit_features": 1,
+    "semantic_enhancements": 3,
+    "total_stored": 4
+  },
+  "semantic_matches": [
+    {
+      "feature_key": "outdoor_activities",
+      "source_feature": "space.garden",
+      "similarity_score": 0.78,
+      "confidence": 0.72
+    }
+  ]
+}
+```
+
+#### POST /api/semantic/parents/{parent_id}/preferences
+
+Process parent preferences with semantic enhancement.
+
+**Request:**
+```json
+{
+  "original_text": "we want something near a forest with outdoor activities",
+  "extracted_features": [
+    {
+      "feature_key": "location.near_forest",
+      "confidence": 0.8,
+      "preference": "nice_to_have",
+      "raw_phrase": "near a forest"
+    },
+    {
+      "feature_key": "outdoor_activities",
+      "confidence": 0.9,
+      "preference": "preferred",
+      "raw_phrase": "outdoor activities"
+    }
+  ]
+}
+```
+
+**Response:**
+```json
+{
+  "matches": [
+    {
+      "feature_key": "location.near_forest",
+      "match_type": "explicit",
+      "confidence": 0.8,
+      "similarity_score": 1.0
+    }
+  ],
+  "semantic_enhancements": [
+    {
+      "feature_key": "forest_kindergarten",
+      "match_type": "semantic",
+      "confidence": 0.68,
+      "similarity_score": 0.85,
+      "derived_from": "outdoor_activities"
+    }
+  ]
+}
+```
+
+#### GET /api/semantic/match-score/{parent_id}/{center_id}
+
+Calculate semantic match score between parent and center.
+
+**Response:**
+```json
+{
+  "score": 0.78,
+  "matches": [
+    {
+      "feature_key": "space.garden",
+      "preference_level": "preferred",
+      "match_score": 0.85,
+      "weighted_score": 0.68,
+      "is_semantic": false
+    }
+  ],
+  "total_preferences": 5,
+  "matched_preferences": 3,
+  "raw_score": 3.2,
+  "total_weight": 4.1
+}
+```
+
+#### GET /api/semantic/search-features
+
+Search for features similar to query text.
+
+**Parameters:**
+- `query` (required): Text to search for
+- `similarity_threshold` (optional, default: 0.6): Minimum similarity score
+- `limit` (optional, default: 10): Maximum results
+
+**Response:**
+```json
+{
+  "query": "outdoor play and nature activities",
+  "matches": [
+    {
+      "feature_key": "space.garden",
+      "title": "Garden",
+      "category_key": "space",
+      "value_type": "boolean",
+      "description": "Outdoor garden space for children",
+      "similarity_score": 0.85
+    }
+  ],
+  "count": 1
+}
+```
+
+#### POST /api/semantic/initialize-embeddings
+
+One-time setup to create embeddings for all ontology features.
+
+**Response:**
+```json
+{
+  "message": "Embeddings cache initialized successfully",
+  "features_processed": 247,
+  "processing_time_ms": 12450
+}
+```
+
 ### GET /api/matches/stats
 
 Get service statistics and capabilities.
@@ -239,6 +394,7 @@ Get service statistics and capabilities.
   "version": "2.1.0",
   "features": {
     "complex_preferences": true,
+    "semantic_matching": true,
     "schema_registry": true,
     "spatial_queries": true,
     "detailed_explanations": true,
@@ -256,12 +412,17 @@ Get service statistics and capabilities.
     "allocate": "Global optimal allocation",
     "waitlist": "Center-specific waitlist", 
     "batch": "Batch processing",
-    "complex-types": "Get available complex preference types"
+    "complex-types": "Get available complex preference types",
+    "semantic": "AI-powered semantic matching and feature enhancement"
   },
   "api_changes": {
     "parameter_changes": {
       "top_k": "replaced with 'limit'",
       "parent_id": "now primary identifier for database lookup"
+    },
+    "new_features": {
+      "semantic_matching": "OpenAI embeddings for intelligent feature relationships",
+      "categorical_preferences": "Human-friendly preference levels (required, preferred, etc.)"
     }
   }
 }

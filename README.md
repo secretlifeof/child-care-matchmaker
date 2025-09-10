@@ -38,6 +38,13 @@ src/matchmaker/
 
 ## Features
 
+### Semantic Matching with AI Embeddings
+- **OpenAI Integration**: Uses text-embedding-3-small for feature similarity
+- **Automatic Relationship Discovery**: No manual setup of feature relationships 
+- **Smart Categorization**: Separates semantic matching (descriptions) from hard matching (location/ratings)
+- **Multi-language Support**: Works with German, English, and other languages
+- **Cost Optimized**: ~$1-5/month for typical usage with cached embeddings
+
 ### Progressive Loading
 - Starts with nearest 100 centers
 - Expands search radius until sufficient quality matches found
@@ -46,15 +53,21 @@ src/matchmaker/
 ### Constraint Handling
 - **Hard Constraints** (filters):
   - Age compatibility
-  - Distance limits
+  - Distance limits (PostGIS spatial queries)
   - Opening hours overlap
   - Must-have requirements
   - Exclusions
 - **Soft Constraints** (scoring):
   - Preference satisfaction (0-1 continuous)
-  - Property matching
+  - Property matching with semantic enhancement
   - Quality indicators
   - Distance penalties
+
+### Intelligent Feature Extraction
+- **Categorical Preferences**: Uses "required", "preferred", "nice_to_have", "exclude" 
+- **LLM-Friendly**: Better than numeric thresholds for AI extraction
+- **Automatic Weights**: Converts categories to scoring weights internally
+- **Confidence Scoring**: All extractions include confidence levels
 
 ### Sibling Co-Assignment
 - Bonus scoring for keeping siblings together
@@ -68,7 +81,9 @@ src/matchmaker/
 
 ## API Endpoints
 
-### Get Recommendations
+### Core Matching Endpoints
+
+#### Get Recommendations
 ```http
 POST /api/matches/recommend
 {
@@ -79,7 +94,7 @@ POST /api/matches/recommend
 }
 ```
 
-### Global Allocation
+#### Global Allocation
 ```http
 POST /api/matches/allocate
 {
@@ -90,7 +105,7 @@ POST /api/matches/allocate
 }
 ```
 
-### Generate Waitlist
+#### Generate Waitlist
 ```http
 POST /api/matches/waitlist
 {
@@ -98,6 +113,97 @@ POST /api/matches/waitlist
   "bucket_id": "uuid",  // optional
   "include_all": false
 }
+```
+
+### Semantic Matching Endpoints
+
+#### Process Center Features
+```http
+POST /api/semantic/centers/{center_id}/features
+{
+  "features": [
+    {
+      "feature_key": "space.garden",
+      "value_bool": true,
+      "confidence": 0.92,
+      "raw_phrase": "Unser Garten mit altem Baumbestand"
+    }
+  ]
+}
+```
+
+#### Process Parent Preferences
+```http
+POST /api/semantic/parents/{parent_id}/preferences
+{
+  "original_text": "near forest with outdoor activities",
+  "extracted_features": [
+    {
+      "feature_key": "location.near_forest",
+      "confidence": 0.8,
+      "preference": "nice_to_have",
+      "raw_phrase": "near forest"
+    }
+  ]
+}
+```
+
+#### Get Match Score
+```http
+GET /api/semantic/match-score/{parent_id}/{center_id}
+```
+
+#### Search Features
+```http
+GET /api/semantic/search-features?query=garden&limit=5
+```
+
+#### Initialize Embeddings (One-time Setup)
+```http
+POST /api/semantic/initialize-embeddings
+```
+
+## Quick Start
+
+### 1. Using Docker (Recommended)
+```bash
+# Clone and start the service
+git clone <repository>
+cd child-care-matchmaker
+docker-compose --profile dev up --build
+```
+
+### 2. Set up PostgreSQL with pgvector
+```sql
+-- In your PostgreSQL database
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- Add embedding support to ontology features
+ALTER TABLE ontology.Ontology_Features 
+ADD COLUMN IF NOT EXISTS embedding vector(1536),
+ADD COLUMN IF NOT EXISTS embedding_model TEXT DEFAULT 'text-embedding-3-small',
+ADD COLUMN IF NOT EXISTS embedding_updated_at TIMESTAMPTZ;
+
+-- Create vector index for fast similarity search
+CREATE INDEX idx_ontology_features_embedding 
+ON ontology.Ontology_Features 
+USING ivfflat (embedding vector_cosine_ops) 
+WITH (lists = 100);
+```
+
+### 3. Initialize Semantic Matching
+```bash
+# One-time setup: Create embeddings for your ontology features
+curl -X POST "http://localhost:8002/api/semantic/initialize-embeddings"
+```
+
+### 4. Test the Integration
+```bash
+# Search for similar features
+curl "http://localhost:8002/api/semantic/search-features?query=garden&limit=5"
+
+# Check service health
+curl "http://localhost:8002/health"
 ```
 
 ## Installation
@@ -143,6 +249,19 @@ QUALITY_WEIGHT=0.1
 
 # Distance
 DISTANCE_DECAY_FACTOR=0.1
+
+# OpenAI Integration (for semantic matching)
+OPENAI_API_KEY=your_openai_api_key_here
+EMBEDDING_MODEL_ID=text-embedding-3-small
+
+# Database (PostgreSQL with pgvector extension)
+DATABASE_URL=postgresql://user:pass@localhost:5432/database
+
+# Graph Database (optional for advanced relationships)
+GRAPH_DB_TYPE=neo4j  # Options: "tigergraph" or "neo4j"
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=your_password
 ```
 
 ## Data Models

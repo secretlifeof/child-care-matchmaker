@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api.middleware import LoggingMiddleware
-from .api.routes import matches
+from .api.routes import matches, semantic
 from .database import close_database_manager, get_database_manager
 from .services.graph import close_global_client, get_graph_client
 from .services.graph.factory import GraphClientFactory
@@ -57,6 +57,21 @@ async def lifespan(app: FastAPI):
         logger.log_error(f"Failed to initialize graph database: {e}")
         logger.log_warning("Graph features will be disabled")
 
+    # Initialize semantic matching embeddings if OpenAI key is available
+    try:
+        openai_api_key = os.getenv("OPENAI_API_KEY")
+        if openai_api_key:
+            from .services.semantic_matching import SemanticMatchingService
+            db_manager = await get_database_manager()
+            semantic_service = SemanticMatchingService(db_manager.pool, openai_api_key)
+            await semantic_service._ensure_embeddings_exist()
+            logger.log_info("Semantic matching embeddings ready")
+        else:
+            logger.log_warning("OpenAI API key not configured, semantic matching disabled")
+    except Exception as e:
+        logger.log_error(f"Failed to initialize semantic matching: {e}")
+        logger.log_warning("Semantic matching features will be disabled")
+
     yield
 
     # Shutdown
@@ -87,6 +102,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(matches.router)
+app.include_router(semantic.router)
 
 
 @app.get("/")
