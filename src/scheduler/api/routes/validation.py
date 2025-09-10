@@ -4,7 +4,8 @@ Schedule validation routes
 
 import logging
 from datetime import datetime
-from fastapi import APIRouter, HTTPException, Depends
+
+from fastapi import APIRouter, Depends, HTTPException
 
 from ...models import ScheduleValidationRequest, ScheduleValidationResponse
 from ...scheduler import ScheduleOptimizer

@@ -15,11 +15,11 @@ from .config import settings
 
 def setup_logging():
     """Setup structured logging configuration"""
-    
+
     # Create logs directory if it doesn't exist
     log_dir = Path("logs")
     log_dir.mkdir(exist_ok=True)
-    
+
     # Configure standard logging
     logging_config = {
         "version": 1,
@@ -140,10 +140,10 @@ def setup_logging():
             }
         }
     }
-    
+
     # Apply logging configuration
     logging.config.dictConfig(logging_config)
-    
+
     # Configure structlog for structured logging
     structlog.configure(
         processors=[
@@ -162,7 +162,7 @@ def setup_logging():
         wrapper_class=structlog.stdlib.BoundLogger,
         cache_logger_on_first_use=True,
     )
-    
+
     # Log startup message
     logger = logging.getLogger("main")
     logger.info(f"Logging configured - Debug: {settings.DEBUG}")
@@ -170,11 +170,11 @@ def setup_logging():
 
 class PerformanceLogger:
     """Performance logging utility for tracking optimization metrics"""
-    
+
     def __init__(self, logger_name: str = "performance"):
         self.logger = logging.getLogger(logger_name)
         self.structured_logger = structlog.get_logger(logger_name)
-    
+
     def log_optimization_start(self, center_id: str, staff_count: int, group_count: int, week_date: str):
         """Log optimization start"""
         self.structured_logger.info(
@@ -185,7 +185,7 @@ class PerformanceLogger:
             week_date=week_date,
             timestamp=datetime.now().isoformat()
         )
-    
+
     def log_optimization_result(
         self,
         center_id: str,
@@ -206,7 +206,7 @@ class PerformanceLogger:
             conflict_count=conflict_count,
             timestamp=datetime.now().isoformat()
         )
-    
+
     def log_constraint_violation(
         self,
         constraint_type: str,
@@ -225,7 +225,7 @@ class PerformanceLogger:
             group_id=group_id,
             timestamp=datetime.now().isoformat()
         )
-    
+
     def log_cache_operation(self, operation: str, key: str, success: bool, duration: float = None):
         """Log cache operation"""
         self.structured_logger.debug(
@@ -236,7 +236,7 @@ class PerformanceLogger:
             duration_ms=duration * 1000 if duration else None,
             timestamp=datetime.now().isoformat()
         )
-    
+
     def log_api_request(
         self,
         endpoint: str,
@@ -261,11 +261,11 @@ class PerformanceLogger:
 
 class SolverLogger:
     """Specialized logger for OR-Tools solver operations"""
-    
+
     def __init__(self):
         self.logger = logging.getLogger("solver")
         self.structured_logger = structlog.get_logger("solver")
-    
+
     def log_model_creation(self, variables_count: int, constraints_count: int):
         """Log model creation statistics"""
         self.structured_logger.info(
@@ -274,7 +274,7 @@ class SolverLogger:
             constraints_count=constraints_count,
             timestamp=datetime.now().isoformat()
         )
-    
+
     def log_solver_progress(self, iteration: int, objective_value: float, time_elapsed: float):
         """Log solver progress"""
         self.structured_logger.debug(
@@ -284,7 +284,7 @@ class SolverLogger:
             time_elapsed_seconds=time_elapsed,
             timestamp=datetime.now().isoformat()
         )
-    
+
     def log_constraint_added(self, constraint_type: str, count: int):
         """Log constraint addition"""
         self.structured_logger.debug(
@@ -293,7 +293,7 @@ class SolverLogger:
             count=count,
             timestamp=datetime.now().isoformat()
         )
-    
+
     def log_infeasibility_analysis(self, conflicting_constraints: list):
         """Log infeasibility analysis results"""
         self.structured_logger.warning(
@@ -305,24 +305,24 @@ class SolverLogger:
 
 class RequestLogger:
     """Logger for API request/response tracking"""
-    
+
     def __init__(self):
         self.logger = logging.getLogger("requests")
         self.performance_logger = PerformanceLogger("requests")
-    
+
     async def log_request(self, request, call_next):
         """Middleware for logging requests"""
         start_time = datetime.now()
-        
+
         # Log request start
         self.logger.info(f"Request started: {request.method} {request.url.path}")
-        
+
         # Process request
         response = await call_next(request)
-        
+
         # Calculate duration
         duration = (datetime.now() - start_time).total_seconds()
-        
+
         # Log request completion
         self.performance_logger.log_api_request(
             endpoint=request.url.path,
@@ -330,7 +330,7 @@ class RequestLogger:
             status_code=response.status_code,
             duration=duration
         )
-        
+
         # Log response
         if response.status_code >= 400:
             self.logger.warning(
@@ -342,7 +342,7 @@ class RequestLogger:
                 f"Request completed: {request.method} {request.url.path} "
                 f"-> {response.status_code} in {duration:.3f}s"
             )
-        
+
         return response
 
 

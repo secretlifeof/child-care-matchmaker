@@ -15,7 +15,7 @@ This module contains middleware for request/response processing:
 __all__ = [
     # Will be implemented
     # "LoggingMiddleware",
-    # "CORSMiddleware", 
+    # "CORSMiddleware",
     # "RateLimitingMiddleware",
     # "AuthenticationMiddleware",
     # "ErrorHandlingMiddleware"
@@ -28,7 +28,7 @@ MIDDLEWARE_VERSION = "1.0.0"
 AVAILABLE_MIDDLEWARE = [
     # "logging",
     # "cors",
-    # "rate_limiting", 
+    # "rate_limiting",
     # "authentication",
     # "error_handling"
 ]

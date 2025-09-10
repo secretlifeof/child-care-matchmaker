@@ -1,46 +1,46 @@
 """TigerGraph client implementation."""
 
-import logging
-from typing import Dict, List, Optional, Any
 import asyncio
+import logging
 from concurrent.futures import ThreadPoolExecutor
+from typing import Any
 
 try:
     import pyTigerGraph as tg
 except ImportError:
     tg = None
 
-from .base import GraphClient, FeatureMatchResult, GraphNode, GraphEdge
+from .base import FeatureMatchResult, GraphClient
 
 logger = logging.getLogger(__name__)
 
 
 class TigerGraphClient(GraphClient):
     """TigerGraph implementation of GraphClient interface."""
-    
+
     def __init__(
-        self, 
-        host: str, 
-        username: str, 
-        password: str, 
+        self,
+        host: str,
+        username: str,
+        password: str,
         graph_name: str = "childcare",
         version: str = "3.9.0"
     ):
         super().__init__()
-        
+
         if tg is None:
             raise ImportError("pyTigerGraph is required for TigerGraph client. Install with: pip install pyTigerGraph")
-        
+
         self.host = host
         self.username = username
         self.password = password
         self.graph_name = graph_name
         self.version = version
-        
+
         self.conn = None
         self._token = None
         self._executor = ThreadPoolExecutor(max_workers=4)
-        
+
     async def connect(self) -> bool:
         """Establish connection to TigerGraph."""
         try:
@@ -49,44 +49,44 @@ class TigerGraphClient(GraphClient):
                 self._executor,
                 self._create_connection
             )
-            
+
             # Get authentication token
             self._token = await loop.run_in_executor(
                 self._executor,
                 self.conn.getToken
             )
-            
+
             self.connected = True
             logger.info(f"Connected to TigerGraph at {self.host}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to connect to TigerGraph: {e}")
             self.connected = False
             return False
-    
+
     def _create_connection(self):
         """Create TigerGraph connection (blocking operation)."""
         return tg.TigerGraphConnection(
             host=self.host,
-            username=self.username, 
+            username=self.username,
             password=self.password,
             graphname=self.graph_name,
             version=self.version
         )
-    
+
     async def disconnect(self):
         """Close TigerGraph connection."""
         if self._executor:
             self._executor.shutdown(wait=True)
         self.connected = False
         logger.info("Disconnected from TigerGraph")
-    
+
     async def health_check(self) -> bool:
         """Check TigerGraph health."""
         if not self.conn:
             return False
-            
+
         try:
             loop = asyncio.get_event_loop()
             # Simple query to test connection
@@ -97,13 +97,13 @@ class TigerGraphClient(GraphClient):
             return True
         except:
             return False
-    
+
     async def create_center_node(self, center_id: str, **properties) -> bool:
         """Create center node in TigerGraph."""
         if not self.conn:
             logger.error("Not connected to TigerGraph")
             return False
-        
+
         try:
             vertex_data = {
                 "id": center_id,
@@ -112,89 +112,89 @@ class TigerGraphClient(GraphClient):
                 "lon": properties.get("lon"),
                 "h3_9": properties.get("h3_9")
             }
-            
+
             loop = asyncio.get_event_loop()
             result = await loop.run_in_executor(
                 self._executor,
                 lambda: self.conn.upsertVertex("Center", center_id, vertex_data)
             )
-            
+
             logger.debug(f"Created center node: {center_id}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Error creating center node {center_id}: {e}")
             return False
-    
+
     async def create_parent_node(self, parent_id: str, **properties) -> bool:
         """Create parent node in TigerGraph."""
         if not self.conn:
             logger.error("Not connected to TigerGraph")
             return False
-        
+
         try:
             vertex_data = {
                 "id": parent_id,
                 "home_lat": properties.get("home_lat"),
                 "home_lon": properties.get("home_lon")
             }
-            
-            loop = asyncio.get_event_loop() 
+
+            loop = asyncio.get_event_loop()
             result = await loop.run_in_executor(
                 self._executor,
                 lambda: self.conn.upsertVertex("Parent", parent_id, vertex_data)
             )
-            
+
             logger.debug(f"Created parent node: {parent_id}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Error creating parent node {parent_id}: {e}")
             return False
-    
+
     async def create_feature_node(self, feature_key: str, category: str, **properties) -> bool:
-        """Create feature node in TigerGraph.""" 
+        """Create feature node in TigerGraph."""
         if not self.conn:
             logger.error("Not connected to TigerGraph")
             return False
-        
+
         try:
             vertex_data = {
                 "key": feature_key,
                 "category": category,
                 **properties
             }
-            
+
             loop = asyncio.get_event_loop()
             result = await loop.run_in_executor(
                 self._executor,
                 lambda: self.conn.upsertVertex("Feature", feature_key, vertex_data)
             )
-            
+
             logger.debug(f"Created feature node: {feature_key}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Error creating feature node {feature_key}: {e}")
             return False
-    
+
     async def create_has_feature_edge(
         self,
         center_id: str,
-        feature_key: str, 
+        feature_key: str,
         confidence: float = 1.0,
         source: str = "extraction",
-        raw_phrase: Optional[str] = None,
-        value_bool: Optional[bool] = None,
-        value_num: Optional[float] = None,
-        unit: Optional[str] = None,
+        raw_phrase: str | None = None,
+        value_bool: bool | None = None,
+        value_num: float | None = None,
+        unit: str | None = None,
         **properties
     ) -> bool:
         """Create HAS_FEATURE edge in TigerGraph."""
         if not self.conn:
-            logger.error("Not connected to TigerGraph") 
+            logger.error("Not connected to TigerGraph")
             return False
-        
+
         try:
             edge_data = {
                 "confidence": confidence,
@@ -205,37 +205,37 @@ class TigerGraphClient(GraphClient):
                 "unit": unit or "",
                 **properties
             }
-            
+
             loop = asyncio.get_event_loop()
             result = await loop.run_in_executor(
                 self._executor,
                 lambda: self.conn.upsertEdge("Center", center_id, "HAS_FEATURE", "Feature", feature_key, edge_data)
             )
-            
+
             logger.debug(f"Created HAS_FEATURE edge: {center_id} -> {feature_key}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Error creating HAS_FEATURE edge {center_id}->{feature_key}: {e}")
             return False
-    
+
     async def create_wants_feature_edge(
         self,
         parent_id: str,
         feature_key: str,
         preference: str,
         confidence: float,
-        value_bool: Optional[bool] = None,
-        value_num: Optional[float] = None, 
-        value_text: Optional[str] = None,
-        unit: Optional[str] = None,
+        value_bool: bool | None = None,
+        value_num: float | None = None,
+        value_text: str | None = None,
+        unit: str | None = None,
         **properties
     ) -> bool:
         """Create WANTS edge in TigerGraph."""
         if not self.conn:
             logger.error("Not connected to TigerGraph")
             return False
-        
+
         try:
             edge_data = {
                 "preference": preference,
@@ -246,33 +246,33 @@ class TigerGraphClient(GraphClient):
                 "confidence": confidence,
                 **properties
             }
-            
+
             loop = asyncio.get_event_loop()
             result = await loop.run_in_executor(
                 self._executor,
                 lambda: self.conn.upsertEdge("Parent", parent_id, "WANTS", "Feature", feature_key, edge_data)
             )
-            
+
             logger.debug(f"Created WANTS edge: {parent_id} -> {feature_key}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Error creating WANTS edge {parent_id}->{feature_key}: {e}")
             return False
-    
+
     async def query_feature_matches(
         self,
         parent_id: str,
-        candidate_center_ids: List[str]
-    ) -> List[FeatureMatchResult]:
+        candidate_center_ids: list[str]
+    ) -> list[FeatureMatchResult]:
         """Query feature matches using TigerGraph."""
         if not self.conn:
             logger.error("Not connected to TigerGraph")
             return []
-        
+
         try:
             loop = asyncio.get_event_loop()
-            
+
             # Run installed query for feature matching
             result = await loop.run_in_executor(
                 self._executor,
@@ -284,7 +284,7 @@ class TigerGraphClient(GraphClient):
                     }
                 )
             )
-            
+
             matches = []
             for item in result:
                 matches.append(FeatureMatchResult(
@@ -298,27 +298,27 @@ class TigerGraphClient(GraphClient):
                     parent_value=item.get("parent_value"),
                     similarity_score=item.get("similarity_score", 1.0)
                 ))
-            
+
             logger.debug(f"Found {len(matches)} feature matches for parent {parent_id}")
             return matches
-            
+
         except Exception as e:
             logger.error(f"Error querying feature matches for parent {parent_id}: {e}")
             return []
-    
+
     async def query_centers_with_feature(
-        self, 
+        self,
         feature_key: str,
-        value_filter: Optional[Dict[str, Any]] = None
-    ) -> List[str]:
+        value_filter: dict[str, Any] | None = None
+    ) -> list[str]:
         """Find centers with specific feature."""
         if not self.conn:
             logger.error("Not connected to TigerGraph")
             return []
-        
+
         try:
             loop = asyncio.get_event_loop()
-            
+
             result = await loop.run_in_executor(
                 self._executor,
                 lambda: self.conn.runInstalledQuery(
@@ -329,24 +329,24 @@ class TigerGraphClient(GraphClient):
                     }
                 )
             )
-            
+
             center_ids = [item.get("center_id") for item in result]
             logger.debug(f"Found {len(center_ids)} centers with feature {feature_key}")
             return center_ids
-            
+
         except Exception as e:
             logger.error(f"Error querying centers with feature {feature_key}: {e}")
             return []
-    
-    async def get_center_features(self, center_id: str) -> Dict[str, Any]:
+
+    async def get_center_features(self, center_id: str) -> dict[str, Any]:
         """Get all features for a center."""
         if not self.conn:
             logger.error("Not connected to TigerGraph")
             return {}
-        
+
         try:
             loop = asyncio.get_event_loop()
-            
+
             result = await loop.run_in_executor(
                 self._executor,
                 lambda: self.conn.runInstalledQuery(
@@ -354,7 +354,7 @@ class TigerGraphClient(GraphClient):
                     {"center_id": center_id}
                 )
             )
-            
+
             features = {}
             for item in result:
                 feature_key = item.get("feature_key")
@@ -367,31 +367,31 @@ class TigerGraphClient(GraphClient):
                         "unit": item.get("unit", ""),
                         "raw": item.get("raw", "")
                     }
-            
+
             logger.debug(f"Retrieved {len(features)} features for center {center_id}")
             return features
-            
+
         except Exception as e:
             logger.error(f"Error getting features for center {center_id}: {e}")
             return {}
-    
-    async def get_parent_preferences(self, parent_id: str) -> Dict[str, Any]:
+
+    async def get_parent_preferences(self, parent_id: str) -> dict[str, Any]:
         """Get all preferences for a parent."""
         if not self.conn:
             logger.error("Not connected to TigerGraph")
             return {}
-        
+
         try:
             loop = asyncio.get_event_loop()
-            
+
             result = await loop.run_in_executor(
                 self._executor,
                 lambda: self.conn.runInstalledQuery(
-                    "get_parent_preferences", 
+                    "get_parent_preferences",
                     {"parent_id": parent_id}
                 )
             )
-            
+
             preferences = {}
             for item in result:
                 feature_key = item.get("feature_key")
@@ -404,23 +404,23 @@ class TigerGraphClient(GraphClient):
                         "value_text": item.get("value_text", ""),
                         "unit": item.get("unit", "")
                     }
-            
+
             logger.debug(f"Retrieved {len(preferences)} preferences for parent {parent_id}")
             return preferences
-            
+
         except Exception as e:
             logger.error(f"Error getting preferences for parent {parent_id}: {e}")
             return {}
-    
+
     async def delete_center_features(self, center_id: str) -> bool:
         """Delete all features for a center."""
         if not self.conn:
             logger.error("Not connected to TigerGraph")
             return False
-        
+
         try:
             loop = asyncio.get_event_loop()
-            
+
             result = await loop.run_in_executor(
                 self._executor,
                 lambda: self.conn.runInstalledQuery(
@@ -428,23 +428,23 @@ class TigerGraphClient(GraphClient):
                     {"center_id": center_id}
                 )
             )
-            
+
             logger.debug(f"Deleted features for center {center_id}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Error deleting features for center {center_id}: {e}")
             return False
-    
+
     async def delete_parent_preferences(self, parent_id: str) -> bool:
         """Delete all preferences for a parent."""
         if not self.conn:
             logger.error("Not connected to TigerGraph")
             return False
-        
+
         try:
             loop = asyncio.get_event_loop()
-            
+
             result = await loop.run_in_executor(
                 self._executor,
                 lambda: self.conn.runInstalledQuery(
@@ -452,34 +452,34 @@ class TigerGraphClient(GraphClient):
                     {"parent_id": parent_id}
                 )
             )
-            
+
             logger.debug(f"Deleted preferences for parent {parent_id}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Error deleting preferences for parent {parent_id}: {e}")
             return False
-    
-    async def execute_raw_query(self, query: str, parameters: Dict[str, Any] = None) -> Any:
+
+    async def execute_raw_query(self, query: str, parameters: dict[str, Any] = None) -> Any:
         """Execute raw GSQL query."""
         if not self.conn:
             logger.error("Not connected to TigerGraph")
             return None
-        
+
         try:
             loop = asyncio.get_event_loop()
-            
+
             result = await loop.run_in_executor(
                 self._executor,
                 lambda: self.conn.gsql(query)
             )
-            
+
             return result
-            
+
         except Exception as e:
             logger.error(f"Error executing raw query: {e}")
             return None
-    
+
     async def install_required_queries(self):
         """Install required GSQL queries for matching operations."""
         queries = {
@@ -497,7 +497,7 @@ class TigerGraphClient(GraphClient):
                 PRINT @@results;
             }
             """,
-            
+
             "centers_with_feature": """
             CREATE QUERY centers_with_feature(STRING feature_key, MAP<STRING,STRING> value_filter) FOR GRAPH childcare {
                 centers = SELECT c FROM Center:c -(HAS_FEATURE)- Feature:f
@@ -505,7 +505,7 @@ class TigerGraphClient(GraphClient):
                 PRINT centers[centers.id AS center_id];
             }
             """,
-            
+
             "get_center_features": """
             CREATE QUERY get_center_features(STRING center_id) FOR GRAPH childcare {
                 features = SELECT f, e FROM Center:c -(HAS_FEATURE:e)- Feature:f
@@ -515,7 +515,7 @@ class TigerGraphClient(GraphClient):
                 PRINT @@results;
             }
             """,
-            
+
             "get_parent_preferences": """
             CREATE QUERY get_parent_preferences(STRING parent_id) FOR GRAPH childcare {
                 preferences = SELECT f, e FROM Parent:p -(WANTS:e)- Feature:f
@@ -525,43 +525,43 @@ class TigerGraphClient(GraphClient):
                 PRINT @@results;
             }
             """,
-            
+
             "delete_center_features": """
             CREATE QUERY delete_center_features(STRING center_id) FOR GRAPH childcare {
                 DELETE e FROM Center:c -(HAS_FEATURE:e)- Feature:f WHERE c.id == center_id;
             }
             """,
-            
+
             "delete_parent_preferences": """
             CREATE QUERY delete_parent_preferences(STRING parent_id) FOR GRAPH childcare {
                 DELETE e FROM Parent:p -(WANTS:e)- Feature:f WHERE p.id == parent_id;
             }
             """
         }
-        
+
         if not self.conn:
             logger.error("Not connected to TigerGraph")
             return False
-        
+
         try:
             loop = asyncio.get_event_loop()
-            
+
             for query_name, query_body in queries.items():
                 # Install the query
                 await loop.run_in_executor(
                     self._executor,
                     lambda: self.conn.gsql(query_body)
                 )
-                
+
                 await loop.run_in_executor(
                     self._executor,
                     lambda: self.conn.gsql(f"INSTALL QUERY {query_name}")
                 )
-                
+
                 logger.info(f"Installed TigerGraph query: {query_name}")
-            
+
             return True
-            
+
         except Exception as e:
             logger.error(f"Error installing queries: {e}")
             return False

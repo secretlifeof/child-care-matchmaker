@@ -2,23 +2,21 @@
 Utility helper functions for the scheduler service
 """
 
-import re
+import calendar
+import csv
 import hashlib
 import json
 import logging
-from datetime import datetime, date, time, timedelta
-from typing import Any, Dict, List, Optional, Union, Tuple
-from uuid import UUID
-import calendar
-from datetime import date, datetime, timedelta, time
-from dataclasses import dataclass
-import json
-import csv
-from io import StringIO
+import re
 from calendar import monthrange
+from dataclasses import dataclass
+from datetime import date, datetime, time, timedelta
+from io import StringIO
+from typing import Any
+from uuid import UUID
 
-from ..models import *
 from ..config import get_settings
+from ..models import *
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -94,7 +92,7 @@ def format_percentage(value: float, decimal_places: int = 1) -> str:
     return f"{value * 100:.{decimal_places}f}%"
 
 
-def get_week_dates(start_date: date) -> List[date]:
+def get_week_dates(start_date: date) -> list[date]:
     """Get all dates in a week starting from given date"""
     dates = []
     for i in range(7):
@@ -178,7 +176,7 @@ def calculate_staff_child_ratio(staff_count: int, child_count: int) -> str:
     return f"{simplified_staff}:{simplified_children}"
 
 
-def parse_time_range(time_range_str: str) -> Tuple[Optional[time], Optional[time]]:
+def parse_time_range(time_range_str: str) -> tuple[time | None, time | None]:
     """Parse time range string like '09:00-17:00' to time objects"""
     try:
         if "-" not in time_range_str:
@@ -212,17 +210,17 @@ def get_business_days_in_month(year: int, month: int) -> int:
     return business_days
 
 
-def chunk_list(lst: List[Any], chunk_size: int) -> List[List[Any]]:
+def chunk_list(lst: list[Any], chunk_size: int) -> list[list[Any]]:
     """Split a list into chunks of specified size"""
     return [lst[i : i + chunk_size] for i in range(0, len(lst), chunk_size)]
 
 
-def flatten_list(nested_list: List[List[Any]]) -> List[Any]:
+def flatten_list(nested_list: list[list[Any]]) -> list[Any]:
     """Flatten a nested list"""
     return [item for sublist in nested_list for item in sublist]
 
 
-def deep_merge_dicts(dict1: Dict, dict2: Dict) -> Dict:
+def deep_merge_dicts(dict1: dict, dict2: dict) -> dict:
     """Deep merge two dictionaries"""
     result = dict1.copy()
 
@@ -275,7 +273,7 @@ def calculate_priority_score(
 
 def validate_priority_weights(
     seniority_weight: float, performance_weight: float, flexibility_score: float
-) -> List[str]:
+) -> list[str]:
     """Validate priority weight values and return any errors"""
 
     errors = []
@@ -309,7 +307,7 @@ def format_money(amount: float, currency: str = "$") -> str:
     return f"{currency}{amount:,.2f}"
 
 
-def parse_csv_line(line: str, delimiter: str = ",") -> List[str]:
+def parse_csv_line(line: str, delimiter: str = ",") -> list[str]:
     """Parse CSV line handling quoted fields"""
     import csv
     import io
@@ -333,7 +331,7 @@ def generate_color_for_staff(staff_id: str) -> str:
 
 
 def calculate_schedule_density(
-    schedule: List[Dict], total_possible_hours: int
+    schedule: list[dict], total_possible_hours: int
 ) -> float:
     """Calculate how densely packed a schedule is"""
     if total_possible_hours == 0:
@@ -343,7 +341,7 @@ def calculate_schedule_density(
     return total_scheduled_hours / total_possible_hours
 
 
-def find_schedule_gaps(shifts: List[Dict], date_obj: date) -> List[Tuple[time, time]]:
+def find_schedule_gaps(shifts: list[dict], date_obj: date) -> list[tuple[time, time]]:
     """Find gaps in a day's schedule"""
     if not shifts:
         return []
@@ -370,7 +368,7 @@ def find_schedule_gaps(shifts: List[Dict], date_obj: date) -> List[Tuple[time, t
     return gaps
 
 
-def suggest_shift_consolidation(shifts: List[Dict]) -> List[str]:
+def suggest_shift_consolidation(shifts: list[dict]) -> list[str]:
     """Suggest ways to consolidate fragmented shifts"""
     suggestions = []
 
@@ -409,7 +407,7 @@ def suggest_shift_consolidation(shifts: List[Dict]) -> List[str]:
     return suggestions
 
 
-def calculate_workload_balance(staff_hours: Dict[str, float]) -> Dict[str, float]:
+def calculate_workload_balance(staff_hours: dict[str, float]) -> dict[str, float]:
     """Calculate workload balance metrics"""
     if not staff_hours:
         return {}
@@ -489,15 +487,15 @@ class ScheduleTemplate:
 
     name: str
     description: str
-    pattern: Dict[str, Any]
-    recommended_for: List[str]
+    pattern: dict[str, Any]
+    recommended_for: list[str]
 
 
 class DateRangeHelper:
     """Helper utilities for date range operations"""
 
     @staticmethod
-    def get_week_dates(year: int, week: int) -> Tuple[date, date]:
+    def get_week_dates(year: int, week: int) -> tuple[date, date]:
         """Get start and end dates for a specific week"""
 
         # Get the first day of the year
@@ -514,7 +512,7 @@ class DateRangeHelper:
         return week_start, week_end
 
     @staticmethod
-    def get_month_dates(year: int, month: int) -> Tuple[date, date]:
+    def get_month_dates(year: int, month: int) -> tuple[date, date]:
         """Get start and end dates for a specific month"""
 
         start_date = date(year, month, 1)
@@ -524,7 +522,7 @@ class DateRangeHelper:
         return start_date, end_date
 
     @staticmethod
-    def get_quarter_dates(year: int, quarter: int) -> Tuple[date, date]:
+    def get_quarter_dates(year: int, quarter: int) -> tuple[date, date]:
         """Get start and end dates for a specific quarter"""
 
         if not 1 <= quarter <= 4:
@@ -542,7 +540,7 @@ class DateRangeHelper:
     @staticmethod
     def split_date_range(
         start_date: date, end_date: date, chunk_size: int
-    ) -> List[Tuple[date, date]]:
+    ) -> list[tuple[date, date]]:
         """Split a date range into smaller chunks"""
 
         chunks = []
@@ -556,7 +554,7 @@ class DateRangeHelper:
         return chunks
 
     @staticmethod
-    def get_business_days(start_date: date, end_date: date) -> List[date]:
+    def get_business_days(start_date: date, end_date: date) -> list[date]:
         """Get list of business days (Monday-Friday) in date range"""
 
         business_days = []
@@ -570,7 +568,7 @@ class DateRangeHelper:
         return business_days
 
     @staticmethod
-    def get_weekends(start_date: date, end_date: date) -> List[date]:
+    def get_weekends(start_date: date, end_date: date) -> list[date]:
         """Get list of weekend days in date range"""
 
         weekends = []
@@ -589,8 +587,8 @@ class SchedulePatternGenerator:
 
     @staticmethod
     def create_shift_rotation(
-        staff_ids: List[UUID], start_date: date, days: int, shifts_per_day: int = 3
-    ) -> List[Dict[str, Any]]:
+        staff_ids: list[UUID], start_date: date, days: int, shifts_per_day: int = 3
+    ) -> list[dict[str, Any]]:
         """Create a rotating shift pattern"""
 
         patterns = []
@@ -674,8 +672,8 @@ class ScheduleAnalyzer:
 
     @staticmethod
     def analyze_coverage(
-        schedule: List[ScheduledShift], requirements: List[StaffingRequirement]
-    ) -> Dict[str, Any]:
+        schedule: list[ScheduledShift], requirements: list[StaffingRequirement]
+    ) -> dict[str, Any]:
         """Analyze schedule coverage against requirements"""
 
         coverage_analysis = {
@@ -741,8 +739,8 @@ class ScheduleAnalyzer:
 
     @staticmethod
     def analyze_staff_workload(
-        schedule: List[ScheduledShift], staff: List[Staff]
-    ) -> Dict[UUID, Dict[str, Any]]:
+        schedule: list[ScheduledShift], staff: list[Staff]
+    ) -> dict[UUID, dict[str, Any]]:
         """Analyze workload distribution across staff"""
 
         staff_analysis = {}
@@ -817,8 +815,8 @@ class ScheduleAnalyzer:
 
     @staticmethod
     def identify_schedule_conflicts(
-        schedule: List[ScheduledShift],
-    ) -> List[Dict[str, Any]]:
+        schedule: list[ScheduledShift],
+    ) -> list[dict[str, Any]]:
         """Identify conflicts in the schedule"""
 
         conflicts = []
@@ -872,9 +870,9 @@ class ScheduleExportHelper:
 
     @staticmethod
     def export_to_csv(
-        schedule: List[ScheduledShift],
-        staff: List[Staff] = None,
-        groups: List[Group] = None,
+        schedule: list[ScheduledShift],
+        staff: list[Staff] = None,
+        groups: list[Group] = None,
     ) -> str:
         """Export schedule to CSV format"""
 
@@ -929,9 +927,9 @@ class ScheduleExportHelper:
 
     @staticmethod
     def export_to_calendar_json(
-        schedule: List[ScheduledShift],
-        staff: List[Staff] = None,
-        groups: List[Group] = None,
+        schedule: list[ScheduledShift],
+        staff: list[Staff] = None,
+        groups: list[Group] = None,
     ) -> str:
         """Export schedule to calendar JSON format"""
 
@@ -988,7 +986,7 @@ class ScheduleImportHelper:
     """Helper for importing schedules from various formats"""
 
     @staticmethod
-    def import_from_csv(csv_content: str) -> Tuple[List[ScheduledShift], List[str]]:
+    def import_from_csv(csv_content: str) -> tuple[list[ScheduledShift], list[str]]:
         """Import schedule from CSV content"""
 
         shifts = []
@@ -1023,7 +1021,7 @@ class ScheduleValidationHelper:
     """Helper for schedule validation operations"""
 
     @staticmethod
-    def validate_date_range(start_date: date, end_date: date) -> List[str]:
+    def validate_date_range(start_date: date, end_date: date) -> list[str]:
         """Validate a date range"""
 
         errors = []
@@ -1047,7 +1045,7 @@ class ScheduleValidationHelper:
         return errors
 
     @staticmethod
-    def validate_staff_data(staff: List[Staff]) -> List[str]:
+    def validate_staff_data(staff: list[Staff]) -> list[str]:
         """Validate staff data"""
 
         errors = []
@@ -1098,7 +1096,7 @@ class ScheduleValidationHelper:
         return errors
 
     @staticmethod
-    def validate_requirements(requirements: List[StaffingRequirement]) -> List[str]:
+    def validate_requirements(requirements: list[StaffingRequirement]) -> list[str]:
         """Validate staffing requirements"""
 
         errors = []
@@ -1128,7 +1126,7 @@ class ScheduleOptimizationHelper:
     @staticmethod
     def estimate_solve_time(
         total_days: int, staff_count: int, groups_count: int, requirements_count: int
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Estimate solve time and complexity"""
 
         # Calculate problem size metrics
@@ -1183,7 +1181,7 @@ class ScheduleOptimizationHelper:
     @staticmethod
     def get_optimization_config_recommendations(
         total_days: int, staff_count: int, problem_type: str = "general"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Get optimization configuration recommendations"""
 
         base_time = 300  # 5 minutes
@@ -1234,7 +1232,7 @@ class ScheduleOptimizationHelper:
 
 
 def create_quick_weekly_schedule(
-    center_id: UUID, week_start: date, staff_names: List[str], group_names: List[str]
+    center_id: UUID, week_start: date, staff_names: list[str], group_names: list[str]
 ) -> EnhancedScheduleGenerationRequest:
     """Quickly create a basic weekly schedule request"""
 
@@ -1295,7 +1293,7 @@ def create_quick_weekly_schedule(
     )
 
 
-def validate_schedule_request(request: EnhancedScheduleGenerationRequest) -> List[str]:
+def validate_schedule_request(request: EnhancedScheduleGenerationRequest) -> list[str]:
     """Validate a complete schedule request"""
 
     all_errors = []
@@ -1319,7 +1317,7 @@ def validate_schedule_request(request: EnhancedScheduleGenerationRequest) -> Lis
     return all_errors
 
 
-def get_schedule_summary(schedule: List[ScheduledShift]) -> Dict[str, Any]:
+def get_schedule_summary(schedule: list[ScheduledShift]) -> dict[str, Any]:
     """Get a summary of a schedule"""
 
     if not schedule:

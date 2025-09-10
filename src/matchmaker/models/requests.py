@@ -1,20 +1,22 @@
 """Request models with flexible parameters."""
 
-from typing import List, Optional, Dict, Any, Union
-from uuid import UUID
-from pydantic import BaseModel, Field
 from datetime import datetime
+from typing import Any
+from uuid import UUID
 
-from .base import MatchMode, Application, Center
+from pydantic import BaseModel, Field
+
+from .base import Application, Center, MatchMode
 
 
 class ScoringWeights(BaseModel):
     """Scoring weight configuration."""
-    preference_weight: float = Field(default=0.4, ge=0.0, le=1.0)
-    property_weight: float = Field(default=0.3, ge=0.0, le=1.0)
+    spatial_weight: float = Field(default=0.3, ge=0.0, le=1.0)  # Distance & route preferences
+    preference_weight: float = Field(default=0.4, ge=0.0, le=1.0)  # User preferences
+    quality_weight: float = Field(default=0.3, ge=0.0, le=1.0)  # Center quality
     availability_weight: float = Field(default=0.2, ge=0.0, le=1.0)
-    quality_weight: float = Field(default=0.1, ge=0.0, le=1.0)
-    distance_weight: float = Field(default=0.15, ge=0.0, le=1.0)
+    property_weight: float = Field(default=0.3, ge=0.0, le=1.0)
+    distance_weight: float = Field(default=0.15, ge=0.0, le=1.0)  # Deprecated, use spatial_weight
     sibling_bonus: float = Field(default=0.2, ge=0.0, le=1.0)
 
 
@@ -35,14 +37,14 @@ class ProgressiveLoadingConfig(BaseModel):
 
 class PolicySettings(BaseModel):
     """Policy and priority configuration."""
-    priority_tiers: Dict[str, int] = Field(default_factory=lambda: {
+    priority_tiers: dict[str, int] = Field(default_factory=lambda: {
         "sibling": 1000,
         "municipality": 800,
         "staff_children": 600,
         "low_income": 500,
         "special_needs": 300
     })
-    reserved_capacity: Dict[str, float] = Field(default_factory=lambda: {
+    reserved_capacity: dict[str, float] = Field(default_factory=lambda: {
         "sibling_reserved_pct": 0.1,
         "municipality_reserved_pct": 0.3
     })
@@ -106,26 +108,28 @@ class CenterValidation(BaseModel):
 class RecommendationRequest(BaseModel):
     """Request for recommendations."""
     # Core data - either inline or by reference
-    application: Optional[Application] = None
-    application_id: Optional[UUID] = None
-    centers: Optional[List[Center]] = None
-    
+    parent_id: UUID | None = None  # Primary identifier for database lookup
+    application: Application | None = None
+    application_id: UUID | None = None
+    centers: list[Center] | None = None
+
     # Recommendation parameters
-    top_k: int = Field(default=10, ge=1, le=100)
+    limit: int = Field(default=10, ge=1, le=100)  # Changed from top_k
+    top_k: int | None = None  # Deprecated, kept for backward compatibility
     include_full_centers: bool = Field(default=False)
     include_explanations: bool = Field(default=True)
     min_score_threshold: float = Field(default=0.1, ge=0.0, le=1.0)
-    
+
     # Override filters
-    force_center_ids: List[UUID] = Field(default_factory=list)
-    exclude_center_ids: List[UUID] = Field(default_factory=list)
-    max_distance_km: Optional[float] = Field(default=None, ge=0)
-    
+    force_center_ids: list[UUID] = Field(default_factory=list)
+    exclude_center_ids: list[UUID] = Field(default_factory=list)
+    max_distance_km: float | None = Field(default=10.0, ge=0)
+
     # Configuration
-    matching_config: Optional[MatchingConfig] = None
-    validation_rules: Optional[ValidationRules] = None
-    center_validation: Optional[CenterValidation] = None
-    
+    matching_config: MatchingConfig | None = None
+    validation_rules: ValidationRules | None = None
+    center_validation: CenterValidation | None = None
+
     def get_application_id(self) -> UUID:
         """Get the application ID from either source."""
         if self.application:
@@ -139,74 +143,74 @@ class RecommendationRequest(BaseModel):
 class AllocationRequest(BaseModel):
     """Request for global allocation."""
     # Core data
-    applications: Optional[List[Application]] = None
-    application_ids: Optional[List[UUID]] = None
-    centers: Optional[List[Center]] = None
-    center_ids: Optional[List[UUID]] = None
-    
+    applications: list[Application] | None = None
+    application_ids: list[UUID] | None = None
+    centers: list[Center] | None = None
+    center_ids: list[UUID] | None = None
+
     # Allocation parameters
     respect_capacity: bool = Field(default=True)
     prioritize_siblings: bool = Field(default=True)
     allow_partial_families: bool = Field(default=False)
     optimization_objective: str = Field(default="fairness")  # "efficiency" | "fairness" | "utilization"
-    
+
     # Solver parameters
     max_iterations: int = Field(default=1000, ge=100, le=10000)
     time_limit_seconds: int = Field(default=30, ge=1, le=300)
-    seed: Optional[int] = None
-    
+    seed: int | None = None
+
     # Configuration
-    matching_config: Optional[MatchingConfig] = None
-    validation_rules: Optional[ValidationRules] = None
+    matching_config: MatchingConfig | None = None
+    validation_rules: ValidationRules | None = None
 
 
 class WaitlistRequest(BaseModel):
     """Request for waitlist generation."""
     # Core data
     center_id: UUID
-    center: Optional[Center] = None
-    applications: Optional[List[Application]] = None
-    waiting_list_container_id: Optional[UUID] = None
-    
+    center: Center | None = None
+    applications: list[Application] | None = None
+    waiting_list_container_id: UUID | None = None
+
     # Waitlist parameters
     include_current_students: bool = Field(default=False)
     group_by_age: bool = Field(default=True)
     include_estimated_dates: bool = Field(default=True)
-    
+
     # Policy overrides
-    policy_overrides: Optional[Dict[str, Any]] = None
-    
+    policy_overrides: dict[str, Any] | None = None
+
     # Configuration
-    matching_config: Optional[MatchingConfig] = None
+    matching_config: MatchingConfig | None = None
 
 
 class BatchMatchRequest(BaseModel):
     """Request for batch matching operations."""
-    requests: List[Dict[str, Any]]
-    shared_centers: Optional[List[Center]] = None
-    shared_applications: Optional[List[Application]] = None
-    matching_config: Optional[MatchingConfig] = None
+    requests: list[dict[str, Any]]
+    shared_centers: list[Center] | None = None
+    shared_applications: list[Application] | None = None
+    matching_config: MatchingConfig | None = None
     parallel_processing: bool = Field(default=True)
 
 
 class MatchRequest(BaseModel):
     """Generic match request supporting all modes."""
     mode: MatchMode
-    
+
     # Universal data
-    applications: Optional[List[Application]] = None
-    application_ids: Optional[List[UUID]] = None
-    centers: Optional[List[Center]] = None
-    center_ids: Optional[List[UUID]] = None
-    
+    applications: list[Application] | None = None
+    application_ids: list[UUID] | None = None
+    centers: list[Center] | None = None
+    center_ids: list[UUID] | None = None
+
     # Mode-specific parameters
-    parameters: Dict[str, Any] = Field(default_factory=dict)
-    
+    parameters: dict[str, Any] = Field(default_factory=dict)
+
     # Configuration
-    matching_config: Optional[MatchingConfig] = None
-    validation_rules: Optional[ValidationRules] = None
-    
+    matching_config: MatchingConfig | None = None
+    validation_rules: ValidationRules | None = None
+
     # Request metadata
-    request_id: Optional[UUID] = None
+    request_id: UUID | None = None
     timestamp: datetime = Field(default_factory=datetime.utcnow)
-    client_info: Optional[Dict[str, str]] = None
+    client_info: dict[str, str] | None = None

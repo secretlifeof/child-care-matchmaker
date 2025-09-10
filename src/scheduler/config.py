@@ -3,12 +3,12 @@ Configuration settings for the Schedule Optimization Service
 """
 
 import os
-from typing import List, Dict, Any, Optional
-from pydantic import Field, validator
-from pydantic_settings import BaseSettings
-
 from datetime import time
 from enum import Enum
+from typing import Any
+
+from pydantic import Field, validator
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -156,12 +156,12 @@ class EnhancedSchedulerSettings(BaseSettings):
     DEBUG: bool = Field(default=False, env="DEBUG")
     LOG_LEVEL: str = Field(default="INFO", env="LOG_LEVEL")
     # DATABASE_URL: str = Field(env="DATABASE_URL")
-    
+
     # Authentication Settings
     ENABLE_API_KEY_AUTH: bool = Field(default=False, env="ENABLE_API_KEY_AUTH")
     REQUIRE_AUTH: bool = Field(default=False, env="REQUIRE_AUTH")
-    API_KEY: Optional[str] = Field(default=None, env="API_KEY")
-    
+    API_KEY: str | None = Field(default=None, env="API_KEY")
+
     # Maintenance Settings
     MAINTENANCE_MODE: bool = Field(default=False, env="MAINTENANCE_MODE")
     MAINTENANCE_MESSAGE: str = Field(default="System maintenance in progress", env="MAINTENANCE_MESSAGE")
@@ -271,8 +271,8 @@ class EnhancedSchedulerSettings(BaseSettings):
     CACHE_MAX_SIZE: int = Field(
         default=1000, env="CACHE_MAX_SIZE", description="Maximum cache entries"
     )
-    REDIS_URL: Optional[str] = Field(default=None, env="REDIS_URL")
-    MEMCACHED_SERVERS: List[str] = Field(
+    REDIS_URL: str | None = Field(default=None, env="REDIS_URL")
+    MEMCACHED_SERVERS: list[str] = Field(
         default=["localhost:11211"], env="MEMCACHED_SERVERS"
     )
 
@@ -357,19 +357,19 @@ class EnhancedSchedulerSettings(BaseSettings):
 
     # Integration Settings
     WEBHOOK_ENABLED: bool = Field(default=False, env="WEBHOOK_ENABLED")
-    WEBHOOK_URL: Optional[str] = Field(default=None, env="WEBHOOK_URL")
+    WEBHOOK_URL: str | None = Field(default=None, env="WEBHOOK_URL")
     EMAIL_NOTIFICATIONS_ENABLED: bool = Field(
         default=False, env="EMAIL_NOTIFICATIONS_ENABLED"
     )
     SLACK_NOTIFICATIONS_ENABLED: bool = Field(
         default=False, env="SLACK_NOTIFICATIONS_ENABLED"
     )
-    SLACK_WEBHOOK_URL: Optional[str] = Field(default=None, env="SLACK_WEBHOOK_URL")
+    SLACK_WEBHOOK_URL: str | None = Field(default=None, env="SLACK_WEBHOOK_URL")
 
     # Development/Testing
     ENABLE_TEST_MODE: bool = Field(default=False, env="ENABLE_TEST_MODE")
     MOCK_SOLVER_RESPONSES: bool = Field(default=False, env="MOCK_SOLVER_RESPONSES")
-    DEVELOPMENT_SEED: Optional[int] = Field(default=None, env="DEVELOPMENT_SEED")
+    DEVELOPMENT_SEED: int | None = Field(default=None, env="DEVELOPMENT_SEED")
 
     @validator("OPERATING_START_HOUR", "OPERATING_END_HOUR")
     def validate_operating_hours(cls, v):
@@ -414,7 +414,7 @@ class EnhancedSchedulerSettings(BaseSettings):
         return self.OPERATING_END_HOUR - self.OPERATING_START_HOUR
 
     @property
-    def optimization_weights(self) -> Dict[str, float]:
+    def optimization_weights(self) -> dict[str, float]:
         """Get optimization weights as dictionary"""
         return {
             "preference": self.PREFERENCE_WEIGHT,
@@ -432,7 +432,7 @@ class EnhancedSchedulerSettings(BaseSettings):
         )
 
     @property
-    def solver_config(self) -> Dict[str, Any]:
+    def solver_config(self) -> dict[str, Any]:
         """Get solver configuration dictionary"""
         return {
             "max_time": self.DEFAULT_SOLVER_TIME,
@@ -498,7 +498,7 @@ class ConfigValidator:
     """Validate configuration settings"""
 
     @staticmethod
-    def validate_solver_config(settings: EnhancedSchedulerSettings) -> List[str]:
+    def validate_solver_config(settings: EnhancedSchedulerSettings) -> list[str]:
         """Validate solver-related configuration"""
         issues = []
 
@@ -514,7 +514,7 @@ class ConfigValidator:
         return issues
 
     @staticmethod
-    def validate_business_rules(settings: EnhancedSchedulerSettings) -> List[str]:
+    def validate_business_rules(settings: EnhancedSchedulerSettings) -> list[str]:
         """Validate business rule configuration"""
         issues = []
 
@@ -530,7 +530,7 @@ class ConfigValidator:
         return issues
 
     @staticmethod
-    def validate_performance_config(settings: EnhancedSchedulerSettings) -> List[str]:
+    def validate_performance_config(settings: EnhancedSchedulerSettings) -> list[str]:
         """Validate performance-related configuration"""
         issues = []
 
@@ -546,7 +546,7 @@ class ConfigValidator:
         return issues
 
     @staticmethod
-    def validate_all(settings: EnhancedSchedulerSettings) -> Dict[str, List[str]]:
+    def validate_all(settings: EnhancedSchedulerSettings) -> dict[str, list[str]]:
         """Validate all configuration settings"""
         return {
             "solver": ConfigValidator.validate_solver_config(settings),
@@ -575,10 +575,10 @@ class ConfigFactory:
 
     @staticmethod
     def create_optimization_config(
-        goals: List[str] = None,
+        goals: list[str] = None,
         max_solver_time: int = None,
         strategy: OptimizationStrategy = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Create optimization configuration dictionary"""
 
         settings = get_settings()
@@ -596,7 +596,7 @@ class ConfigFactory:
         return config
 
     @staticmethod
-    def create_chunking_config(total_days: int) -> Dict[str, Any]:
+    def create_chunking_config(total_days: int) -> dict[str, Any]:
         """Create chunking configuration based on total days"""
 
         settings = get_settings()
@@ -618,7 +618,7 @@ class ConfigFactory:
         }
 
     @staticmethod
-    def create_validation_config(strict: bool = None) -> Dict[str, Any]:
+    def create_validation_config(strict: bool = None) -> dict[str, Any]:
         """Create validation configuration"""
 
         settings = get_settings()
@@ -643,7 +643,7 @@ def load_config_from_file(config_path: str) -> EnhancedSchedulerSettings:
     return EnhancedSchedulerSettings(_env_file=config_path)
 
 
-def validate_current_config() -> Dict[str, Any]:
+def validate_current_config() -> dict[str, Any]:
     """Validate the current configuration and return issues"""
 
     settings = get_settings()
@@ -666,7 +666,7 @@ def validate_current_config() -> Dict[str, Any]:
     }
 
 
-def get_runtime_config() -> Dict[str, Any]:
+def get_runtime_config() -> dict[str, Any]:
     """Get runtime configuration information"""
 
     settings = get_settings()

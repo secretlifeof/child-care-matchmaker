@@ -2,35 +2,25 @@
 Schedule generation and optimization API routes
 """
 
-import asyncio
 import logging
-from datetime import datetime, date, timedelta
-from typing import List, Optional
+from datetime import date, datetime, timedelta
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends, Query
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 
+from ...core.optimizer import ScheduleOptimizer
 from ...models import (
+    EnhancedScheduleGenerationRequest,
+    EnhancedScheduleResponse,
+    OptimizationGoal,
+    ScheduledShift,
     ScheduleGenerationRequest,
     ScheduleGenerationResponse,
     ScheduleValidationRequest,
     ScheduleValidationResponse,
-    ScheduledShift,
-    OptimizationGoal,
-    ScheduleConflict,
-    EnhancedScheduleGenerationRequest,
-    EnhancedScheduleResponse,
-    CenterConfiguration,
-    Staff,
-    Group,
-    StaffingRequirement,
-    ScheduleConstraint,
-    EnhancedOptimizationConfig,
 )
-from ...core.optimizer import ScheduleOptimizer
-from ...utils.profiler import PerformanceProfiler
 from ...utils.exceptions import OptimizationError, ValidationError
+from ...utils.profiler import PerformanceProfiler
 from ..dependencies import get_optimizer, get_profiler, rate_limit
 
 logger = logging.getLogger(__name__)
@@ -247,8 +237,8 @@ async def validate_schedule(
 )
 async def optimize_existing_schedule(
     base_request: ScheduleGenerationRequest,
-    current_schedule: List[ScheduledShift],
-    optimization_goals: Optional[List[OptimizationGoal]] = None,
+    current_schedule: list[ScheduledShift],
+    optimization_goals: list[OptimizationGoal] | None = None,
     preserve_confirmed: bool = Query(True, description="Preserve confirmed shifts"),
     max_changes: int = Query(
         10, ge=0, le=50, description="Maximum number of changes allowed"
@@ -311,7 +301,7 @@ async def optimize_existing_schedule(
 
 @router.post(
     "/batch-generate",
-    response_model=List[ScheduleGenerationResponse],
+    response_model=list[ScheduleGenerationResponse],
     summary="Generate schedules for multiple weeks",
     description="""
     Generate optimized schedules for multiple weeks in batch.
@@ -329,7 +319,7 @@ async def optimize_existing_schedule(
     """,
 )
 async def generate_batch_schedules(
-    requests: List[ScheduleGenerationRequest],
+    requests: list[ScheduleGenerationRequest],
     background_tasks: BackgroundTasks,
     ensure_fairness_across_weeks: bool = Query(
         True, description="Ensure fair distribution across all weeks"
@@ -340,7 +330,7 @@ async def generate_batch_schedules(
     optimizer: ScheduleOptimizer = Depends(get_optimizer),
     profiler: PerformanceProfiler = Depends(get_profiler),
     _: bool = Depends(rate_limit),
-) -> List[ScheduleGenerationResponse]:
+) -> list[ScheduleGenerationResponse]:
     """Generate schedules for multiple weeks in batch"""
 
     request_id = f"batch_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -431,7 +421,7 @@ async def get_request_status(request_id: str, _: bool = Depends(rate_limit)) -> 
 
 
 # Helper functions
-def _log_priority_weights(request_id: str, staff: List) -> None:
+def _log_priority_weights(request_id: str, staff: list) -> None:
     """Log priority weight distribution for analysis"""
     try:
         weights = [
@@ -453,7 +443,7 @@ def _log_priority_weights(request_id: str, staff: List) -> None:
 
 
 def _log_hour_distribution(
-    request_id: str, schedule: List[ScheduledShift], staff: List
+    request_id: str, schedule: list[ScheduledShift], staff: list
 ) -> None:
     """Log hour distribution for monitoring fairness"""
     try:
@@ -484,7 +474,7 @@ def _log_hour_distribution(
 
 
 def _calculate_schedule_changes(
-    old_schedule: List[ScheduledShift], new_schedule: List[ScheduledShift]
+    old_schedule: list[ScheduledShift], new_schedule: list[ScheduledShift]
 ) -> int:
     """Calculate number of changes between two schedules"""
     try:
@@ -551,7 +541,7 @@ async def _update_analytics(
 
 async def _update_batch_analytics(
     center_id: UUID,
-    responses: List[ScheduleGenerationResponse],
+    responses: list[ScheduleGenerationResponse],
     batch_time: float,
     request_id: str,
 ) -> None:
@@ -623,7 +613,7 @@ async def _update_enhanced_analytics(
 async def preview_schedule_complexity(
     center_id: UUID,
     schedule_start_date: date,
-    schedule_end_date: Optional[date] = None,
+    schedule_end_date: date | None = None,
     staff_count: int = Query(..., description="Number of staff members"),
     groups_count: int = Query(..., description="Number of groups"),
     requirements_count: int = Query(..., description="Number of staffing requirements"),

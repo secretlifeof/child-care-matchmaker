@@ -3,11 +3,13 @@ Pydantic models for the Schedule Optimization Service
 """
 
 from __future__ import annotations
-from datetime import datetime, date, time, timedelta
-from typing import List, Optional, Dict, Any, Union
+
+from datetime import date, datetime, time, timedelta
 from enum import Enum
-from pydantic import BaseModel, Field, validator
+from typing import Any
 from uuid import UUID
+
+from pydantic import BaseModel, Field, validator
 
 
 class StaffRole(str, Enum):
@@ -41,7 +43,7 @@ class PreferenceType(str, Enum):
     MAX_HOURS = "max_hours"
     MIN_HOURS = "min_hours"
     PREFERRED_DAYS = "preferred_days"
-    AVOID_DAYS = "avoid_days"
+    EXCLUDE_DAYS = "avoid_days"
 
 
 class PriorityLevel(str, Enum):
@@ -88,26 +90,26 @@ class ShiftType(str, Enum):
 class TimeSlot(BaseModel):
     start_time: time
     end_time: time
-    day_of_week: Optional[int] = Field(None, ge=0, le=6)  # 0=Monday, 6=Sunday, None=all days
+    day_of_week: int | None = Field(None, ge=0, le=6)  # 0=Monday, 6=Sunday, None=all days
 
     @validator("end_time")
     def end_after_start(cls, v, values):
         if "start_time" in values and v <= values["start_time"]:
             raise ValueError("end_time must be after start_time")
         return v
-    
+
     @property
     def applies_to_all_days(self) -> bool:
         """Check if this time slot applies to all days"""
         return self.day_of_week is None
-    
+
     @classmethod
-    def daily_slot(cls, start_time: time, end_time: time) -> "TimeSlot":
+    def daily_slot(cls, start_time: time, end_time: time) -> TimeSlot:
         """Create a time slot that applies to all days"""
         return cls(start_time=start_time, end_time=end_time, day_of_week=None)
-    
+
     @classmethod
-    def weekly_slot(cls, day_of_week: int, start_time: time, end_time: time) -> "TimeSlot":
+    def weekly_slot(cls, day_of_week: int, start_time: time, end_time: time) -> TimeSlot:
         """Create a time slot for a specific day of the week"""
         return cls(start_time=start_time, end_time=end_time, day_of_week=day_of_week)
 
@@ -117,39 +119,39 @@ class CenterConfiguration(BaseModel):
     """Center-wide configuration including opening hours and ratios"""
     center_id: UUID
     name: str
-    
+
     # Opening hours
-    opening_hours: List[TimeSlot] = Field(
+    opening_hours: list[TimeSlot] = Field(
         description="Center opening hours for each day of the week"
     )
-    
+
     # Staff-to-child ratios by age group (1 staff per X children)
-    staff_child_ratios: Dict[AgeGroup, float] = Field(
+    staff_child_ratios: dict[AgeGroup, float] = Field(
         default={
             AgeGroup.INFANT: 4.0,
-            AgeGroup.TODDLER: 6.0, 
+            AgeGroup.TODDLER: 6.0,
             AgeGroup.PRESCHOOL: 10.0,
             AgeGroup.MIXED: 8.0
         },
         description="Staff-to-child ratios (1 staff per X children)"
     )
-    
+
     # Overtime limits (center-wide)
     max_daily_overtime_hours: float = Field(2.0, ge=0, le=8)
     max_weekly_overtime_hours: float = Field(10.0, ge=0, le=20)
     overtime_threshold_daily: float = Field(8.0, gt=0, le=12)
     overtime_threshold_weekly: float = Field(40.0, gt=0, le=60)
-    
+
     # Break requirements
     min_break_between_shifts_hours: float = Field(10.0, ge=0, le=24)
-    
+
     @validator("staff_child_ratios")
     def validate_ratios(cls, v):
         for age_group, ratio in v.items():
             if ratio <= 0:
                 raise ValueError(f"Ratio for {age_group} must be positive")
         return v
-    
+
     @validator("max_daily_overtime_hours")
     def validate_daily_overtime(cls, v, values):
         if v < 0:
@@ -157,7 +159,7 @@ class CenterConfiguration(BaseModel):
         if v > 8:
             raise ValueError("Daily overtime hours cannot exceed 8 hours")
         return v
-    
+
     @validator("max_weekly_overtime_hours")
     def validate_weekly_overtime(cls, v, values):
         if v < 0:
@@ -168,11 +170,11 @@ class CenterConfiguration(BaseModel):
 
 
 class Qualification(BaseModel):
-    qualification_type: Optional[str] = None
+    qualification_type: str | None = None
     qualification_name: str
-    issuing_organization: Optional[str] = None
-    issue_date: Optional[date] = None
-    expiry_date: Optional[date] = None
+    issuing_organization: str | None = None
+    issue_date: date | None = None
+    expiry_date: date | None = None
     is_verified: bool = False
 
 
@@ -185,13 +187,13 @@ class StaffAvailability(BaseModel):
 
 class StaffPreference(BaseModel):
     preference_type: PreferenceType
-    day_of_week: Optional[int] = Field(None, ge=0, le=6)
-    time_range_start: Optional[time] = None
-    time_range_end: Optional[time] = None
-    max_hours_per_day: Optional[float] = None
-    min_hours_per_day: Optional[float] = None
+    day_of_week: int | None = Field(None, ge=0, le=6)
+    time_range_start: time | None = None
+    time_range_end: time | None = None
+    max_hours_per_day: float | None = None
+    min_hours_per_day: float | None = None
     weight: float = Field(1.0, ge=0.0, le=1.0)
-    reason: Optional[str] = None
+    reason: str | None = None
 
 
 class StaffAbsence(BaseModel):
@@ -199,24 +201,24 @@ class StaffAbsence(BaseModel):
     absence_type: AbsenceType
     start_date: date
     end_date: date
-    start_time: Optional[time] = None  # If None, full day absence
-    end_time: Optional[time] = None    # If None, full day absence
-    reason: Optional[str] = None
+    start_time: time | None = None  # If None, full day absence
+    end_time: time | None = None    # If None, full day absence
+    reason: str | None = None
     is_approved: bool = True
-    
+
     @validator("end_date")
     def end_after_start(cls, v, values):
         if "start_date" in values and v < values["start_date"]:
             raise ValueError("end_date must be after or equal to start_date")
         return v
-    
+
     @validator("end_time")
     def validate_time_range(cls, v, values):
         if v is not None and "start_time" in values and values["start_time"] is not None:
             if v <= values["start_time"]:
                 raise ValueError("end_time must be after start_time")
         return v
-    
+
     @property
     def is_full_day(self) -> bool:
         """Check if this is a full day absence"""
@@ -228,7 +230,7 @@ class GroupAssignment(BaseModel):
     group_id: UUID
     assignment_type: GroupAssignmentType
     priority_weight: float = Field(1.0, ge=0.0, le=2.0)
-    notes: Optional[str] = None
+    notes: str | None = None
 
 
 class ShiftTemplate(BaseModel):
@@ -238,10 +240,10 @@ class ShiftTemplate(BaseModel):
     shift_type: ShiftType
     start_time: time
     end_time: time
-    break_duration_minutes: Optional[int] = Field(None, ge=0, le=120)
-    required_qualifications: List[str] = Field(default_factory=list)
+    break_duration_minutes: int | None = Field(None, ge=0, le=120)
+    required_qualifications: list[str] = Field(default_factory=list)
     is_active: bool = True
-    
+
     @validator("end_time")
     def validate_time_range(cls, v, values):
         if "start_time" in values:
@@ -254,7 +256,7 @@ class ShiftTemplate(BaseModel):
             if duration_hours > 16:
                 raise ValueError("Shift duration cannot exceed 16 hours")
         return v
-    
+
     @property
     def duration_hours(self) -> float:
         """Calculate shift duration in hours"""
@@ -273,9 +275,9 @@ class ShiftTemplateRequirement(BaseModel):
     shift_template_id: UUID
     group_id: UUID
     required_count: int = Field(1, ge=0)
-    preferred_count: Optional[int] = Field(None, ge=0)
-    day_of_week: Optional[int] = Field(None, ge=0, le=6)  # None means all days
-    
+    preferred_count: int | None = Field(None, ge=0)
+    day_of_week: int | None = Field(None, ge=0, le=6)  # None means all days
+
     @validator("preferred_count")
     def validate_preferred_count(cls, v, values):
         if v is not None and "required_count" in values and v < values["required_count"]:
@@ -287,33 +289,33 @@ class Staff(BaseModel):
     staff_id: UUID
     name: str
     role: StaffRole
-    qualifications: List[Qualification] = []
-    availability: List[StaffAvailability] = []
-    preferences: List[StaffPreference] = []
+    qualifications: list[Qualification] = []
+    availability: list[StaffAvailability] = []
+    preferences: list[StaffPreference] = []
     seniority_weight: float = Field(1.0, ge=0.0, le=2.0)
     performance_weight: float = Field(1.0, ge=0.0, le=2.0)
     flexibility_score: float = Field(1.0, ge=0.0, le=2.0)
     overall_priority: PriorityLevel = PriorityLevel.MEDIUM
     max_weekly_hours: float = Field(40.0, gt=0, le=60)
-    hourly_rate: Optional[float] = Field(None, gt=0)
-    overtime_rate: Optional[float] = Field(None, gt=0)
+    hourly_rate: float | None = Field(None, gt=0)
+    overtime_rate: float | None = Field(None, gt=0)
 
     # Shift length constraints (optional, overrides center/group defaults)
-    min_shift_hours: Optional[float] = Field(None, gt=0, le=12)
-    max_shift_hours: Optional[float] = Field(None, gt=0, le=16)
-    
+    min_shift_hours: float | None = Field(None, gt=0, le=12)
+    max_shift_hours: float | None = Field(None, gt=0, le=16)
+
     # Enhanced fields for new requirements
-    absences: List[StaffAbsence] = Field(default_factory=list)
-    group_assignments: List[GroupAssignment] = Field(default_factory=list)
-    max_daily_hours: Optional[float] = Field(None, gt=0, le=16)
-    
+    absences: list[StaffAbsence] = Field(default_factory=list)
+    group_assignments: list[GroupAssignment] = Field(default_factory=list)
+    max_daily_hours: float | None = Field(None, gt=0, le=16)
+
     @validator("overtime_rate")
     def overtime_rate_validation(cls, v, values):
         if v is not None and "hourly_rate" in values and values["hourly_rate"] is not None:
             if v < values["hourly_rate"]:
                 raise ValueError("overtime_rate should be greater than or equal to hourly_rate")
         return v
-    
+
     @validator("group_assignments")
     def validate_primary_assignments(cls, v):
         """Ensure staff can only be primary to one group"""
@@ -344,15 +346,15 @@ class Group(BaseModel):
     age_group: AgeGroup
     capacity: int = Field(..., gt=0)
     current_enrollment: int = Field(0, ge=0)
-    required_qualifications: List[str] = []
-    preferred_qualifications: List[str] = []
+    required_qualifications: list[str] = []
+    preferred_qualifications: list[str] = []
 
     # Group-specific shift length constraints (optional, overrides center defaults)
-    min_shift_hours: Optional[float] = Field(None, gt=0, le=12)
-    max_shift_hours: Optional[float] = Field(None, gt=0, le=16)
-    
+    min_shift_hours: float | None = Field(None, gt=0, le=12)
+    max_shift_hours: float | None = Field(None, gt=0, le=16)
+
     # Shift templates assigned to this group
-    shift_template_ids: List[UUID] = Field(default_factory=list)
+    shift_template_ids: list[UUID] = Field(default_factory=list)
 
     @validator("current_enrollment")
     def enrollment_not_exceed_capacity(cls, v, values):
@@ -365,9 +367,9 @@ class StaffingRequirement(BaseModel):
     group_id: UUID
     time_slot: TimeSlot
     min_staff_count: int = Field(1, ge=1)
-    max_staff_count: Optional[int] = None
-    required_qualifications: List[str] = []
-    preferred_qualifications: List[str] = []
+    max_staff_count: int | None = None
+    required_qualifications: list[str] = []
+    preferred_qualifications: list[str] = []
 
     @validator("max_staff_count")
     def max_not_less_than_min(cls, v, values):
@@ -384,11 +386,11 @@ class ScheduleConstraint(BaseModel):
     constraint_type: str
     is_mandatory: bool = True
     weight: float = Field(1.0, ge=0.0, le=1.0)
-    config: Dict[str, Any] = {}
+    config: dict[str, Any] = {}
 
 
 class OptimizationConfig(BaseModel):
-    goals: List[OptimizationGoal] = [OptimizationGoal.MINIMIZE_COST]
+    goals: list[OptimizationGoal] = [OptimizationGoal.MINIMIZE_COST]
     max_solver_time: int = Field(60, gt=0, le=300)  # seconds
     consider_preferences: bool = True
     minimize_overtime: bool = True
@@ -416,15 +418,15 @@ class ScheduleGenerationRequest(BaseModel):
     """Legacy weekly schedule request - kept for backward compatibility"""
     center_id: UUID
     week_start_date: date
-    staff: List[Staff]
-    groups: List[Group]
-    staffing_requirements: List[StaffingRequirement]
-    constraints: List[ScheduleConstraint] = []
+    staff: list[Staff]
+    groups: list[Group]
+    staffing_requirements: list[StaffingRequirement]
+    constraints: list[ScheduleConstraint] = []
     optimization_config: OptimizationConfig = OptimizationConfig()
-    existing_schedules: Optional[List["ScheduledShift"]] = None
+    existing_schedules: list[ScheduledShift] | None = None
 
     # Extra shift constraints (HARD CONSTRAINT)
-    extra_shift_eligible_staff_ids: List[UUID] = Field(
+    extra_shift_eligible_staff_ids: list[UUID] = Field(
         default=[],
         description="List of staff IDs who can be assigned extra shifts beyond normal allocation. If empty, no extra shifts are allowed.",
     )
@@ -458,33 +460,33 @@ class ScheduleGenerationRequest(BaseModel):
 class EnhancedScheduleGenerationRequest(BaseModel):
     """Enhanced request model with flexible date range and new features"""
     center_id: UUID
-    schedule_start_date: Union[date, str] = Field(description="Start date of the scheduling period (date or ISO 8601 datetime string)")
-    schedule_end_date: Optional[Union[date, str]] = Field(
+    schedule_start_date: date | str = Field(description="Start date of the scheduling period (date or ISO 8601 datetime string)")
+    schedule_end_date: date | str | None = Field(
         default=None,
         description="End date of the scheduling period (inclusive). If not provided, defaults to 7 days from start. (date or ISO 8601 datetime string)",
     )
-    
+
     # Core scheduling data
-    staff: List[Staff]
-    groups: List[Group]
-    staffing_requirements: List[StaffingRequirement]
+    staff: list[Staff]
+    groups: list[Group]
+    staffing_requirements: list[StaffingRequirement]
     center_config: CenterConfiguration
-    
+
     # Shift templates
-    shift_templates: List[ShiftTemplate] = Field(default_factory=list)
-    shift_template_requirements: List[ShiftTemplateRequirement] = Field(default_factory=list)
-    
+    shift_templates: list[ShiftTemplate] = Field(default_factory=list)
+    shift_template_requirements: list[ShiftTemplateRequirement] = Field(default_factory=list)
+
     # Optional configurations
-    constraints: List[ScheduleConstraint] = Field(default_factory=list)
+    constraints: list[ScheduleConstraint] = Field(default_factory=list)
     optimization_config: OptimizationConfig = Field(default_factory=OptimizationConfig)
-    existing_schedules: Optional[List["ScheduledShift"]] = None
-    
+    existing_schedules: list[ScheduledShift] | None = None
+
     # Extra shift constraints (HARD CONSTRAINT)
-    extra_shift_eligible_staff_ids: List[UUID] = Field(
+    extra_shift_eligible_staff_ids: list[UUID] = Field(
         default_factory=list,
         description="List of staff IDs who can be assigned extra shifts beyond normal allocation. If empty, no extra shifts are allowed.",
     )
-    
+
     @validator("schedule_start_date", pre=True)
     def parse_start_date(cls, v):
         """Parse start date from string (ISO 8601 datetime) or return date as-is"""
@@ -505,7 +507,7 @@ class EnhancedScheduleGenerationRequest(BaseModel):
             return v
         else:
             raise ValueError(f"Invalid date type: {type(v)}. Expected date, datetime, or string.")
-    
+
     @validator("schedule_end_date", pre=True)
     def parse_end_date(cls, v):
         """Parse end date from string (ISO 8601 datetime) or return date as-is"""
@@ -528,7 +530,7 @@ class EnhancedScheduleGenerationRequest(BaseModel):
             return v
         else:
             raise ValueError(f"Invalid date type: {type(v)}. Expected date, datetime, or string.")
-    
+
     @validator("schedule_end_date")
     def validate_end_date(cls, v, values):
         if v is not None and "schedule_start_date" in values:
@@ -544,7 +546,7 @@ class EnhancedScheduleGenerationRequest(BaseModel):
             if total_days == 0:
                 raise ValueError("Date range must be at least 1 day")
         return v
-    
+
     @validator("staff")
     def validate_staff_list(cls, v):
         if not v:
@@ -552,7 +554,7 @@ class EnhancedScheduleGenerationRequest(BaseModel):
         if len(v) > 100:
             raise ValueError("Too many staff members (maximum 100)")
         return v
-    
+
     @validator("groups")
     def validate_groups_list(cls, v):
         if not v:
@@ -560,7 +562,7 @@ class EnhancedScheduleGenerationRequest(BaseModel):
         if len(v) > 20:
             raise ValueError("Too many groups (maximum 20)")
         return v
-    
+
     @property
     def total_days(self) -> int:
         """Calculate total days in the scheduling period"""
@@ -573,28 +575,28 @@ class EnhancedScheduleGenerationRequest(BaseModel):
     def effective_end_date(self) -> date:
         """Get the effective end date (computed if not provided)"""
         return self.schedule_end_date or (self.schedule_start_date + timedelta(days=6))
-    
-    def get_staff_availability_for_date(self, staff_id: UUID, target_date: date) -> List[StaffAvailability]:
+
+    def get_staff_availability_for_date(self, staff_id: UUID, target_date: date) -> list[StaffAvailability]:
         """Get staff availability for a specific date, considering absences and preferences"""
         staff_member = next((s for s in self.staff if s.staff_id == staff_id), None)
         if not staff_member:
             return []
-        
+
         day_of_week = target_date.weekday()
-        
+
         # Check for absences (highest priority - hard constraint)
         for absence in staff_member.absences:
             if absence.start_date <= target_date <= absence.end_date:
                 if absence.is_full_day:
                     return []  # No availability on this day
                 # TODO: Handle partial day absences
-        
+
         # Get preferences or fallback to center opening hours
         available_times = []
-        
+
         # Check if staff has any availability preferences for this day
         staff_availability = [av for av in staff_member.availability if av.day_of_week == day_of_week and av.is_available]
-        
+
         if staff_availability:
             # Use staff preferences
             available_times = staff_availability
@@ -610,25 +612,25 @@ class EnhancedScheduleGenerationRequest(BaseModel):
                         end_time=opening.end_time,
                         is_available=True
                     ))
-        
+
         return available_times
 
 
 # Response Models
 class ScheduledShift(BaseModel):
-    schedule_id: Optional[UUID] = None
+    schedule_id: UUID | None = None
     staff_id: UUID
     group_id: UUID
-    shift_template_id: Optional[UUID] = None
-    date: Union[date, str]
-    start_time: Union[time, str]
-    end_time: Union[time, str]
+    shift_template_id: UUID | None = None
+    date: date | str
+    start_time: time | str
+    end_time: time | str
     scheduled_hours: float
     status: ShiftStatus = ShiftStatus.SCHEDULED
-    notes: Optional[str] = None
+    notes: str | None = None
     is_overtime: bool = False
-    assignment_type: Optional[GroupAssignmentType] = None
-    timestamptz: Optional[str] = Field(None, description="ISO 8601 datetime string combining date and start_time")
+    assignment_type: GroupAssignmentType | None = None
+    timestamptz: str | None = Field(None, description="ISO 8601 datetime string combining date and start_time")
 
     @validator("date", pre=True)
     def parse_shift_date(cls, v):
@@ -717,11 +719,11 @@ class ScheduledShift(BaseModel):
 class ScheduleConflict(BaseModel):
     conflict_type: str
     severity: str  # 'error', 'warning', 'info'
-    group_id: Optional[UUID] = None
-    staff_id: Optional[UUID] = None
-    time_slot: Optional[TimeSlot] = None
+    group_id: UUID | None = None
+    staff_id: UUID | None = None
+    time_slot: TimeSlot | None = None
     description: str
-    suggested_solutions: List[str] = []
+    suggested_solutions: list[str] = []
 
 
 class OptimizationResult(BaseModel):
@@ -734,30 +736,30 @@ class OptimizationResult(BaseModel):
 
 class ScheduleGenerationResponse(BaseModel):
     success: bool
-    schedules: List[ScheduledShift] = []  # All schedules (existing + new)
-    new_schedules: List[ScheduledShift] = []  # Only newly generated schedules
-    conflicts: List[ScheduleConflict] = []
+    schedules: list[ScheduledShift] = []  # All schedules (existing + new)
+    new_schedules: list[ScheduledShift] = []  # Only newly generated schedules
+    conflicts: list[ScheduleConflict] = []
     optimization_result: OptimizationResult
-    total_cost: Optional[float] = None
+    total_cost: float | None = None
     total_hours: float = 0
-    staff_utilization: Dict[UUID, float] = {}
+    staff_utilization: dict[UUID, float] = {}
     satisfaction_score: float = 0.0
     message: str = ""
 
 
 class ScheduleValidationRequest(BaseModel):
-    schedule: List[ScheduledShift]
-    staff: List[Staff]
-    groups: List[Group]
-    staffing_requirements: List[StaffingRequirement]
-    constraints: List[ScheduleConstraint] = []
+    schedule: list[ScheduledShift]
+    staff: list[Staff]
+    groups: list[Group]
+    staffing_requirements: list[StaffingRequirement]
+    constraints: list[ScheduleConstraint] = []
 
 
 class ScheduleValidationResponse(BaseModel):
     is_valid: bool
-    conflicts: List[ScheduleConflict] = []
-    warnings: List[str] = []
-    suggestions: List[str] = []
+    conflicts: list[ScheduleConflict] = []
+    warnings: list[str] = []
+    suggestions: list[str] = []
 
 
 
@@ -767,25 +769,25 @@ class EnhancedScheduleResponse(BaseModel):
 
     # Response fields
     success: bool
-    schedules: List[ScheduledShift] = []  # All schedules (existing + new) 
-    new_schedules: List[ScheduledShift] = []  # Only newly generated schedules
-    conflicts: List[ScheduleConflict] = []
+    schedules: list[ScheduledShift] = []  # All schedules (existing + new)
+    new_schedules: list[ScheduledShift] = []  # Only newly generated schedules
+    conflicts: list[ScheduleConflict] = []
     optimization_result: OptimizationResult
     total_cost: float = 0.0
     total_hours: float = 0.0
-    staff_utilization: Dict[UUID, float] = {}
+    staff_utilization: dict[UUID, float] = {}
     satisfaction_score: float = 0.0
     message: str = ""
 
     # Enhanced fields for date range support
-    schedule_start_date: Optional[date] = None
-    schedule_end_date: Optional[date] = None
-    total_days: Optional[int] = None
+    schedule_start_date: date | None = None
+    schedule_end_date: date | None = None
+    total_days: int | None = None
 
     # Additional metrics for longer periods
-    daily_averages: Dict[str, float] = {}
+    daily_averages: dict[str, float] = {}
     period_coverage: float = 0.0
-    
+
     # Schedule counts
     total_schedules_count: int = 0
     new_schedules_count: int = 0
@@ -829,10 +831,10 @@ class EnhancedOptimizationConfig(OptimizationConfig):
     """Extended optimization config with period-aware settings"""
 
     # Period-specific settings
-    max_consecutive_days: Optional[int] = Field(
+    max_consecutive_days: int | None = Field(
         default=None, description="Maximum consecutive working days for staff"
     )
-    min_days_off_per_week: Optional[int] = Field(
+    min_days_off_per_week: int | None = Field(
         default=None, description="Minimum days off per week for staff"
     )
     balance_workload_over_period: bool = Field(
@@ -855,11 +857,11 @@ class EnhancedOptimizationConfig(OptimizationConfig):
 def create_weekly_request(
     center_id: UUID,
     week_start: date,
-    staff: List[Staff],
-    groups: List[Group],
-    requirements: List[StaffingRequirement],
+    staff: list[Staff],
+    groups: list[Group],
+    requirements: list[StaffingRequirement],
     center_config: CenterConfiguration,
-    existing_config: Optional[OptimizationConfig] = None,
+    existing_config: OptimizationConfig | None = None,
 ) -> EnhancedScheduleGenerationRequest:
     """Helper function to create a standard weekly schedule request"""
 
@@ -886,9 +888,9 @@ def create_weekly_request(
 def create_monthly_request(
     center_id: UUID,
     month_start: date,
-    staff: List[Staff],
-    groups: List[Group],
-    requirements: List[StaffingRequirement],
+    staff: list[Staff],
+    groups: list[Group],
+    requirements: list[StaffingRequirement],
     center_config: CenterConfiguration,
 ) -> EnhancedScheduleGenerationRequest:
     """Helper function to create a monthly schedule request"""

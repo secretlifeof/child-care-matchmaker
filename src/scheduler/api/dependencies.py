@@ -1,36 +1,36 @@
 """
 FastAPI dependency injection for the scheduler API
 """
-import time
 import logging
-from typing import Optional, Dict, Any
+import time
+from datetime import datetime
 from functools import lru_cache
-from datetime import datetime, timedelta
+from typing import Any
 
-from fastapi import HTTPException, Request, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Depends, HTTPException, Request
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from ..core.optimizer import ScheduleOptimizer
-from ..core.cache import CacheManager
-from ..utils.profiler import PerformanceProfiler
-from ..utils.exceptions import ConfigurationError
 from ..config import settings
+from ..core.cache import CacheManager
+from ..core.optimizer import ScheduleOptimizer
+from ..utils.exceptions import ConfigurationError
+from ..utils.profiler import PerformanceProfiler
 
 logger = logging.getLogger(__name__)
 
 # Global instances - initialized once
-_optimizer_instance: Optional[ScheduleOptimizer] = None
-_cache_manager_instance: Optional[CacheManager] = None
-_profiler_instance: Optional[PerformanceProfiler] = None
+_optimizer_instance: ScheduleOptimizer | None = None
+_cache_manager_instance: CacheManager | None = None
+_profiler_instance: PerformanceProfiler | None = None
 
 # Rate limiting storage (in production, use Redis)
-_rate_limit_storage: Dict[str, Dict[str, Any]] = {}
+_rate_limit_storage: dict[str, dict[str, Any]] = {}
 
 # Security
 security = HTTPBearer(auto_error=False)
 
 
-@lru_cache()
+@lru_cache
 def get_settings():
     """Get application settings (cached)"""
     return settings
@@ -39,7 +39,7 @@ def get_settings():
 def get_optimizer() -> ScheduleOptimizer:
     """Get the schedule optimizer instance (singleton)"""
     global _optimizer_instance
-    
+
     if _optimizer_instance is None:
         try:
             _optimizer_instance = ScheduleOptimizer()
@@ -47,14 +47,14 @@ def get_optimizer() -> ScheduleOptimizer:
         except Exception as e:
             logger.error(f"Failed to initialize optimizer: {e}")
             raise ConfigurationError(f"Optimizer initialization failed: {e}")
-    
+
     return _optimizer_instance
 
 
 def get_cache_manager() -> CacheManager:
     """Get the cache manager instance (singleton)"""
     global _cache_manager_instance
-    
+
     if _cache_manager_instance is None:
         try:
             _cache_manager_instance = CacheManager()
@@ -63,24 +63,24 @@ def get_cache_manager() -> CacheManager:
             logger.warning(f"Failed to initialize cache manager: {e}")
             # Return a basic in-memory cache as fallback
             _cache_manager_instance = CacheManager()
-    
+
     return _cache_manager_instance
 
 
 def get_profiler() -> PerformanceProfiler:
     """Get the performance profiler instance (singleton)"""
     global _profiler_instance
-    
+
     if _profiler_instance is None:
         _profiler_instance = PerformanceProfiler()
         logger.info("Performance profiler initialized")
-    
+
     return _profiler_instance
 
 
 async def get_current_user(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
-) -> Optional[Dict[str, Any]]:
+    credentials: HTTPAuthorizationCredentials | None = Depends(security)
+) -> dict[str, Any] | None:
     """
     Get current user from API key (optional authentication)
     
@@ -89,7 +89,7 @@ async def get_current_user(
     """
     if not settings.ENABLE_API_KEY_AUTH:
         return None
-    
+
     if not credentials:
         if settings.REQUIRE_AUTH:
             raise HTTPException(
@@ -98,7 +98,7 @@ async def get_current_user(
                 headers={"WWW-Authenticate": "Bearer"},
             )
         return None
-    
+
     # Simple API key validation (in production, use proper auth service)
     expected_key = settings.API_KEY
     if expected_key and credentials.credentials == expected_key:
@@ -107,7 +107,7 @@ async def get_current_user(
             "permissions": ["schedule:read", "schedule:write"],
             "authenticated": True
         }
-    
+
     raise HTTPException(
         status_code=401,
         detail="Invalid API key",
@@ -115,7 +115,7 @@ async def get_current_user(
     )
 
 
-def require_auth(user: Optional[Dict[str, Any]] = Depends(get_current_user)) -> Dict[str, Any]:
+def require_auth(user: dict[str, Any] | None = Depends(get_current_user)) -> dict[str, Any]:
     """Require authentication (force authentication check)"""
     if not user:
         raise HTTPException(
@@ -127,7 +127,7 @@ def require_auth(user: Optional[Dict[str, Any]] = Depends(get_current_user)) -> 
 
 def require_permission(permission: str):
     """Require specific permission"""
-    def permission_check(user: Dict[str, Any] = Depends(require_auth)) -> Dict[str, Any]:
+    def permission_check(user: dict[str, Any] = Depends(require_auth)) -> dict[str, Any]:
         if permission not in user.get("permissions", []):
             raise HTTPException(
                 status_code=403,
@@ -150,10 +150,10 @@ async def rate_limit(
     # Disable rate limiting in debug mode
     if settings.DEBUG:
         return True
-    
+
     client_ip = request.client.host
     current_time = time.time()
-    
+
     # Clean old entries
     cutoff_time = current_time - window_seconds
     for ip in list(_rate_limit_storage.keys()):
@@ -163,13 +163,13 @@ async def rate_limit(
         ]
         if not _rate_limit_storage[ip]["requests"]:
             del _rate_limit_storage[ip]
-    
+
     # Check rate limit for this IP
     if client_ip not in _rate_limit_storage:
         _rate_limit_storage[client_ip] = {"requests": []}
-    
+
     client_requests = _rate_limit_storage[client_ip]["requests"]
-    
+
     if len(client_requests) >= max_requests:
         # Rate limit exceeded
         retry_after = int(min(client_requests) + window_seconds - current_time) + 1
@@ -178,14 +178,14 @@ async def rate_limit(
             detail="Rate limit exceeded",
             headers={"Retry-After": str(retry_after)}
         )
-    
+
     # Add current request
     client_requests.append(current_time)
-    
+
     return True
 
 
-def get_request_context(request: Request) -> Dict[str, Any]:
+def get_request_context(request: Request) -> dict[str, Any]:
     """Extract request context for logging and analytics"""
     return {
         "method": request.method,
@@ -212,7 +212,7 @@ async def validate_content_type(request: Request) -> bool:
 async def check_maintenance_mode() -> bool:
     """Check if the system is in maintenance mode"""
     maintenance_mode = settings.MAINTENANCE_MODE
-    
+
     if maintenance_mode:
         maintenance_message = settings.MAINTENANCE_MESSAGE
         raise HTTPException(
@@ -220,20 +220,20 @@ async def check_maintenance_mode() -> bool:
             detail=maintenance_message,
             headers={"Retry-After": "3600"}  # 1 hour
         )
-    
+
     return True
 
 
 class DatabaseSession:
     """Database session dependency (for future use)"""
-    
+
     def __init__(self):
         # In future, this would create a database session
         pass
-    
+
     def __enter__(self):
         return self
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         # Close database session
         pass
@@ -248,16 +248,16 @@ def log_request_start(request: Request, profiler: PerformanceProfiler = Depends(
     """Log request start and begin performance tracking"""
     request_context = get_request_context(request)
     request_id = request_context["request_id"] or f"req_{int(time.time() * 1000)}"
-    
+
     logger.info(f"[{request_id}] {request.method} {request.url.path} - Request started")
     profiler.start_timer(f"request_{request_id}")
-    
+
     # Store request context for later use
     request.state.request_id = request_id
     request.state.start_time = time.time()
 
 
-def get_client_info(request: Request) -> Dict[str, str]:
+def get_client_info(request: Request) -> dict[str, str]:
     """Extract client information from request headers"""
     return {
         "ip": request.client.host,
@@ -289,16 +289,15 @@ async def validate_request_size(
 def get_timezone_from_request(request: Request) -> str:
     """Get timezone from request headers or default"""
     timezone = request.headers.get("x-timezone", "UTC")
-    
+
     # Validate timezone (basic check)
     try:
-        from datetime import timezone as dt_timezone
         # This is a simple validation - in production, use pytz
         if timezone not in ["UTC", "EST", "PST", "CST", "MST"]:
             timezone = "UTC"
     except Exception:
         timezone = "UTC"
-    
+
     return timezone
 
 
@@ -328,20 +327,20 @@ async def check_cache_health(cache: CacheManager = Depends(get_cache_manager)) -
 async def startup_event():
     """Initialize dependencies on startup"""
     logger.info("Initializing application dependencies...")
-    
+
     try:
         # Initialize optimizer
         get_optimizer()
-        
+
         # Initialize cache
         cache = get_cache_manager()
         await cache.set("startup_time", datetime.now().isoformat(), ttl=86400)
-        
+
         # Initialize profiler
         get_profiler()
-        
+
         logger.info("All dependencies initialized successfully")
-        
+
     except Exception as e:
         logger.error(f"Failed to initialize dependencies: {e}")
         raise
@@ -350,18 +349,18 @@ async def startup_event():
 async def shutdown_event():
     """Cleanup on shutdown"""
     logger.info("Shutting down application dependencies...")
-    
+
     try:
         # Cleanup cache
         if _cache_manager_instance:
             await _cache_manager_instance.clear()
-        
+
         # Reset profiler
         if _profiler_instance:
             _profiler_instance.reset()
-        
+
         logger.info("Dependencies cleaned up successfully")
-        
+
     except Exception as e:
         logger.error(f"Error during shutdown: {e}")
 
@@ -369,13 +368,13 @@ async def shutdown_event():
 # Custom dependency for request tracing
 class RequestTracer:
     """Request tracing dependency for distributed tracing"""
-    
+
     def __init__(self, request: Request):
         self.request = request
         self.trace_id = request.headers.get("x-trace-id") or f"trace_{int(time.time() * 1000)}"
         self.span_id = f"span_{int(time.time() * 1000000)}"
-    
-    def get_trace_context(self) -> Dict[str, str]:
+
+    def get_trace_context(self) -> dict[str, str]:
         return {
             "trace_id": self.trace_id,
             "span_id": self.span_id,

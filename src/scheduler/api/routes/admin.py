@@ -3,9 +3,11 @@ Administrative routes for configuration and cache management
 """
 
 import logging
-from fastapi import APIRouter, HTTPException, Depends
+
+from fastapi import APIRouter, Depends, HTTPException
 
 from ...config import settings
+
 try:
     from ...config import CONSTRAINT_TYPES, OPTIMIZATION_GOALS
 except ImportError:

@@ -1,9 +1,10 @@
 """Base graph database client interface."""
 
-from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any, Tuple
-from pydantic import BaseModel
 import logging
+from abc import ABC, abstractmethod
+from typing import Any
+
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
@@ -11,8 +12,8 @@ logger = logging.getLogger(__name__)
 class GraphNode(BaseModel):
     """Generic graph node representation."""
     id: str
-    labels: List[str]
-    properties: Dict[str, Any] = {}
+    labels: list[str]
+    properties: dict[str, Any] = {}
 
 
 class GraphEdge(BaseModel):
@@ -20,51 +21,51 @@ class GraphEdge(BaseModel):
     from_id: str
     to_id: str
     relationship_type: str
-    properties: Dict[str, Any] = {}
+    properties: dict[str, Any] = {}
 
 
 class FeatureMatchResult(BaseModel):
     """Result of feature matching for a center."""
     center_id: str
     feature_key: str
-    preference: str  # "must", "nice_to_have", "exclude"
+    preference: str  # "required", "nice_to_have", "exclude"
     center_confidence: float
     parent_confidence: float
     feature_satisfied: bool
-    center_value: Optional[Any] = None
-    parent_value: Optional[Any] = None
+    center_value: Any | None = None
+    parent_value: Any | None = None
     similarity_score: float = 1.0  # For semantic/embedding matches
 
 
 class GraphQueryResult(BaseModel):
     """Generic query result container."""
-    nodes: List[GraphNode] = []
-    edges: List[GraphEdge] = []
-    feature_matches: List[FeatureMatchResult] = []
-    metadata: Dict[str, Any] = {}
+    nodes: list[GraphNode] = []
+    edges: list[GraphEdge] = []
+    feature_matches: list[FeatureMatchResult] = []
+    metadata: dict[str, Any] = {}
 
 
 class GraphClient(ABC):
     """Abstract base class for graph database clients."""
-    
+
     def __init__(self):
         self.connected = False
-    
+
     @abstractmethod
     async def connect(self) -> bool:
         """Establish connection to graph database."""
         pass
-    
+
     @abstractmethod
     async def disconnect(self):
-        """Close connection to graph database.""" 
+        """Close connection to graph database."""
         pass
-    
+
     @abstractmethod
     async def health_check(self) -> bool:
         """Check if graph database is healthy."""
         pass
-    
+
     # Node operations
     @abstractmethod
     async def create_center_node(self, center_id: str, **properties) -> bool:
@@ -79,7 +80,7 @@ class GraphClient(ABC):
             True if successful
         """
         pass
-    
+
     @abstractmethod
     async def create_parent_node(self, parent_id: str, **properties) -> bool:
         """
@@ -93,7 +94,7 @@ class GraphClient(ABC):
             True if successful
         """
         pass
-    
+
     @abstractmethod
     async def create_feature_node(self, feature_key: str, category: str, **properties) -> bool:
         """
@@ -108,19 +109,19 @@ class GraphClient(ABC):
             True if successful
         """
         pass
-    
-    # Edge operations  
+
+    # Edge operations
     @abstractmethod
     async def create_has_feature_edge(
-        self, 
-        center_id: str, 
+        self,
+        center_id: str,
         feature_key: str,
         confidence: float = 1.0,
         source: str = "extraction",
-        raw_phrase: Optional[str] = None,
-        value_bool: Optional[bool] = None,
-        value_num: Optional[float] = None,
-        unit: Optional[str] = None,
+        raw_phrase: str | None = None,
+        value_bool: bool | None = None,
+        value_num: float | None = None,
+        unit: str | None = None,
         **properties
     ) -> bool:
         """
@@ -141,18 +142,18 @@ class GraphClient(ABC):
             True if successful
         """
         pass
-    
+
     @abstractmethod
     async def create_wants_feature_edge(
         self,
         parent_id: str,
-        feature_key: str, 
+        feature_key: str,
         preference: str,  # "must", "nice_to_have", "exclude"
         confidence: float,
-        value_bool: Optional[bool] = None,
-        value_num: Optional[float] = None,
-        value_text: Optional[str] = None,
-        unit: Optional[str] = None,
+        value_bool: bool | None = None,
+        value_num: float | None = None,
+        value_text: str | None = None,
+        unit: str | None = None,
         **properties
     ) -> bool:
         """
@@ -173,14 +174,14 @@ class GraphClient(ABC):
             True if successful
         """
         pass
-    
+
     # Query operations
     @abstractmethod
     async def query_feature_matches(
-        self, 
+        self,
         parent_id: str,
-        candidate_center_ids: List[str]
-    ) -> List[FeatureMatchResult]:
+        candidate_center_ids: list[str]
+    ) -> list[FeatureMatchResult]:
         """
         Query feature matches between parent and candidate centers.
         
@@ -192,13 +193,13 @@ class GraphClient(ABC):
             List of feature match results
         """
         pass
-    
+
     @abstractmethod
     async def query_centers_with_feature(
-        self, 
-        feature_key: str, 
-        value_filter: Optional[Dict[str, Any]] = None
-    ) -> List[str]:
+        self,
+        feature_key: str,
+        value_filter: dict[str, Any] | None = None
+    ) -> list[str]:
         """
         Find centers that have a specific feature.
         
@@ -210,9 +211,9 @@ class GraphClient(ABC):
             List of center IDs
         """
         pass
-    
+
     @abstractmethod
-    async def get_center_features(self, center_id: str) -> Dict[str, Any]:
+    async def get_center_features(self, center_id: str) -> dict[str, Any]:
         """
         Get all features for a center.
         
@@ -223,9 +224,9 @@ class GraphClient(ABC):
             Dictionary mapping feature_key to feature data
         """
         pass
-    
+
     @abstractmethod
-    async def get_parent_preferences(self, parent_id: str) -> Dict[str, Any]:
+    async def get_parent_preferences(self, parent_id: str) -> dict[str, Any]:
         """
         Get all preferences for a parent.
         
@@ -236,11 +237,11 @@ class GraphClient(ABC):
             Dictionary mapping feature_key to preference data
         """
         pass
-    
+
     # Bulk operations
     async def bulk_create_center_features(
-        self, 
-        center_features: List[Dict[str, Any]]
+        self,
+        center_features: list[dict[str, Any]]
     ) -> int:
         """
         Bulk create center features.
@@ -257,10 +258,10 @@ class GraphClient(ABC):
             if success:
                 created_count += 1
         return created_count
-    
+
     async def bulk_create_parent_preferences(
         self,
-        parent_preferences: List[Dict[str, Any]]
+        parent_preferences: list[dict[str, Any]]
     ) -> int:
         """
         Bulk create parent preferences.
@@ -277,22 +278,22 @@ class GraphClient(ABC):
             if success:
                 created_count += 1
         return created_count
-    
+
     # Utility methods
     @abstractmethod
     async def delete_center_features(self, center_id: str) -> bool:
         """Delete all features for a center."""
         pass
-    
+
     @abstractmethod
     async def delete_parent_preferences(self, parent_id: str) -> bool:
         """Delete all preferences for a parent."""
         pass
-    
+
     @abstractmethod
-    async def execute_raw_query(self, query: str, parameters: Dict[str, Any] = None) -> Any:
+    async def execute_raw_query(self, query: str, parameters: dict[str, Any] = None) -> Any:
         """Execute raw database-specific query."""
         pass
-    
+
     def __str__(self):
         return f"{self.__class__.__name__}(connected={self.connected})"

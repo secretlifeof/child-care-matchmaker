@@ -7,12 +7,12 @@ from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api.routes import matches
 from .api.middleware import LoggingMiddleware
-from .utils.logger import get_logger
+from .api.routes import matches
+from .database import close_database_manager, get_database_manager
 from .services.graph import close_global_client, get_graph_client
 from .services.graph.factory import GraphClientFactory
-from .database import get_database_manager, close_database_manager
+from .utils.logger import get_logger
 
 # Get the matchmaker logger instead of basic logging
 logger = get_logger()
@@ -23,7 +23,7 @@ async def lifespan(app: FastAPI):
     """Manage application lifecycle."""
     # Startup
     logger.log_info("Starting Parent-Daycare Matchmaker Service")
-    
+
     # Initialize PostgreSQL database connection
     try:
         db_manager = await get_database_manager()
@@ -34,17 +34,17 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.log_error(f"Failed to connect to PostgreSQL: {e}")
         raise
-    
+
     # Initialize graph database connection
     try:
         # Validate graph database configuration
         graph_type = os.getenv('GRAPH_DB_TYPE', 'tigergraph')
         is_valid, missing_vars = GraphClientFactory.validate_environment()
-        
+
         if is_valid:
             graph_client = await get_graph_client()
             logger.log_info(f"Connected to {graph_type} graph database")
-            
+
             # Install required queries for TigerGraph
             if hasattr(graph_client, 'install_required_queries'):
                 await graph_client.install_required_queries()
@@ -52,13 +52,13 @@ async def lifespan(app: FastAPI):
         else:
             logger.log_warning(f"Graph database configuration invalid: missing {missing_vars}")
             logger.log_warning("Graph features will be disabled")
-            
+
     except Exception as e:
         logger.log_error(f"Failed to initialize graph database: {e}")
         logger.log_warning("Graph features will be disabled")
-    
+
     yield
-    
+
     # Shutdown
     logger.log_info("Shutting down Parent-Daycare Matchmaker Service")
     await close_global_client()
@@ -67,7 +67,7 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app
 app = FastAPI(
-    title="Parent-Daycare Matchmaker", 
+    title="Parent-Daycare Matchmaker",
     description="Enhanced graph-based matching service with TigerGraph/Neo4j support",
     version="2.0.0",
     lifespan=lifespan
@@ -95,7 +95,7 @@ async def root():
     # Get graph database info
     graph_type = os.getenv('GRAPH_DB_TYPE', 'tigergraph')
     is_valid, missing_vars = GraphClientFactory.validate_environment()
-    
+
     return {
         "service": "Parent-Daycare Matchmaker",
         "version": "2.0.0",
@@ -131,7 +131,7 @@ async def health_check():
         "timestamp": datetime.utcnow().isoformat(),
         "version": "2.0.0"
     }
-    
+
     # Check PostgreSQL database health
     try:
         db_manager = await get_database_manager()
@@ -148,7 +148,7 @@ async def health_check():
             "error": str(e)
         }
         health_status["status"] = "degraded"
-    
+
     # Check graph database health
     try:
         graph_client = await get_graph_client()
@@ -167,7 +167,7 @@ async def health_check():
             "error": str(e)
         }
         health_status["status"] = "degraded"
-    
+
     return health_status
 
 

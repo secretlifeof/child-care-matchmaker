@@ -1,10 +1,9 @@
 """TigerGraph client for semantic property relationships."""
 
 import logging
-from typing import Dict, List, Optional
-from pydantic import BaseModel
-import httpx
+
 import pyTigerGraph as tg
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
@@ -29,12 +28,12 @@ class PropertyRelationship(BaseModel):
 
 class TigerGraphClient:
     """Client for querying TigerGraph semantic relationships."""
-    
+
     def __init__(self, host: str, username: str, password: str, graph_name: str = "childcare"):
         """Initialize TigerGraph connection."""
         self.host = host
         self.graph_name = graph_name
-        
+
         try:
             self.conn = tg.TigerGraphConnection(
                 host=host,
@@ -47,10 +46,10 @@ class TigerGraphClient:
         except Exception as e:
             logger.error(f"Failed to connect to TigerGraph: {e}")
             self.conn = None
-    
-    async def get_related_properties(self, property_name: str, 
-                                   max_depth: int = 2, 
-                                   min_similarity: float = 0.7) -> List[RelatedProperty]:
+
+    async def get_related_properties(self, property_name: str,
+                                   max_depth: int = 2,
+                                   min_similarity: float = 0.7) -> list[RelatedProperty]:
         """
         Get semantically related properties from TigerGraph.
         
@@ -65,7 +64,7 @@ class TigerGraphClient:
         if not self.conn:
             logger.warning("TigerGraph not connected, returning empty relationships")
             return []
-        
+
         try:
             # Run the installed query to find related properties
             result = self.conn.runInstalledQuery(
@@ -76,7 +75,7 @@ class TigerGraphClient:
                     "min_similarity": min_similarity
                 }
             )
-            
+
             related = []
             for item in result:
                 related.append(RelatedProperty(
@@ -86,19 +85,19 @@ class TigerGraphClient:
                     confidence=item.get("confidence", 0.0),
                     source=item.get("source", "unknown")
                 ))
-            
+
             logger.debug(f"Found {len(related)} related properties for '{property_name}'")
             return related
-            
+
         except Exception as e:
             logger.error(f"Error querying TigerGraph for '{property_name}': {e}")
             return []
-    
+
     async def property_exists(self, property_name: str) -> bool:
         """Check if property exists in TigerGraph."""
         if not self.conn:
             return False
-            
+
         try:
             result = self.conn.runInstalledQuery(
                 "check_property_exists",
@@ -108,8 +107,8 @@ class TigerGraphClient:
         except Exception as e:
             logger.error(f"Error checking property existence: {e}")
             return False
-    
-    async def get_property_hierarchy(self, property_name: str) -> Dict[str, List[str]]:
+
+    async def get_property_hierarchy(self, property_name: str) -> dict[str, list[str]]:
         """
         Get property hierarchy (broader/narrower terms).
         
@@ -118,54 +117,54 @@ class TigerGraphClient:
         """
         if not self.conn:
             return {"broader": [], "narrower": [], "related": []}
-        
+
         try:
             result = self.conn.runInstalledQuery(
                 "get_property_hierarchy",
                 {"property_name": property_name}
             )
-            
+
             hierarchy = {"broader": [], "narrower": [], "related": []}
             for item in result:
                 rel_type = item.get("relationship_type", "related")
                 prop_name = item.get("name", "")
-                
+
                 if rel_type == "broader":
                     hierarchy["broader"].append(prop_name)
                 elif rel_type == "narrower":
                     hierarchy["narrower"].append(prop_name)
                 else:
                     hierarchy["related"].append(prop_name)
-            
+
             return hierarchy
-            
+
         except Exception as e:
             logger.error(f"Error getting property hierarchy: {e}")
             return {"broader": [], "narrower": [], "related": []}
-    
-    async def get_center_properties(self, center_id: str) -> List[Dict]:
+
+    async def get_center_properties(self, center_id: str) -> list[dict]:
         """Get all properties for a center from TigerGraph."""
         if not self.conn:
             return []
-        
+
         try:
             result = self.conn.runInstalledQuery(
                 "get_center_properties",
                 {"center_id": center_id}
             )
-            
+
             return result
-            
+
         except Exception as e:
             logger.error(f"Error getting center properties: {e}")
             return []
-    
+
     def install_queries(self):
         """Install required GSQL queries in TigerGraph."""
         if not self.conn:
             logger.error("Cannot install queries - no TigerGraph connection")
             return
-        
+
         queries = {
             "find_related_properties": """
             CREATE QUERY find_related_properties(STRING property_name, INT max_depth, DOUBLE min_similarity) FOR GRAPH childcare {
@@ -186,7 +185,7 @@ class TigerGraphClient:
                              related.@source AS source];
             }
             """,
-            
+
             "check_property_exists": """
             CREATE QUERY check_property_exists(STRING property_name) FOR GRAPH childcare {
                 result = SELECT s FROM Property:s 
@@ -194,7 +193,7 @@ class TigerGraphClient:
                 PRINT result[result.name];
             }
             """,
-            
+
             "get_property_hierarchy": """
             CREATE QUERY get_property_hierarchy(STRING property_name) FOR GRAPH childcare {
                 start = {Property.*};
@@ -216,7 +215,7 @@ class TigerGraphClient:
                 PRINT related[related.name, related.relationship_type];
             }
             """,
-            
+
             "get_center_properties": """
             CREATE QUERY get_center_properties(STRING center_id) FOR GRAPH childcare {
                 center_props = SELECT p FROM Center:c -(HAS_PROPERTY>)- Property:p
@@ -238,7 +237,7 @@ class TigerGraphClient:
             }
             """
         }
-        
+
         for query_name, query_body in queries.items():
             try:
                 self.conn.gsql(query_body)
@@ -250,12 +249,12 @@ class TigerGraphClient:
 
 class SemanticPropertyExpander:
     """Expands parent preferences using TigerGraph semantic relationships."""
-    
+
     def __init__(self, tigergraph_client: TigerGraphClient):
         self.tg_client = tigergraph_client
         self._cache = {}  # Simple in-memory cache
-    
-    async def expand_preferences(self, preferences: List['ParentPreference']) -> List['ParentPreference']:
+
+    async def expand_preferences(self, preferences: list['ParentPreference']) -> list['ParentPreference']:
         """
         Expand preferences with semantically related properties.
         
@@ -265,15 +264,15 @@ class SemanticPropertyExpander:
         Returns:
             Expanded list including semantic matches with reduced weights
         """
-        from ..models.base import ParentPreference, PreferenceStrength
-        
+        from ..models.base import ParentPreference
+
         expanded = list(preferences)  # Start with original preferences
-        
+
         for pref in preferences:
             # Skip if this is an absolute requirement (don't dilute)
             if pref.is_absolute:
                 continue
-            
+
             # Check cache first
             cache_key = f"{pref.property_key}_{pref.strength.value}"
             if cache_key in self._cache:
@@ -285,11 +284,11 @@ class SemanticPropertyExpander:
                     min_similarity=0.7
                 )
                 self._cache[cache_key] = related
-            
+
             # Create semantic preferences with reduced strength
             for rel_prop in related[:5]:  # Limit to top 5 to avoid noise
                 semantic_strength = self._derive_semantic_strength(pref.strength, rel_prop.similarity)
-                
+
                 semantic_pref = ParentPreference(
                     id=pref.id,  # Same ID for tracking
                     profile_id=pref.profile_id,
@@ -304,12 +303,12 @@ class SemanticPropertyExpander:
                     min_value=pref.min_value,
                     max_value=pref.max_value
                 )
-                
+
                 expanded.append(semantic_pref)
-        
+
         logger.info(f"Expanded {len(preferences)} preferences to {len(expanded)} with semantic relationships")
         return expanded
-    
+
     def _derive_semantic_strength(self, original_strength: 'PreferenceStrength', similarity: float) -> 'PreferenceStrength':
         """
         Derive semantic preference strength based on original strength and similarity.
@@ -322,7 +321,7 @@ class SemanticPropertyExpander:
             Reduced strength for semantic match
         """
         from ..models.base import PreferenceStrength
-        
+
         # High similarity maintains strength better
         if similarity >= 0.9:
             strength_mapping = {
@@ -339,5 +338,5 @@ class SemanticPropertyExpander:
                 PreferenceStrength.PREFERRED: PreferenceStrength.NICE_TO_HAVE,
                 PreferenceStrength.NICE_TO_HAVE: PreferenceStrength.NICE_TO_HAVE
             }
-        
+
         return strength_mapping.get(original_strength, PreferenceStrength.NICE_TO_HAVE)

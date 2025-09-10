@@ -31,7 +31,7 @@ except ImportError:
 
 __all__ = [
     "schedule_router",
-    "validation_router", 
+    "validation_router",
     "health_router",
     "admin_router"
 ]
@@ -40,7 +40,7 @@ __all__ = [
 AVAILABLE_ROUTERS = [
     schedule_router,
     validation_router,
-    health_router, 
+    health_router,
     admin_router
 ]
 

@@ -3,11 +3,12 @@ Health check and system status routes
 """
 
 from datetime import datetime
+
 from fastapi import APIRouter, Depends
 
 from ...config import settings
 from ...utils import PerformanceProfiler
-from ..dependencies import get_profiler, get_cache_manager
+from ..dependencies import get_cache_manager, get_profiler
 
 router = APIRouter(tags=["System"])
 

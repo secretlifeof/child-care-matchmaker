@@ -3,14 +3,13 @@ Constraint definitions for the Schedule Optimization Service
 """
 
 import logging
-from datetime import datetime, timedelta, time, date
-from typing import List, Dict, Set, Tuple, Optional
-from ortools.sat.python import cp_model
-import numpy as np
 from collections import defaultdict
+from datetime import date
 
-from .models import *
+from ortools.sat.python import cp_model
+
 from .config import settings
+from .models import *
 
 logger = logging.getLogger(__name__)
 
@@ -23,11 +22,11 @@ class ConstraintBuilder:
 
     def add_hard_constraints(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        groups: List[Group],
-        requirements: List[StaffingRequirement],
-        time_slots: List[Tuple[int, int]],  # (day, hour)
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        groups: list[Group],
+        requirements: list[StaffingRequirement],
+        time_slots: list[tuple[int, int]],  # (day, hour)
     ):
         """Add all hard constraints that must be satisfied"""
 
@@ -61,10 +60,10 @@ class ConstraintBuilder:
 
     def add_soft_constraints(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        time_slots: List[Tuple[int, int]],
-    ) -> List[cp_model.IntVar]:
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        time_slots: list[tuple[int, int]],
+    ) -> list[cp_model.IntVar]:
         """Add soft constraints and return penalty variables for objective function"""
 
         penalty_vars = []
@@ -97,21 +96,21 @@ class ConstraintBuilder:
 
     def _add_staffing_ratio_constraints(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        requirements: List[StaffingRequirement],
-        staff: List[Staff],
-        groups: List[Group],
-        time_slots: List[Tuple[int, int]],
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        requirements: list[StaffingRequirement],
+        staff: list[Staff],
+        groups: list[Group],
+        time_slots: list[tuple[int, int]],
     ):
         """
         For each time slot that has requirements, enforce proper staffing levels.
         Handle overlapping requirements by taking the maximum of min_staff and 
         minimum of max_staff across all applicable requirements.
         """
-        
+
         # Build a mapping from (group_id, day_offset, hour) to list of requirements
         slot_requirements = defaultdict(list)
-        
+
         # First, we need to map day_of_week from requirements to actual day_offsets
         # We'll iterate through all time slots and check which requirements apply
         for day_offset, hour in time_slots:
@@ -119,14 +118,14 @@ class ConstraintBuilder:
             # This assumes we have a start date context - we'll need to pass it in
             # For now, let's assume day_offset maps to weekday cyclically
             actual_dow = day_offset % 7
-            
+
             for req in requirements:
                 req_dow = req.time_slot.day_of_week
                 req_start_hour = req.time_slot.start_time.hour
                 req_end_hour = req.time_slot.end_time.hour
-                
+
                 # Check if this requirement applies to this slot
-                if (req_dow == actual_dow and 
+                if (req_dow == actual_dow and
                     req_start_hour <= hour < req_end_hour):
                     slot_requirements[(req.group_id, day_offset, hour)].append(req)
 
@@ -134,13 +133,13 @@ class ConstraintBuilder:
         for (group_id, day_offset, hour), applicable_reqs in slot_requirements.items():
             if not applicable_reqs:
                 continue
-                
+
             # Collect all variables for this slot
             slot_vars = []
             for (sid, gid, d, h), var in assignments.items():
                 if gid == group_id and d == day_offset and h == hour:
                     slot_vars.append(var)
-            
+
             if not slot_vars:
                 # No variables for this slot - check if this should cause infeasibility
                 min_required = max(req.min_staff_count for req in applicable_reqs)
@@ -180,13 +179,13 @@ class ConstraintBuilder:
 
             # Add the constraints
             total_assigned = sum(slot_vars)
-            
+
             # Minimum staffing constraint
             self.model.Add(total_assigned >= min_staff_required)
-            
+
             # Maximum staffing constraint
             self.model.Add(total_assigned <= max_staff_allowed)
-            
+
             logger.debug(
                 f"Added staffing constraint for group {group_id}, day {day_offset}, hour {hour}: "
                 f"{min_staff_required} <= staff <= {max_staff_allowed} "
@@ -195,9 +194,9 @@ class ConstraintBuilder:
 
     def _add_availability_constraints(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        time_slots: List[Tuple[int, int]],
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        time_slots: list[tuple[int, int]],
     ):
         """Staff cannot be scheduled when unavailable"""
 
@@ -228,15 +227,15 @@ class ConstraintBuilder:
 
     def _add_qualification_constraints(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        requirements: List[StaffingRequirement],
-        time_slots: List[Tuple[int, int]],
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        requirements: list[StaffingRequirement],
+        time_slots: list[tuple[int, int]],
     ):
         """Disallow assignments for staff who lack required qualifications—
         applied over every hour of each explicit staffing requirement."""
         # build a map of each staff member’s VERIFIED qualifications
-        staff_quals: Dict[UUID, Set[str]] = {}
+        staff_quals: dict[UUID, set[str]] = {}
         for sm in staff:
             quals = {
                 q.qualification_name
@@ -266,9 +265,9 @@ class ConstraintBuilder:
 
     def _add_daily_hour_limits(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        time_slots: List[Tuple[int, int]],
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        time_slots: list[tuple[int, int]],
     ):
         """Limit daily working hours per staff member"""
 
@@ -291,9 +290,9 @@ class ConstraintBuilder:
 
     def _add_weekly_hour_limits(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        time_slots: List[Tuple[int, int]],
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        time_slots: list[tuple[int, int]],
     ):
         """Limit weekly working hours per staff member"""
 
@@ -310,9 +309,9 @@ class ConstraintBuilder:
 
     def _add_consecutive_hour_limits(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        time_slots: List[Tuple[int, int]],
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        time_slots: list[tuple[int, int]],
     ):
         """Limit consecutive working hours"""
 
@@ -353,9 +352,9 @@ class ConstraintBuilder:
 
     def _add_break_requirements(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        time_slots: List[Tuple[int, int]],
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        time_slots: list[tuple[int, int]],
     ):
         """Ensure minimum break between shifts"""
 
@@ -402,10 +401,10 @@ class ConstraintBuilder:
 
     def _add_single_assignment_constraints(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        groups: List[Group],
-        time_slots: List[Tuple[int, int]],
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        groups: list[Group],
+        time_slots: list[tuple[int, int]],
     ):
         """Each staff member can only be assigned to one group per time slot"""
 
@@ -422,10 +421,10 @@ class ConstraintBuilder:
 
     def _add_preference_constraints(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        time_slots: List[Tuple[int, int]],
-    ) -> List[cp_model.IntVar]:
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        time_slots: list[tuple[int, int]],
+    ) -> list[cp_model.IntVar]:
         """Add preference violation penalties"""
 
         penalty_vars = []
@@ -444,7 +443,7 @@ class ConstraintBuilder:
                         is_positive=True,
                     )
                     penalty_vars.append(penalty_var)
-                elif preference.preference_type == PreferenceType.AVOID_DAYS:
+                elif preference.preference_type == PreferenceType.EXCLUDE_DAYS:
                     penalty_var = self._create_preference_penalty(
                         assignments,
                         staff_member,
@@ -458,10 +457,10 @@ class ConstraintBuilder:
 
     def _create_preference_penalty(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
         staff_member: Staff,
         preference: StaffPreference,
-        time_slots: List[Tuple[int, int]],
+        time_slots: list[tuple[int, int]],
         is_positive: bool,
     ) -> cp_model.IntVar:
         """Create penalty variable for preference violations"""
@@ -504,10 +503,10 @@ class ConstraintBuilder:
 
     def _add_overtime_penalties(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        time_slots: List[Tuple[int, int]],
-    ) -> List[cp_model.IntVar]:
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        time_slots: list[tuple[int, int]],
+    ) -> list[cp_model.IntVar]:
         """Add penalties for overtime hours"""
 
         penalty_vars = []
@@ -536,10 +535,10 @@ class ConstraintBuilder:
 
     def _add_fairness_constraints(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        time_slots: List[Tuple[int, int]],
-    ) -> List[cp_model.IntVar]:
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        time_slots: list[tuple[int, int]],
+    ) -> list[cp_model.IntVar]:
         """Add penalties for unfair hour distribution"""
 
         penalty_vars = []
@@ -581,10 +580,10 @@ class ConstraintBuilder:
 
     def _add_continuity_preferences(
         self,
-        assignments: Dict[Tuple[UUID, UUID, int, int], cp_model.IntVar],
-        staff: List[Staff],
-        time_slots: List[Tuple[int, int]],
-    ) -> List[cp_model.IntVar]:
+        assignments: dict[tuple[UUID, UUID, int, int], cp_model.IntVar],
+        staff: list[Staff],
+        time_slots: list[tuple[int, int]],
+    ) -> list[cp_model.IntVar]:
         """Add penalties for fragmented schedules"""
 
         penalty_vars = []
@@ -629,7 +628,7 @@ class ConstraintBuilder:
 
         return penalty_vars
 
-    def _calculate_group_ratios(self, groups: List[Group]) -> Dict[AgeGroup, int]:
+    def _calculate_group_ratios(self, groups: list[Group]) -> dict[AgeGroup, int]:
         """Calculate staff-to-child ratios by age group"""
         return {
             AgeGroup.INFANT: settings.infant_ratio,
@@ -637,4 +636,3 @@ class ConstraintBuilder:
             AgeGroup.PRESCHOOL: settings.preschool_ratio,
             AgeGroup.MIXED: settings.toddler_ratio,  # Use toddler ratio for mixed groups
         }
-      

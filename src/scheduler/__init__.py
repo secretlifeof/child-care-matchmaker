@@ -79,26 +79,26 @@ __all__ = [
 
 # Import main classes for convenience
 try:
-    from .scheduler import ScheduleOptimizer
-    from .solver import ScheduleSolver
+    from .config import settings
     from .enchanced_solver import ScheduleSolver
     from .models import (
+        AgeGroup,
+        Group,
+        OptimizationConfig,
+        OptimizationGoal,
+        PreferenceType,
+        PriorityLevel,
+        ScheduledShift,
         ScheduleGenerationRequest,
         ScheduleGenerationResponse,
         ScheduleValidationRequest,
         ScheduleValidationResponse,
         Staff,
-        Group,
         StaffingRequirement,
-        ScheduledShift,
-        OptimizationConfig,
-        OptimizationGoal,
         StaffRole,
-        AgeGroup,
-        PreferenceType,
-        PriorityLevel,
     )
-    from .config import settings
+    from .scheduler import ScheduleOptimizer
+    from .solver import ScheduleSolver
 except ImportError:
     # Handle import errors gracefully during package building
     pass

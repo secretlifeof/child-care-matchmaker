@@ -5,10 +5,9 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 from loguru import logger
-
 
 # Create logs directory if it doesn't exist
 LOGS_DIR = Path("logs")
@@ -27,25 +26,25 @@ VERBOSE_LOGGING = os.getenv("VERBOSE_LOGGING", "false").lower() in ("true", "1",
 
 class MatchmakerLoguru:
     """Loguru-based logger for the matchmaker service."""
-    
+
     _instance = None
     _configured = False
-    
+
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
-    
+
     def __init__(self):
         if not self._configured:
             self._setup_logger()
             self._configured = True
-    
+
     def _setup_logger(self):
         """Configure Loguru logger with file and console handlers."""
         # Remove default handler
         logger.remove()
-        
+
         # Console handler for development (pretty printing)
         if DEBUG_MODE:
             console_format = (
@@ -62,7 +61,7 @@ class MatchmakerLoguru:
                 backtrace=True,
                 diagnose=True
             )
-        
+
         # File handler with conditional JSON formatting
         logger.add(
             LOG_FILEPATH,
@@ -76,7 +75,7 @@ class MatchmakerLoguru:
             diagnose=True,
             enqueue=True
         )
-        
+
         # Log service start
         logger.bind(
             log_file=str(LOG_FILEPATH),
@@ -84,21 +83,21 @@ class MatchmakerLoguru:
             log_level=LOG_LEVEL,
             verbose_logging=VERBOSE_LOGGING
         ).info("Matchmaker service started")
-    
+
     def log_request(
         self,
         request_id: str,
         method: str,
         endpoint: str,
-        headers: Dict[str, str],
+        headers: dict[str, str],
         body: Any,
-        query_params: Optional[Dict[str, str]] = None
+        query_params: dict[str, str] | None = None
     ):
         """Log incoming request."""
         # Sanitize sensitive data
         safe_headers = self._sanitize_headers(headers) if VERBOSE_LOGGING else {}
         safe_body = self._sanitize_body(body)
-        
+
         log_data = {
             "request_id": request_id,
             "request_type": "incoming",
@@ -106,34 +105,34 @@ class MatchmakerLoguru:
             "endpoint": endpoint,
             "body": safe_body,
         }
-        
+
         if VERBOSE_LOGGING:
             log_data.update({
                 "headers": safe_headers,
                 "query_params": query_params or {},
                 "body_size": len(json.dumps(body)) if body else 0
             })
-        
+
         if DEBUG_MODE:
             # Pretty print for console
             body_preview = json.dumps(safe_body, indent=2) if safe_body else "None"
             message = f"📥 Request {method} {endpoint}\n{body_preview}"
         else:
             message = f"Request received: {method} {endpoint}"
-        
+
         logger.bind(**log_data).info(message)
-    
+
     def log_response(
         self,
         request_id: str,
         status_code: int,
-        headers: Dict[str, str],
+        headers: dict[str, str],
         body: Any,
         duration_ms: float
     ):
         """Log outgoing response."""
         safe_body = self._sanitize_body(body)
-        
+
         log_data = {
             "request_id": request_id,
             "request_type": "outgoing",
@@ -141,13 +140,13 @@ class MatchmakerLoguru:
             "duration_ms": duration_ms,
             "body": safe_body,
         }
-        
+
         if VERBOSE_LOGGING:
             log_data.update({
                 "headers": dict(headers),
                 "body_size": len(json.dumps(body)) if body else 0
             })
-        
+
         # Determine log level based on status code
         if status_code >= 500:
             log_level = "error"
@@ -155,7 +154,7 @@ class MatchmakerLoguru:
             log_level = "warning"
         else:
             log_level = "info"
-        
+
         if DEBUG_MODE:
             # Pretty print for console
             status_emoji = "✅" if status_code < 400 else "❌" if status_code >= 500 else "⚠️"
@@ -163,13 +162,13 @@ class MatchmakerLoguru:
             message = f"{status_emoji} Response {status_code} ({duration_ms:.1f}ms)\n{body_preview}"
         else:
             message = f"Response sent - Status: {status_code}"
-        
+
         getattr(logger.bind(**log_data), log_level)(message)
-    
+
     def log_error(
         self,
         message: str,
-        error: Optional[Exception] = None,
+        error: Exception | None = None,
         **kwargs
     ):
         """Log an error."""
@@ -177,25 +176,25 @@ class MatchmakerLoguru:
             logger.bind(**kwargs).exception(f"❌ {message}")
         else:
             logger.bind(**kwargs).error(f"❌ {message}")
-    
+
     def log_warning(self, message: str, **kwargs):
         """Log a warning."""
         logger.bind(**kwargs).warning(f"⚠️  {message}")
-    
+
     def log_info(self, message: str, **kwargs):
         """Log info message."""
         logger.bind(**kwargs).info(f"ℹ️  {message}")
-    
+
     def log_debug(self, message: str, **kwargs):
         """Log debug message."""
         logger.bind(**kwargs).debug(f"🔍 {message}")
-    
+
     def log_matching_operation(
         self,
         operation: str,
         mode: str,
-        input_data: Dict[str, Any],
-        result: Dict[str, Any],
+        input_data: dict[str, Any],
+        result: dict[str, Any],
         duration_ms: float
     ):
         """Log matching operation details."""
@@ -206,42 +205,42 @@ class MatchmakerLoguru:
             "input_summary": self._summarize_input(input_data),
             "result_summary": self._summarize_result(result)
         }
-        
+
         if DEBUG_MODE:
             message = f"🎯 Matching operation completed: {operation} ({mode}) - {duration_ms:.1f}ms"
         else:
             message = f"Matching operation completed: {operation}"
-        
+
         logger.bind(**log_data).info(message)
-    
-    def _sanitize_headers(self, headers: Dict[str, str]) -> Dict[str, str]:
+
+    def _sanitize_headers(self, headers: dict[str, str]) -> dict[str, str]:
         """Remove sensitive information from headers."""
         sensitive_headers = {
-            'authorization', 'cookie', 'x-api-key', 
+            'authorization', 'cookie', 'x-api-key',
             'x-auth-token', 'x-csrf-token'
         }
-        
+
         safe_headers = {}
         for key, value in headers.items():
             if key.lower() in sensitive_headers:
                 safe_headers[key] = "***REDACTED***"
             else:
                 safe_headers[key] = value
-        
+
         return safe_headers
-    
+
     def _sanitize_body(self, body: Any) -> Any:
         """Remove sensitive information from request/response body."""
         if not body:
             return body
-        
+
         # List of sensitive field names
         sensitive_fields = {
             'password', 'token', 'secret', 'api_key',
             'access_token', 'refresh_token', 'ssn',
             'credit_card', 'bank_account'
         }
-        
+
         if isinstance(body, dict):
             safe_body = {}
             for key, value in body.items():
@@ -252,48 +251,48 @@ class MatchmakerLoguru:
                 else:
                     safe_body[key] = value
             return safe_body
-        
+
         elif isinstance(body, list):
             return [self._sanitize_body(item) for item in body]
-        
+
         return body
-    
-    def _summarize_input(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+
+    def _summarize_input(self, input_data: dict[str, Any]) -> dict[str, Any]:
         """Create a summary of input data for logging."""
         summary = {}
-        
+
         if 'applications' in input_data:
             summary['application_count'] = len(input_data['applications'])
         elif 'application' in input_data:
             summary['application_id'] = str(input_data.get('application', {}).get('id', 'unknown'))
-        
+
         if 'centers' in input_data:
             summary['center_count'] = len(input_data['centers'])
-        
+
         if 'top_k' in input_data:
             summary['requested_recommendations'] = input_data['top_k']
-        
+
         return summary
-    
-    def _summarize_result(self, result: Dict[str, Any]) -> Dict[str, Any]:
+
+    def _summarize_result(self, result: dict[str, Any]) -> dict[str, Any]:
         """Create a summary of result data for logging."""
         summary = {}
-        
+
         if 'offers' in result:
             summary['offers_count'] = len(result['offers'])
-        
+
         if 'waitlist_entries' in result:
             summary['waitlist_count'] = len(result['waitlist_entries'])
-        
+
         if 'success' in result:
             summary['success'] = result['success']
-        
+
         if 'matched_applications' in result:
             summary['matched_applications'] = result['matched_applications']
-        
+
         if 'coverage_rate' in result:
             summary['coverage_rate'] = result['coverage_rate']
-        
+
         return summary
 
 

@@ -1,378 +1,337 @@
 # Request Examples
 
-This document provides complete examples of API requests for different scenarios.
+This document provides complete examples of API requests with the new complex preference system.
 
 ## Basic Recommendation Request
 
-Get personalized recommendations for a single parent:
+Get personalized recommendations using parent ID for database lookup:
 
 ```json
 {
-  "application": {
-    "id": "550e8400-e29b-41d4-a716-446655440001",
-    "family_id": "550e8400-e29b-41d4-a716-446655440101",
-    "children": [
-      {
-        "id": "550e8400-e29b-41d4-a716-446655440201",
-        "family_id": "550e8400-e29b-41d4-a716-446655440101",
-        "name": "Emma Johnson",
-        "birth_date": "2022-03-15"
-      }
-    ],
-    "home_location": {
-      "latitude": 52.5200,
-      "longitude": 13.4050,
-      "address": "Hauptstraße 123",
-      "postal_code": "10117",
-      "city": "Berlin",
-      "country_code": "DE"
-    },
-    "preferences": [
-      {
-        "id": "550e8400-e29b-41d4-a716-446655440301",
-        "profile_id": "550e8400-e29b-41d4-a716-446655440001",
-        "property_key": "organic_food",
-        "operator": "equals",
-        "value_boolean": true,
-        "weight": 0.8,
-        "threshold": 0.7
-      }
-    ],
-    "desired_start_date": "2024-09-01",
-    "desired_hours": [
-      {"day_of_week": 0, "start_hour": 8, "end_hour": 16},
-      {"day_of_week": 1, "start_hour": 8, "end_hour": 16},
-      {"day_of_week": 2, "start_hour": 8, "end_hour": 16},
-      {"day_of_week": 3, "start_hour": 8, "end_hour": 16},
-      {"day_of_week": 4, "start_hour": 8, "end_hour": 16}
-    ],
-    "max_distance_km": 5.0,
-    "priority_flags": []
-  },
-  "centers": [
-    {
-      "id": "550e8400-e29b-41d4-a716-446655440401",
-      "name": "Green Garden Daycare",
-      "location": {
-        "latitude": 52.5150,
-        "longitude": 13.4100,
-        "address": "Gartenstraße 45",
-        "postal_code": "10115",
-        "city": "Berlin",
-        "country_code": "DE"
-      },
-      "properties": [
-        {
-          "id": "550e8400-e29b-41d4-a716-446655440501",
-          "center_id": "550e8400-e29b-41d4-a716-446655440401",
-          "property_key": "organic_food",
-          "category": "service",
-          "value_boolean": true,
-          "source": "verified"
-        }
-      ],
-      "capacity_buckets": [
-        {
-          "id": "550e8400-e29b-41d4-a716-446655440701",
-          "center_id": "550e8400-e29b-41d4-a716-446655440401",
-          "age_band": {
-            "min_age_months": 12,
-            "max_age_months": 36,
-            "name": "Toddlers"
-          },
-          "start_month": "2024-09-01",
-          "total_capacity": 20,
-          "available_capacity": 5
-        }
-      ]
-    }
-  ],
-  "top_k": 10,
+  "parent_id": "550e8400-e29b-41d4-a716-446655440001",
+  "limit": 10,
+  "max_distance_km": 5.0,
   "include_full_centers": false,
-  "include_explanations": true
-}
-```
-
-## Global Allocation Request
-
-Optimal allocation across multiple applications:
-
-```json
-{
-  "applications": [
-    {
-      "id": "app1",
-      "children": [...],
-      "preferences": [...],
-      "priority_flags": ["sibling"]
-    },
-    {
-      "id": "app2", 
-      "children": [...],
-      "preferences": [...],
-      "priority_flags": ["low_income"]
-    }
-  ],
-  "centers": [...],
-  "respect_capacity": true,
-  "prioritize_siblings": true,
-  "optimization_objective": "fairness",
+  "include_explanations": true,
   "matching_config": {
-    "policy_settings": {
-      "priority_tiers": {
-        "sibling": 1000,
-        "low_income": 500
-      }
+    "scoring_weights": {
+      "spatial_weight": 0.3,
+      "preference_weight": 0.4,
+      "quality_weight": 0.3
     }
   }
 }
 ```
 
-## Waitlist Generation Request
+## Complex Preference Examples
 
-Generate priority-ordered waitlist for a center:
+The system automatically loads preferences from the database. Here are examples of the complex preference data structures:
 
+### Location Distance Preference
 ```json
 {
-  "center_id": "550e8400-e29b-41d4-a716-446655440405",
-  "applications": [
-    {
-      "id": "app1",
-      "priority_flags": ["sibling"]
-    },
-    {
-      "id": "app2", 
-      "priority_flags": ["municipality"]
-    },
-    {
-      "id": "app3",
-      "priority_flags": []
-    }
-  ],
-  "center": {
-    "id": "550e8400-e29b-41d4-a716-446655440405",
-    "name": "Popular Daycare",
-    "capacity_buckets": [
+  "parent_id": "uuid",
+  "feature_key": "location_constraint",
+  "complex_value_type_id": "location_distance_type_id",
+  "value_data": {
+    "locations": [
       {
-        "id": "bucket1",
-        "total_capacity": 20,
-        "available_capacity": 0
+        "name": "home",
+        "latitude": 52.52,
+        "longitude": 13.405,
+        "max_distance_km": 3
+      },
+      {
+        "name": "work", 
+        "address": "Berliner Str. 15, Berlin",
+        "max_distance_km": 5,
+        "preferred_distance_km": 3
       }
     ]
   },
-  "policy_overrides": {
-    "priority_tiers": {
-      "sibling": 1000,
-      "municipality": 800,
-      "low_income": 500
-    }
-  },
-  "include_estimated_dates": true
+  "preference": "required",
+  "confidence": 0.95
 }
 ```
 
-## Advanced Configuration Request
+### Schedule Range Preference
+```json
+{
+  "parent_id": "uuid", 
+  "feature_key": "schedule_constraint",
+  "complex_value_type_id": "schedule_range_type_id",
+  "value_data": {
+    "start_time": "16:00",
+    "end_time": "18:00",
+    "flexibility_minutes": 30,
+    "days_of_week": ["monday", "tuesday", "wednesday", "thursday", "friday"]
+  },
+  "preference": "preferred",
+  "confidence": 0.85
+}
+```
 
-Request with custom scoring and performance settings:
+### Social Connection Preference  
+```json
+{
+  "parent_id": "uuid",
+  "feature_key": "sibling_constraint", 
+  "complex_value_type_id": "social_connection_type_id",
+  "value_data": {
+    "connection_type": "sibling",
+    "entity_ids": ["550e8400-e29b-41d4-a716-446655440201"],
+    "priority_level": "required",
+    "same_center_required": true,
+    "same_group_required": false
+  },
+  "preference": "required",
+  "confidence": 1.0
+}
+```
+
+### Educational Approach Preference
+```json
+{
+  "parent_id": "uuid",
+  "feature_key": "educational_approach",
+  "complex_value_type_id": "educational_approach_type_id", 
+  "value_data": {
+    "approaches": ["montessori", "waldorf"],
+    "importance_weights": {"montessori": 0.8, "waldorf": 0.6},
+    "must_have_all": false,
+    "certification_required": true
+  },
+  "preference": "preferred",
+  "confidence": 0.9
+}
+```
+
+### Route Preference
+```json
+{
+  "parent_id": "uuid",
+  "feature_key": "commute_route",
+  "complex_value_type_id": "route_preference_type_id",
+  "value_data": {
+    "start_location": {"latitude": 52.52, "longitude": 13.405},
+    "end_location": {"address": "Hauptstraße 42, 10827 Berlin"},
+    "max_detour_minutes": 10,
+    "transport_mode": "car"
+  },
+  "preference": "preferred",
+  "confidence": 0.8
+}
+```
+
+## API Response Examples
+
+### Enhanced Recommendation Response
 
 ```json
 {
-  "application": {...},
-  "centers": [...],
-  "top_k": 5,
-  "min_score_threshold": 0.6,
-  "matching_config": {
-    "scoring_weights": {
-      "preference_weight": 0.5,
-      "property_weight": 0.2,
-      "availability_weight": 0.2,
-      "quality_weight": 0.1,
-      "sibling_bonus": 0.3
-    },
-    "distance_weights": {
-      "decay_factor": 0.08,
-      "preferred_radius_km": 2.0
-    },
-    "performance": {
-      "max_edges_per_application": 30,
-      "enable_edge_pruning": true,
-      "edge_pruning_threshold": 0.2,
-      "parallel_scoring": true
-    },
-    "debug": {
-      "include_timing_breakdown": true,
-      "include_graph_stats": true,
-      "log_level": "DEBUG"
+  "offers": [
+    {
+      "center_id": "550e8400-e29b-41d4-a716-446655440401",
+      "center_name": "Green Garden Daycare",
+      "score": 0.87,
+      "preference_matches": {
+        "simple_preferences": {
+          "satisfied": 8,
+          "total": 10
+        },
+        "complex_preferences": {
+          "location_distance": {
+            "satisfied": true,
+            "details": "home: ideal distance (1.2km); work: acceptable (4.2km)",
+            "score": 0.95
+          },
+          "schedule_range": {
+            "satisfied": true,
+            "details": "Fully supports schedule 16:00-18:00 (with 30min flexibility)",
+            "score": 1.0
+          },
+          "social_connection": {
+            "satisfied": true,
+            "details": "Siblings already enrolled at this center",
+            "score": 1.0
+          },
+          "educational_approach": {
+            "satisfied": true,
+            "details": "Offers: montessori, waldorf (no certification)",
+            "score": 0.7
+          }
+        }
+      },
+      "center_details": {
+        "location": {
+          "latitude": 52.5150,
+          "longitude": 13.4100,
+          "address": "Gartenstraße 45"
+        },
+        "description": "Modern daycare with outdoor space and Montessori approach"
+      }
+    }
+  ],
+  "processing_details": {
+    "centers_evaluated": 45,
+    "complex_types_processed": ["location_distance", "schedule_range", "social_connection", "educational_approach"],
+    "processing_time_ms": 234
+  },
+  "success": true
+}
+```
+
+### Complex Types Discovery Response
+
+```json
+{
+  "complex_types": [
+    {
+      "type_name": "location_distance",
+      "description": "Distance constraints from multiple locations",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "object", 
+              "properties": {
+                "name": {"type": "string"},
+                "latitude": {"type": "number"},
+                "longitude": {"type": "number"},
+                "address": {"type": "string"},
+                "max_distance_km": {"type": "number"},
+                "preferred_distance_km": {"type": "number"}
+              },
+              "required": ["name", "max_distance_km"]
+            }
+          }
+        },
+        "required": ["locations"]
+      },
+      "examples": [
+        {
+          "locations": [
+            {
+              "name": "home",
+              "latitude": 52.52,
+              "longitude": 13.405,
+              "max_distance_km": 3
+            },
+            {
+              "name": "work",
+              "address": "Berliner Str. 15",
+              "max_distance_km": 5,
+              "preferred_distance_km": 3
+            }
+          ]
+        }
+      ],
+      "version": 1
+    }
+  ],
+  "count": 5
+}
+```
+
+### Service Statistics Response
+
+```json
+{
+  "status": "healthy", 
+  "version": "2.1.0",
+  "features": {
+    "complex_preferences": true,
+    "schema_registry": true,
+    "spatial_queries": true,
+    "detailed_explanations": true,
+    "database_integration": true
+  },
+  "complex_types_supported": [
+    "location_distance",
+    "schedule_range",
+    "social_connection",
+    "educational_approach", 
+    "route_preference"
+  ],
+  "endpoints": {
+    "recommend": "Generate personalized recommendations with complex preferences",
+    "allocate": "Global optimal allocation",
+    "waitlist": "Center-specific waitlist",
+    "batch": "Batch processing",
+    "complex-types": "Get available complex preference types"
+  },
+  "api_changes": {
+    "parameter_changes": {
+      "top_k": "replaced with 'limit'",
+      "parent_id": "now primary identifier for database lookup"
     }
   }
 }
 ```
 
-## Batch Processing Request
+## Error Response Examples
 
-Process multiple operations in one call:
-
+### Parent Not Found
 ```json
 {
-  "requests": [
-    {
-      "type": "recommend",
-      "application_id": "app1",
-      "parameters": {
-        "top_k": 5,
-        "include_explanations": true
-      }
-    },
-    {
-      "type": "waitlist",
-      "center_id": "center1", 
-      "parameters": {
-        "group_by_age": true
-      }
-    },
-    {
-      "type": "allocate",
-      "application_ids": ["app2", "app3", "app4"],
-      "parameters": {
-        "optimization_objective": "efficiency"
-      }
-    }
-  ],
-  "shared_centers": [...],
-  "matching_config": {
-    "scoring_weights": {...}
-  },
-  "parallel_processing": true
-}
-```
-
-## Response Examples
-
-### Recommendation Response
-
-```json
-{
-  "mode": "recommend",
-  "offers": [
-    {
-      "application_id": "550e8400-e29b-41d4-a716-446655440001",
-      "center_id": "550e8400-e29b-41d4-a716-446655440401",
-      "bucket_id": "550e8400-e29b-41d4-a716-446655440701",
-      "rank": 1,
-      "score": 0.87,
-      "is_available": true,
-      "explanation": {
-        "distance_km": 2.3,
-        "preference_score": 0.9,
-        "components": {
-          "organic_food": 1.0,
-          "outdoor_space": 0.8,
-          "distance_penalty": 0.23
-        },
-        "constraints_satisfied": ["age_match", "hours_overlap"],
-        "reason_codes": ["preference_match", "close_distance"]
-      }
-    }
-  ],
-  "success": true,
-  "processing_time_ms": 234
-}
-```
-
-### Allocation Response
-
-```json
-{
-  "mode": "allocate",
-  "offers": [
-    {
-      "application_id": "app1",
-      "center_id": "center1",
-      "bucket_id": "bucket1",
-      "score": 0.89,
-      "is_allocated": true
-    }
-  ],
-  "statistics": {
-    "total_applications": 150,
-    "matched_applications": 142,
-    "coverage_rate": 0.947,
-    "average_score": 0.73,
-    "solver_status": "OPTIMAL"
-  },
-  "unmatched_applications": [
-    {
-      "application_id": "app99",
-      "reasons": ["no_capacity", "distance_exceeded"]
-    }
-  ],
-  "success": true,
-  "processing_time_ms": 1847
-}
-```
-
-### Waitlist Response
-
-```json
-{
-  "mode": "waitlist",
-  "center_id": "550e8400-e29b-41d4-a716-446655440405",
-  "waitlist_entries": [
-    {
-      "application_id": "app1",
-      "rank": 1,
-      "score": 0.94,
-      "tier": "sibling",
-      "estimated_wait_days": 45,
-      "explanation": {
-        "tier_bonus": 1000,
-        "base_score": 0.75
-      }
-    },
-    {
-      "application_id": "app2", 
-      "rank": 2,
-      "score": 0.83,
-      "tier": "municipality",
-      "estimated_wait_days": 67
-    }
-  ],
-  "statistics": {
-    "total_interested": 87,
-    "by_tier": {
-      "sibling": 12,
-      "municipality": 34,
-      "regular": 41
-    }
-  },
-  "success": true,
-  "processing_time_ms": 156
-}
-```
-
-## Error Response Example
-
-```json
-{
+  "offers": [],
   "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid application data",
-    "details": {
-      "field": "children",
-      "issue": "At least one child is required",
-      "provided_value": []
-    }
-  },
-  "timestamp": "2024-01-15T10:30:00Z",
-  "request_id": "550e8400-e29b-41d4-a716-446655440999"
+  "message": "No preferences found for parent",
+  "processing_details": {
+    "centers_evaluated": 0,
+    "complex_types_processed": [],
+    "processing_time_ms": 15
+  }
+}
+```
+
+### No Centers Found
+```json
+{
+  "offers": [],
+  "success": true,
+  "message": "No centers found within constraints", 
+  "processing_details": {
+    "centers_evaluated": 0,
+    "complex_types_processed": ["location_distance"],
+    "processing_time_ms": 45
+  }
+}
+```
+
+### Processing Error
+```json
+{
+  "offers": [],
+  "success": false,
+  "message": "Processing error: Database connection failed",
+  "processing_details": {
+    "centers_evaluated": 0,
+    "complex_types_processed": [],
+    "processing_time_ms": 125
+  }
 }
 ```
 
 ## Integration Notes
 
-- **Center Data**: Always provide centers in the request to limit matching scope and avoid additional API calls
-- **Progressive Loading**: If centers not provided, service will progressively load from main API starting with nearest 100
-- **Capacity Respect**: Set `respect_capacity: false` to include full centers for waitlist generation
-- **Custom Scoring**: Use `matching_config` to adjust scoring weights for specific requirements
-- **Batch Efficiency**: Use batch requests for multiple operations to reduce overhead
+### Database-Driven Approach
+- **Preference Loading**: All preferences (simple and complex) loaded from database using `parent_id`
+- **Schema Registry**: Complex types defined in `matching.Complex_Value_Types` table
+- **Spatial Queries**: Uses PostGIS for efficient geographic distance calculations
+- **No Inline Data**: Application/center data no longer provided in requests
+
+### Key Changes from Legacy API
+- **Parameter Change**: `top_k` → `limit`
+- **Database Lookup**: Use `parent_id` instead of inline application data  
+- **Complex Support**: Automatic processing of complex preference types
+- **Enhanced Response**: Detailed explanations for all preference matches
+- **Processing Metadata**: Information about complex types used and performance
+
+### Best Practices
+- **Parent ID Required**: Always provide valid `parent_id` for database lookup
+- **Distance Limits**: Set reasonable `max_distance_km` to limit search scope
+- **Explanation Details**: Enable `include_explanations` for debugging and user transparency
+- **Error Handling**: Check `success` field and `message` for error details

@@ -1,11 +1,10 @@
 """Progressive data loading for efficient matching."""
 
-import logging
-from typing import List, Optional, Dict, Any
-from uuid import UUID
 import asyncio
+import logging
+from uuid import UUID
+
 import httpx
-from geopy.distance import geodesic
 
 from ...models.base import Application, Center, Location
 
@@ -16,7 +15,7 @@ class ProgressiveLoader:
     """
     Loads data progressively to minimize memory usage and API calls.
     """
-    
+
     def __init__(
         self,
         initial_batch: int = 100,
@@ -33,8 +32,8 @@ class ProgressiveLoader:
         self.target_matches = target_matches
         self.api_base_url = api_base_url
         self.client = httpx.AsyncClient()
-    
-    async def load_application(self, application_id: UUID) -> Optional[Application]:
+
+    async def load_application(self, application_id: UUID) -> Application | None:
         """Load a single application."""
         try:
             # Would connect to main application API
@@ -48,22 +47,22 @@ class ProgressiveLoader:
             logger.error(f"Error loading application {application_id}: {e}")
             # Return mock data for testing
             return self._mock_application(application_id)
-    
-    async def load_applications(self, application_ids: List[UUID]) -> List[Application]:
+
+    async def load_applications(self, application_ids: list[UUID]) -> list[Application]:
         """Load multiple applications."""
         tasks = [self.load_application(app_id) for app_id in application_ids]
         results = await asyncio.gather(*tasks, return_exceptions=True)
-        
+
         applications = []
         for result in results:
             if isinstance(result, Application):
                 applications.append(result)
             else:
                 logger.error(f"Failed to load application: {result}")
-        
+
         return applications
-    
-    async def load_center(self, center_id: UUID) -> Optional[Center]:
+
+    async def load_center(self, center_id: UUID) -> Center | None:
         """Load a single center."""
         try:
             response = await self.client.get(
@@ -76,26 +75,26 @@ class ProgressiveLoader:
             logger.error(f"Error loading center {center_id}: {e}")
             # Return mock data for testing
             return self._mock_center(center_id)
-    
-    async def load_centers(self, center_ids: List[UUID]) -> List[Center]:
+
+    async def load_centers(self, center_ids: list[UUID]) -> list[Center]:
         """Load multiple centers."""
         tasks = [self.load_center(center_id) for center_id in center_ids]
         results = await asyncio.gather(*tasks, return_exceptions=True)
-        
+
         centers = []
         for result in results:
             if isinstance(result, Center):
                 centers.append(result)
             else:
                 logger.error(f"Failed to load center: {result}")
-        
+
         return centers
-    
+
     async def load_centers_progressive(
         self,
         application: Application,
-        target_matches: Optional[int] = None
-    ) -> List[Center]:
+        target_matches: int | None = None
+    ) -> list[Center]:
         """
         Load centers progressively, starting with nearest.
         
@@ -108,12 +107,12 @@ class ProgressiveLoader:
         """
         if target_matches is None:
             target_matches = self.target_matches
-        
+
         all_centers = []
         batch_size = self.initial_batch
         offset = 0
         quality_matches = 0
-        
+
         while len(all_centers) < self.max_centers:
             # Load next batch of centers
             centers = await self._load_centers_near(
@@ -122,39 +121,39 @@ class ProgressiveLoader:
                 offset=offset,
                 max_distance_km=application.max_distance_km
             )
-            
+
             if not centers:
                 break  # No more centers available
-            
+
             all_centers.extend(centers)
-            
+
             # Estimate quality matches in this batch
             # (In real implementation, would do quick scoring)
             quality_matches += len(centers) // 3  # Assume 1/3 are good matches
-            
+
             if quality_matches >= target_matches:
                 logger.info(
                     f"Found {quality_matches} potential matches in "
                     f"{len(all_centers)} centers"
                 )
                 break
-            
+
             # Expand search
             offset += batch_size
             batch_size = int(batch_size * self.expansion_factor)
             batch_size = min(batch_size, self.max_centers - len(all_centers))
-        
+
         return all_centers
-    
+
     async def load_centers_for_applications(
         self,
-        applications: List[Application],
+        applications: list[Application],
         max_per_app: int = 50
-    ) -> List[Center]:
+    ) -> list[Center]:
         """Load centers for multiple applications."""
         # Collect unique center IDs from all applications
         center_ids = set()
-        
+
         for app in applications:
             # Get nearest centers for each application
             centers = await self._load_centers_near(
@@ -162,18 +161,18 @@ class ProgressiveLoader:
                 limit=max_per_app,
                 max_distance_km=app.max_distance_km
             )
-            
+
             for center in centers:
                 center_ids.add(center.id)
-        
+
         # Load all unique centers
         return await self.load_centers(list(center_ids))
-    
+
     async def load_applications_for_center(
         self,
         center_id: UUID,
         include_all: bool = False
-    ) -> List[Application]:
+    ) -> list[Application]:
         """Load applications interested in a specific center."""
         try:
             params = {"center_id": center_id, "include_all": include_all}
@@ -181,24 +180,24 @@ class ProgressiveLoader:
                 f"{self.api_base_url}/api/applications/interested",
                 params=params
             )
-            
+
             if response.status_code == 200:
                 data = response.json()
                 return [Application(**app) for app in data]
-            
+
             return []
         except Exception as e:
             logger.error(f"Error loading applications for center {center_id}: {e}")
             # Return mock data for testing
             return self._mock_applications_for_center(center_id)
-    
+
     async def _load_centers_near(
         self,
         location: Location,
         limit: int,
         offset: int = 0,
-        max_distance_km: Optional[float] = None
-    ) -> List[Center]:
+        max_distance_km: float | None = None
+    ) -> list[Center]:
         """Load centers near a location."""
         try:
             params = {
@@ -207,30 +206,31 @@ class ProgressiveLoader:
                 "limit": limit,
                 "offset": offset
             }
-            
+
             if max_distance_km:
                 params["max_distance_km"] = max_distance_km
-            
+
             response = await self.client.get(
                 f"{self.api_base_url}/api/centers/nearby",
                 params=params
             )
-            
+
             if response.status_code == 200:
                 data = response.json()
                 return [Center(**center) for center in data]
-            
+
             return []
         except Exception as e:
             logger.error(f"Error loading centers near {location}: {e}")
             # Return mock data for testing
             return self._mock_centers_near(location, limit, offset)
-    
+
     def _mock_application(self, application_id: UUID) -> Application:
         """Create mock application for testing."""
         from datetime import date
-        from ...models.base import Child, ParentPreference, TimeSlot, ComparisonOperator
-        
+
+        from ...models.base import Child, ComparisonOperator, ParentPreference, TimeSlot
+
         return Application(
             id=application_id,
             family_id=UUID("12345678-1234-5678-1234-567812345678"),
@@ -269,15 +269,20 @@ class ProgressiveLoader:
             ],
             max_distance_km=5.0
         )
-    
+
     def _mock_center(self, center_id: UUID) -> Center:
         """Create mock center for testing."""
         from datetime import date
+
         from ...models.base import (
-            CenterProperty, CapacityBucket, AgeGroup,
-            PropertyCategory, SourceType, TimeSlot
+            AgeGroup,
+            CapacityBucket,
+            CenterProperty,
+            PropertyCategory,
+            SourceType,
+            TimeSlot,
         )
-        
+
         return Center(
             id=center_id,
             name="Test Daycare Center",
@@ -320,41 +325,41 @@ class ProgressiveLoader:
                 )
             ]
         )
-    
+
     def _mock_centers_near(
         self,
         location: Location,
         limit: int,
         offset: int
-    ) -> List[Center]:
+    ) -> list[Center]:
         """Create mock centers for testing."""
         centers = []
-        
+
         # Generate mock centers at different distances
         for i in range(min(limit, 10)):
             center_id = UUID(f"{'0' * 8}-{'0' * 4}-{'0' * 4}-{'0' * 4}-{str(offset + i).zfill(12)}")
             center = self._mock_center(center_id)
-            
+
             # Vary location slightly
             center.location.latitude += (i - 5) * 0.01
             center.location.longitude += (i - 5) * 0.01
             center.name = f"Daycare Center {offset + i + 1}"
-            
+
             centers.append(center)
-        
+
         return centers
-    
-    def _mock_applications_for_center(self, center_id: UUID) -> List[Application]:
+
+    def _mock_applications_for_center(self, center_id: UUID) -> list[Application]:
         """Create mock applications for testing."""
         applications = []
-        
+
         for i in range(5):
             app_id = UUID(f"{'9' * 8}-{'9' * 4}-{'9' * 4}-{'9' * 4}-{str(i).zfill(12)}")
             app = self._mock_application(app_id)
             applications.append(app)
-        
+
         return applications
-    
+
     async def close(self):
         """Close HTTP client."""
         await self.client.aclose()

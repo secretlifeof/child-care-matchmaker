@@ -10,64 +10,61 @@ This module contains Pydantic schemas for API requests and responses:
 
 # Import from main models for now - can be split later if needed
 from ..models import (
-    # Core data models
-    Staff,
-    Group,
-    StaffingRequirement,
-    ScheduledShift,
-    TimeSlot,
-    Qualification,
-    StaffAvailability,
-    StaffPreference,
-    ScheduleConstraint,
-    OptimizationConfig,
-    
-    # Request models
-    ScheduleGenerationRequest,
-    ScheduleValidationRequest,
-    
-    # Response models  
-    ScheduleGenerationResponse,
-    ScheduleValidationResponse,
-    ScheduleConflict,
-    OptimizationResult,
-    
-    # Enums
-    StaffRole,
     AgeGroup,
-    ShiftStatus,
+    Group,
+    OptimizationConfig,
+    OptimizationGoal,
+    OptimizationResult,
     PreferenceType,
     PriorityLevel,
-    OptimizationGoal
+    Qualification,
+    ScheduleConflict,
+    ScheduleConstraint,
+    ScheduledShift,
+    # Request models
+    ScheduleGenerationRequest,
+    # Response models
+    ScheduleGenerationResponse,
+    ScheduleValidationRequest,
+    ScheduleValidationResponse,
+    ShiftStatus,
+    # Core data models
+    Staff,
+    StaffAvailability,
+    StaffingRequirement,
+    StaffPreference,
+    # Enums
+    StaffRole,
+    TimeSlot,
 )
 
 __all__ = [
     # Core data models
     "Staff",
-    "Group", 
+    "Group",
     "StaffingRequirement",
     "ScheduledShift",
     "TimeSlot",
     "Qualification",
     "StaffAvailability",
-    "StaffPreference", 
+    "StaffPreference",
     "ScheduleConstraint",
     "OptimizationConfig",
-    
+
     # Request models
     "ScheduleGenerationRequest",
     "ScheduleValidationRequest",
-    
+
     # Response models
-    "ScheduleGenerationResponse", 
+    "ScheduleGenerationResponse",
     "ScheduleValidationResponse",
     "ScheduleConflict",
     "OptimizationResult",
-    
+
     # Enums
     "StaffRole",
     "AgeGroup",
-    "ShiftStatus", 
+    "ShiftStatus",
     "PreferenceType",
     "PriorityLevel",
     "OptimizationGoal"
@@ -86,7 +83,7 @@ RESPONSE_SCHEMAS = [
     ScheduleGenerationResponse,
     ScheduleValidationResponse,
     ScheduleConflict,
-    OptimizationResult  
+    OptimizationResult
 ]
 
 DATA_SCHEMAS = [
@@ -120,7 +117,7 @@ def list_schemas_by_category():
     """List all schemas organized by category"""
     return {
         "request": [cls.__name__ for cls in REQUEST_SCHEMAS],
-        "response": [cls.__name__ for cls in RESPONSE_SCHEMAS], 
+        "response": [cls.__name__ for cls in RESPONSE_SCHEMAS],
         "data": [cls.__name__ for cls in DATA_SCHEMAS],
         "enums": [cls.__name__ for cls in ENUM_SCHEMAS]
     }

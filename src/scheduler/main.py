@@ -3,28 +3,24 @@ FastAPI main application for the Daycare Schedule Optimization Service
 """
 
 import logging
-import asyncio
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
-from fastapi.openapi.utils import get_openapi
+
 import uvicorn
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
+from fastapi.responses import JSONResponse
 
-from .config import settings
-from .models import *
-from .core.optimizer import ScheduleOptimizer
-from .core.cache import CacheManager
-from .utils.profiler import PerformanceProfiler
-from .logging_config import setup_logging
 from .api.routes import schedule_router
-from .api.routes.health import router as health_router
 from .api.routes.admin import router as admin_router
+from .api.routes.health import router as health_router
 from .api.routes.validation import router as validation_router
-
-
-
+from .config import settings
+from .core.cache import CacheManager
+from .core.optimizer import ScheduleOptimizer
+from .logging_config import setup_logging
+from .models import *
+from .utils.profiler import PerformanceProfiler
 
 # Setup logging
 setup_logging()

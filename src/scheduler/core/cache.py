@@ -3,12 +3,12 @@ Caching layer for optimization results and frequently accessed data
 """
 
 import asyncio
-import pickle
-import logging
-from datetime import datetime, timedelta
-from typing import Any, Optional, Dict, List
-import json
 import hashlib
+import json
+import logging
+import pickle
+from datetime import datetime
+from typing import Any, Optional
 
 try:
     import redis
@@ -18,7 +18,6 @@ except ImportError:
     REDIS_AVAILABLE = False
 
 from ..config import settings
-from ..utils.exceptions import CacheError
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +73,7 @@ class CacheManager:
             )
             self.redis_client = None
 
-    async def get(self, key: str) -> Optional[Any]:
+    async def get(self, key: str) -> Any | None:
         """Get cached value"""
 
         try:
@@ -103,7 +102,7 @@ class CacheManager:
             self.cache_stats["errors"] += 1
             return None
 
-    async def set(self, key: str, value: Any, ttl: Optional[int] = None) -> bool:
+    async def set(self, key: str, value: Any, ttl: int | None = None) -> bool:
         """Set cached value"""
 
         if ttl is None:
@@ -211,7 +210,7 @@ class CacheManager:
             logger.error(f"Cache exists check error for key {key}: {str(e)}")
             return False
 
-    async def get_stats(self) -> Dict[str, Any]:
+    async def get_stats(self) -> dict[str, Any]:
         """Get cache statistics"""
 
         stats = self.cache_stats.copy()
@@ -237,7 +236,7 @@ class CacheManager:
 
         return stats
 
-    async def get_keys_by_pattern(self, pattern: str) -> List[str]:
+    async def get_keys_by_pattern(self, pattern: str) -> list[str]:
         """Get keys matching a pattern"""
 
         try:
@@ -279,7 +278,7 @@ class CacheManager:
         ttl = int((expire_at - now).total_seconds())
         return await self.set(key, value, ttl)
 
-    async def increment(self, key: str, amount: int = 1) -> Optional[int]:
+    async def increment(self, key: str, amount: int = 1) -> int | None:
         """Increment a numeric value in cache"""
 
         try:
@@ -330,7 +329,7 @@ class CacheManager:
             return False
 
     # Redis-specific operations
-    async def _redis_get(self, key: str) -> Optional[Any]:
+    async def _redis_get(self, key: str) -> Any | None:
         """Get value from Redis"""
 
         try:
@@ -406,7 +405,7 @@ class ScheduleCacheHelper:
         self,
         request_hash: str,
         response: "ScheduleGenerationResponse",
-        ttl: Optional[int] = None,
+        ttl: int | None = None,
     ) -> bool:
         """Cache a schedule generation result"""
 
@@ -422,7 +421,7 @@ class ScheduleCacheHelper:
         return await self.cache.get(cache_key)
 
     async def cache_staff_availability(
-        self, staff_id: str, week_start: str, availability_data: Dict
+        self, staff_id: str, week_start: str, availability_data: dict
     ) -> bool:
         """Cache staff availability data"""
 
@@ -431,14 +430,14 @@ class ScheduleCacheHelper:
 
     async def get_cached_staff_availability(
         self, staff_id: str, week_start: str
-    ) -> Optional[Dict]:
+    ) -> dict | None:
         """Get cached staff availability data"""
 
         cache_key = f"staff:availability:{staff_id}:{week_start}"
         return await self.cache.get(cache_key)
 
     async def cache_optimization_metrics(
-        self, center_id: str, metrics_data: Dict
+        self, center_id: str, metrics_data: dict
     ) -> bool:
         """Cache optimization metrics for analytics"""
 
