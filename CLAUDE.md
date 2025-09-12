@@ -195,6 +195,10 @@ MAX_CENTERS_PER_REQUEST=1000
 MIN_QUALITY_THRESHOLD=0.7
 TARGET_MATCHES=10
 
+# API Keys
+OPENAI_API_KEY=your_openai_key_here  # For semantic matching
+MAPBOX_API_KEY=your_mapbox_key_here  # For geocoding addresses
+
 # Scoring weights
 PREFERENCE_WEIGHT=0.4
 PROPERTY_WEIGHT=0.3

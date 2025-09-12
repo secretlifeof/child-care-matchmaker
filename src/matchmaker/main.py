@@ -8,10 +8,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api.middleware import LoggingMiddleware
-from .api.routes import matches, semantic
+from .api.routes import matches, semantic, streaming, preferences
 from .database import close_database_manager, get_database_manager
 from .services.graph import close_global_client, get_graph_client
 from .services.graph.factory import GraphClientFactory
+from .services.map_service import close_map_service
 from .utils.logger import get_logger
 
 # Get the matchmaker logger instead of basic logging
@@ -72,12 +73,27 @@ async def lifespan(app: FastAPI):
         logger.log_error(f"Failed to initialize semantic matching: {e}")
         logger.log_warning("Semantic matching features will be disabled")
 
+    # Initialize MapBox service if API key is available
+    try:
+        mapbox_api_key = os.getenv("MAPBOX_API_KEY")
+        if mapbox_api_key:
+            from .services.map_service import get_map_service
+            # Initialize the service (this will create the global instance)
+            get_map_service(mapbox_api_key)
+            logger.log_info("MapBox geocoding service initialized")
+        else:
+            logger.log_warning("MapBox API key not configured, geocoding features may be limited")
+    except Exception as e:
+        logger.log_error(f"Failed to initialize MapBox service: {e}")
+        logger.log_warning("MapBox geocoding features will be disabled")
+
     yield
 
     # Shutdown
     logger.log_info("Shutting down Parent-Daycare Matchmaker Service")
     await close_global_client()
     await close_database_manager()
+    await close_map_service()
 
 
 # Create FastAPI app
@@ -103,6 +119,8 @@ app.add_middleware(
 # Include routers
 app.include_router(matches.router)
 app.include_router(semantic.router)
+app.include_router(streaming.router)
+app.include_router(preferences.router)
 
 
 @app.get("/")
@@ -128,13 +146,19 @@ async def root():
             "/api/matches/waitlist": "Generate center waitlist",
             "/api/matches/batch": "Batch matching operations",
             "/api/matches/stats": "Service statistics and configuration",
+            "/api/preferences/process/interactive": "Process parent preferences with user interaction streaming",
+            "/api/preferences/interactions/respond": "Respond to preference processing interactions",
+            "/api/streaming/matches/interactive": "Interactive matching with user input streaming (deprecated)",
+            "/api/streaming/interactions/respond": "Respond to user interaction requests (deprecated)",
             "/docs": "Interactive API documentation"
         },
         "features": {
             "graph_databases": ["TigerGraph", "Neo4j"],
             "capacity_checking": True,
             "semantic_matching": True,
-            "explainable_results": True
+            "explainable_results": True,
+            "geocoding": ["MapBox"],
+            "streaming_interactions": True
         }
     }
 
@@ -181,6 +205,35 @@ async def health_check():
             "type": os.getenv('GRAPH_DB_TYPE', 'tigergraph'),
             "status": "error",
             "error": str(e)
+        }
+        health_status["status"] = "degraded"
+
+    # Check MapBox service health  
+    try:
+        mapbox_api_key = os.getenv("MAPBOX_API_KEY")
+        if mapbox_api_key:
+            from .services.map_service import get_map_service
+            map_service = get_map_service(mapbox_api_key)
+            # Simple test geocoding to check if service is working
+            test_result = await map_service.geocode_address("Berlin", country_code="de")
+            health_status["mapbox"] = {
+                "status": "healthy" if test_result else "degraded",
+                "configured": True,
+                "test_geocoding": test_result is not None
+            }
+            if not test_result:
+                health_status["status"] = "degraded"
+        else:
+            health_status["mapbox"] = {
+                "status": "not_configured",
+                "configured": False,
+                "message": "MapBox API key not provided"
+            }
+    except Exception as e:
+        health_status["mapbox"] = {
+            "status": "error",
+            "error": str(e),
+            "configured": mapbox_api_key is not None
         }
         health_status["status"] = "degraded"
 

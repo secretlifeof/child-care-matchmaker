@@ -143,7 +143,7 @@ async def store_center_features_with_semantics(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/parents/{parent_id}/preferences", response_model=SemanticMatchResponse)
+@router.post("/parents/{parent_id}/preferences")
 async def store_parent_preferences_with_semantics(
     parent_id: UUID,
     request: ParentPreferenceRequest,
@@ -152,20 +152,52 @@ async def store_parent_preferences_with_semantics(
     """
     Store parent preferences and enhance with semantic matches.
     
-    The main app should call this when parents express preferences.
-    This will:
-    1. Store explicitly extracted preferences
-    2. Find semantically related features using embeddings
-    3. Store semantic preferences with reduced confidence
+    IMPORTANT: This endpoint now detects complex preferences and recommends
+    using the interactive processing endpoint when user interaction may be needed.
     
-    Example:
-    - Parent says: "it would be good to have it near a forest"
-    - Main app extracts: "location.near_forest" (nice_to_have)
-    - Service finds semantic matches: "space.garden", "nature_activities", "forest_kindergarten"
-    - When matching, all related features contribute to the score
+    For Node.js integration, your processParentPreferences() method should:
+    1. Try this endpoint first for simple preferences
+    2. If complex preferences detected, use /api/preferences/process/interactive
+    3. Handle the streaming responses for user interactions
     """
     try:
-        # Process preferences and find semantic matches
+        # Check if any preferences might be complex types that need user interaction
+        complex_features_detected = []
+        for feature in request.extracted_features:
+            complex_type = await detect_potential_complex_type(feature)
+            if complex_type:
+                complex_features_detected.append({
+                    "feature_key": feature.feature_key,
+                    "complex_type": complex_type,
+                    "raw_phrase": feature.raw_phrase,
+                    "requires_interaction": await might_require_user_input(feature, complex_type)
+                })
+        
+        # If complex features detected that might need interaction, recommend interactive processing
+        interactive_needed = any(cf["requires_interaction"] for cf in complex_features_detected)
+        
+        if interactive_needed:
+            return {
+                "success": False,
+                "message": "Complex preferences detected that may require user interaction",
+                "complex_features_detected": complex_features_detected,
+                "recommendation": {
+                    "use_endpoint": "/api/preferences/process/interactive",
+                    "method": "POST", 
+                    "reason": "These preferences may require additional user input (e.g., work location, schedule clarification)",
+                    "example_usage": {
+                        "request_body": {
+                            "parent_id": str(parent_id),
+                            "original_text": request.original_text,
+                            "extracted_features": [f.dict() for f in request.extracted_features]
+                        },
+                        "response_type": "streaming (Server-Sent Events)"
+                    }
+                },
+                "fallback_processed": False
+            }
+        
+        # Process simple preferences with semantic matching
         results = await semantic_service.process_parent_preference(
             parent_id=parent_id,
             original_text=request.original_text,
@@ -176,20 +208,71 @@ async def store_parent_preferences_with_semantics(
         explicit_matches = [r for r in results if r['match_type'] == 'explicit']
         semantic_matches = [r for r in results if r['match_type'] == 'semantic']
         
-        return SemanticMatchResponse(
-            matches=explicit_matches,
-            semantic_enhancements=semantic_matches,
-            processing_summary={
+        return {
+            "success": True,
+            "matches": explicit_matches,
+            "semantic_enhancements": semantic_matches,
+            "complex_features_detected": complex_features_detected,
+            "processing_summary": {
                 "original_text": request.original_text,
                 "explicit_features": len(explicit_matches),
                 "semantic_enhancements": len(semantic_matches),
-                "parent_id": str(parent_id)
+                "parent_id": str(parent_id),
+                "processing_type": "simple_preferences_only"
             }
-        )
+        }
         
     except Exception as e:
         logger.error(f"Error processing parent preferences: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+async def detect_potential_complex_type(feature) -> str | None:
+    """Detect if this feature might be a complex preference type."""
+    phrase = feature.raw_phrase.lower() if feature.raw_phrase else ""
+    
+    # Location-related keywords (distance, travel time, specific locations)
+    if any(word in phrase for word in ["km", "distance", "minutes", "walking", "driving", "biking", "cycling", "home", "work", "office"]):
+        return "location_distance"
+    
+    # Schedule-related keywords  
+    if any(word in phrase for word in ["time", "schedule", "pickup", "drop", "hours", "morning", "afternoon", "evening", "flexible"]):
+        return "schedule_range"
+    
+    # Educational approach keywords
+    if any(word in phrase for word in ["montessori", "waldorf", "reggio", "approach", "pedagogy", "philosophy", "method", "curriculum"]):
+        return "educational_approach"
+    
+    # Social connection keywords
+    if any(word in phrase for word in ["sibling", "brother", "sister", "friend", "family", "same center", "together"]):
+        return "social_connection"
+    
+    return None
+
+
+async def might_require_user_input(feature, complex_type: str) -> bool:
+    """Check if this complex feature might require user input."""
+    phrase = feature.raw_phrase.lower() if feature.raw_phrase else ""
+    
+    if complex_type == "location_distance":
+        # Work location often needs clarification
+        if any(word in phrase for word in ["work", "office", "job"]):
+            return True
+        # Vague references might need clarification
+        if any(word in phrase for word in ["there", "that place", "where"]):
+            return True
+    
+    elif complex_type == "schedule_range":
+        # Ambiguous time references
+        if any(word in phrase for word in ["flexible", "varies", "depends", "sometimes"]):
+            return True
+    
+    elif complex_type == "social_connection":
+        # References to other children without specific IDs
+        if any(word in phrase for word in ["sibling", "brother", "sister", "friend"]):
+            return True
+    
+    return False
 
 
 @router.get("/match-score/{parent_id}/{center_id}", response_model=MatchScoreResponse)

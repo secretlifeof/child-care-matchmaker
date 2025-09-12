@@ -18,6 +18,10 @@ class ComplexValueType(BaseModel):
     examples: list[dict[str, Any]] | None = None
     version: int = 1
     is_active: bool = True
+    agent_class: str | None = None  # Agent class name (e.g., 'LocationDistanceAgent')
+    plugin_pipeline: list[dict[str, Any]] | None = None  # Pipeline configuration
+    supports_user_interaction: bool = False
+    default_config: dict[str, Any] | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -27,6 +31,19 @@ class ComplexValueType(BaseModel):
         required_keys = {'type', 'properties'}
         if not all(k in v for k in required_keys):
             raise ValueError("Schema must have 'type' and 'properties' keys")
+        return v
+    
+    @validator('plugin_pipeline')
+    def validate_plugin_pipeline(cls, v):
+        """Validate plugin pipeline configuration."""
+        if v is not None:
+            if not isinstance(v, list):
+                raise ValueError("Plugin pipeline must be a list")
+            for plugin_config in v:
+                if not isinstance(plugin_config, dict):
+                    raise ValueError("Each plugin config must be a dictionary")
+                if 'name' not in plugin_config:
+                    raise ValueError("Each plugin config must have a 'name' field")
         return v
 
 

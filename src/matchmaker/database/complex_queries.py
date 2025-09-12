@@ -22,8 +22,9 @@ class ComplexPreferenceRepository:
         """Get all active complex value types from schema registry."""
         async with self.pool.acquire() as conn:
             rows = await conn.fetch("""
-                SELECT id, type_name, description, schema, examples,
-                       version, is_active, created_at, updated_at
+                SELECT id, type_name, description, schema as schema_definition, examples,
+                       version, is_active, agent_class, plugin_pipeline, 
+                       supports_user_interaction, default_config, created_at, updated_at
                 FROM matching.Complex_Value_Types
                 WHERE is_active = true
                 ORDER BY type_name
@@ -35,11 +36,27 @@ class ComplexPreferenceRepository:
         """Get a specific complex value type by name."""
         async with self.pool.acquire() as conn:
             row = await conn.fetchrow("""
-                SELECT id, type_name, description, schema, examples,
-                       version, is_active, created_at, updated_at
+                SELECT id, type_name, description, schema as schema_definition, examples,
+                       version, is_active, agent_class, plugin_pipeline, 
+                       supports_user_interaction, default_config, created_at, updated_at
                 FROM matching.Complex_Value_Types
                 WHERE type_name = $1 AND is_active = true
             """, type_name)
+
+            if row:
+                return ComplexValueType(**dict(row))
+            return None
+    
+    async def get_complex_value_type_by_id(self, type_id: UUID) -> ComplexValueType | None:
+        """Get a specific complex value type by ID."""
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow("""
+                SELECT id, type_name, description, schema as schema_definition, examples,
+                       version, is_active, agent_class, plugin_pipeline, 
+                       supports_user_interaction, default_config, created_at, updated_at
+                FROM matching.Complex_Value_Types
+                WHERE id = $1 AND is_active = true
+            """, type_id)
 
             if row:
                 return ComplexValueType(**dict(row))
